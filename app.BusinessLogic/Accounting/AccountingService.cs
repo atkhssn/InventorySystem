@@ -1,19 +1,16 @@
 ﻿using app.EntityModel.CoreModel;
 using app.Infrastructure;
 using app.Infrastructure.Auth;
-using app.Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore;
 
 namespace app.Services.Accounting
 {
     public class AccountingService : IAccountingService
     {
-        private readonly IEntityRepository<CostCenter> _entityRepository;
         private readonly inventoryDbContext _dbContext;
         private readonly IWorkContext _workContext;
-        public AccountingService(IWorkContext workContext, IEntityRepository<CostCenter> entityRepository, inventoryDbContext dbContext)
+        public AccountingService(IWorkContext workContext, inventoryDbContext dbContext)
         {
-            _entityRepository = entityRepository;
             _dbContext = dbContext;
             _workContext = workContext;
         }
@@ -23,7 +20,6 @@ namespace app.Services.Accounting
         public async Task<CostCenterViewModel> GetAllRecordAsync()
         {
             CostCenterViewModel model = new CostCenterViewModel();
-
             model.CostCenterViewModels = await _dbContext.CostCenter.Where(x => x.IsActive).Select(x => new CostCenterViewModel
             {
                 Id = x.Id,
@@ -36,7 +32,6 @@ namespace app.Services.Accounting
                 UpdatedOn = DateTime.Now,
                 IsActive = true
             }).ToListAsync();
-
             return model;
         }
 
@@ -55,18 +50,28 @@ namespace app.Services.Accounting
                 UpdatedOn = DateTime.Now,
                 IsActive = true
             }).FirstOrDefaultAsync();
-
             return model;
         }
 
-        public async Task<bool> AddRecordAsync(CostCenterViewModel model)
+        public async Task<ResponseViewModel> AddRecordAsync(CostCenterViewModel model)
         {
-            var getCostCenter = _dbContext.CostCenter.Where(x => x.Name == model.Name).FirstOrDefault();
+            ResponseViewModel response = new ResponseViewModel();
             var user = await _workContext.GetCurrentUserAsync();
+            var findCostCenter = _dbContext.CostCenter.Where(x => x.Name.ToUpper() == model.Name.ToUpper()).FirstOrDefault();
+            var findCostCenterShort = _dbContext.CostCenter.Where(x => x.ShortName.ToUpper() == model.ShortName.ToUpper()).FirstOrDefault();
 
-            if (getCostCenter is not null)
+            if (findCostCenter is not null)
             {
-                return await Task.Run(() => false);
+                response.ResponseCode = 400;
+                response.ResponseMessage = $"[{model.Name}] has already been added.";
+                return await Task.Run(() => response);
+            }
+
+            if (findCostCenterShort is not null)
+            {
+                response.ResponseCode = 400;
+                response.ResponseMessage = $"[{model.ShortName}] has already been added.";
+                return await Task.Run(() => response);
             }
 
             CostCenter costCenter = new CostCenter
@@ -81,50 +86,83 @@ namespace app.Services.Accounting
             };
 
             _dbContext.CostCenter.Add(costCenter);
-            await _dbContext.SaveChangesAsync();
-            return true;
+
+            if (await _dbContext.SaveChangesAsync() > 0)
+            {
+                response.ResponseCode = 200;
+                response.ResponseMessage = $"New cost center has been added.";
+                return await Task.Run(() => response);
+            }
+
+            response.ResponseCode = 500;
+            response.ResponseMessage = $"An internal server error occurred.";
+            return await Task.Run(() => response);
         }
 
-        public async Task<bool> UpdateRecordAync(CostCenterViewModel model)
+        public async Task<ResponseViewModel> UpdateRecordAync(CostCenterViewModel model)
         {
-            var getCostCenter = _dbContext.CostCenter.Where(x => x.Id == model.Id).FirstOrDefault();
+            ResponseViewModel response = new ResponseViewModel();
             var user = await _workContext.GetCurrentUserAsync();
+            var getCostCenter = _dbContext.CostCenter.Where(x => x.Id == model.Id && x.ShortName.ToUpper() == model.ShortName.ToUpper()).FirstOrDefault();
+            var findCostCenter = _dbContext.CostCenter.Where(x => x.Name.ToUpper() == model.Name.ToUpper()).FirstOrDefault();
 
             if (getCostCenter is null)
             {
-                return await Task.Run(() => false);
+                response.ResponseCode = 404;
+                response.ResponseMessage = $"No records found to update.";
+                return await Task.Run(() => response);
             }
 
-            if (getCostCenter.Name.ToUpper() == model.Name.ToUpper())
+            if (findCostCenter is not null)
             {
-                return await Task.Run(() => false);
+                response.ResponseCode = 400;
+                response.ResponseMessage = $"[{model.Name}] has already been added.";
+                return await Task.Run(() => response);
             }
 
-            getCostCenter.ShortName = model.ShortName.ToUpper();
             getCostCenter.Name = model.Name;
             getCostCenter.UpdatedBy = user.FullName;
             getCostCenter.UpdatedOn = DateTime.Now;
 
-            await _dbContext.SaveChangesAsync();
-            return true;
-        }
-
-        public async Task<bool> DeleteRecordAync(long Id)
-        {
-            var getCostCenter = _dbContext.CostCenter.Where(x => x.Id == Id).FirstOrDefault();
-            var user = await _workContext.GetCurrentUserAsync();
-
-            if (getCostCenter is null)
+            if (await _dbContext.SaveChangesAsync() > 0)
             {
-                return await Task.Run(() => false);
+                response.ResponseCode = 200;
+                response.ResponseMessage = $"Cost center has been modified.";
+                return await Task.Run(() => response);
             }
 
-            getCostCenter.IsActive = false;
-            getCostCenter.UpdatedBy = user.FullName;
-            getCostCenter.UpdatedOn = DateTime.Now;
+            response.ResponseCode = 500;
+            response.ResponseMessage = $"An internal server error occurred.";
+            return await Task.Run(() => response);
+        }
 
-            await _dbContext.SaveChangesAsync();
-            return true;
+        public async Task<ResponseViewModel> DeleteRecordAync(long Id)
+        {
+            ResponseViewModel response = new ResponseViewModel();
+            var user = await _workContext.GetCurrentUserAsync();
+            var findCostCenter = _dbContext.CostCenter.Where(x => x.Id == Id).FirstOrDefault();
+
+            if (findCostCenter is null)
+            {
+                response.ResponseCode = 404;
+                response.ResponseMessage = $"No records found to update.";
+                return await Task.Run(() => response);
+            }
+
+            findCostCenter.IsActive = false;
+            findCostCenter.UpdatedBy = user.FullName;
+            findCostCenter.UpdatedOn = DateTime.Now;
+
+            if (await _dbContext.SaveChangesAsync() > 0)
+            {
+                response.ResponseCode = 200;
+                response.ResponseMessage = $"Cost center has been removed.";
+                return await Task.Run(() => response);
+            }
+
+            response.ResponseCode = 500;
+            response.ResponseMessage = $"An internal server error occurred.";
+            return await Task.Run(() => response);
         }
 
         #endregion

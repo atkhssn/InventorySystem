@@ -2,7 +2,7 @@
 
 namespace app.Services.Accounting
 {
-    public class CostCenterViewModel : BaseViewModel
+    public sealed class CostCenterViewModel : BaseViewModel
     {
         [Display(Name = "Short Name")]
         public string ShortName { get; set; }
@@ -10,5 +10,6 @@ namespace app.Services.Accounting
         [Display(Name = "Full Name")]
         public string Name { get; set; }
         public List<CostCenterViewModel> CostCenterViewModels { get; set; }
+        public ResponseViewModel responseViewModel { get; set; }
     }
 }

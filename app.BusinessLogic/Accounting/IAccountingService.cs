@@ -4,8 +4,8 @@
     {
         Task<CostCenterViewModel> GetAllRecordAsync();
         Task<CostCenterViewModel> GetRecordDetailAync(long Id);
-        Task<bool> AddRecordAsync(CostCenterViewModel model);
-        Task<bool> UpdateRecordAync(CostCenterViewModel model);
-        Task<bool> DeleteRecordAync(long Id);
+        Task<ResponseViewModel> AddRecordAsync(CostCenterViewModel model);
+        Task<ResponseViewModel> UpdateRecordAync(CostCenterViewModel model);
+        Task<ResponseViewModel> DeleteRecordAync(long Id);
     }
 }
