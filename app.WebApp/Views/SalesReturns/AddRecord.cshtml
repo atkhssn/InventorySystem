@@ -1,0 +1,462 @@
+﻿@model SalesReturnViewModel
+@{
+    ViewData["Title"] = "AddRecord";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+<style>
+    .text-sm .select2-container--default .select2-selection--single, select.form-control-sm ~ .select2-container--default .select2-selection--single {
+        height: calc(2.2rem + 2px) !important;
+    }
+
+    .table thead {
+        background-color: #d0d0d0 !important;
+    }
+</style>
+
+<div class="content-header">
+    <div class="container-fluid ">
+        <div class="breadcrumb d-flex justify-content-between align-items-center  pl-3 pr-3">
+            <ol class="breadcrumb mb-0 p-0">
+                <li class="breadcrumb-item"><a href="/Admin/Index">Home</a></li>
+                <li class="breadcrumb-item active"> Sales Return </li>
+            </ol>
+            <div>
+
+                <a asp-action="Index"><i class="fa fa-list"></i> Sales Return</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h3 class="card-title text-info">
+                            <i class="fas fa-plus"></i>
+                            Sales Return
+                        </h3>
+                    </div>
+
+                    <div class="col-md-6"></div>
+
+                </div>
+
+
+            </div>
+            <div class="card-body">
+                <form asp-action="AddRecord" method="post" id="salereturnfrom">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+           
+                    <div class="row">
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label asp-for="SalesReturnDate" class="control-label">Return Date</label>
+                                <input asp-for="SalesReturnDate" class="form-control" required />
+                                <span asp-validation-for="SalesReturnDate" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <label asp-for="CustomerId" class="control-label"> Customer</label>
+                            <select asp-for="CustomerId"  class="form-control select2">
+                                <option value="">Select Customer</option>
+                            </select>
+                            <span asp-validation-for="CustomerId" class="text-danger"></span>
+                        </div>
+
+
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label asp-for="CustomerMobile" class="control-label">  Customer Mobile </label>
+                                <input asp-for="CustomerMobile" class="form-control" readonly required />
+                                <span asp-validation-for="CustomerMobile" class="text-danger"></span>
+                            </div>
+                        </div>
+
+
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label asp-for="CustomerName" class="control-label">  Customer Name </label>
+                                <input asp-for="CustomerName" class="form-control" readonly required />
+                                <span asp-validation-for="CustomerName" class="text-danger"></span>
+                            </div>
+                        </div>
+
+
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label asp-for="CustomerEmail" class="control-label">  Customer Email </label>
+                                <input asp-for="CustomerEmail" readonly class="form-control" />
+                                <span asp-validation-for="CustomerEmail" class="text-danger"></span>
+                            </div>
+                        </div>
+
+
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label asp-for="CustomerAddress" class="control-label">  Customer Address </label>
+                                <input asp-for="CustomerAddress" readonly class="form-control" required />
+                                <span asp-validation-for="CustomerAddress" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                       
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label asp-for="Reason" class="control-label">Description</label>
+                                <input asp-for="Reason" class="form-control">
+                                <span asp-validation-for="Reason" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <label for="ProductId" class="control-label"> Product</label>
+                            <select id="ProductId" name="ProductId" class="form-control select2">
+                                <option value="">Select ProductId</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            <div class="form-group">
+                                <label for="Quantity" class="control-label"> Quantity </label>
+                                <div style="display:flex">
+                                    <input name="Quantity" id="Quantity" class="form-control" />
+                                    <span> <b id="unitid" class="text-danger"> </b></span>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            <div class="form-group">
+                                <label for="Price" class="control-label">Return Rate </label>
+                                <input name="Price" id="Price" class="form-control" />
+
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            <div class="form-group">
+                                <label for="TotalPrice" class="control-label">Total Price </label>
+                                <input name="TotalPrice" id="TotalPrice" readonly class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            <div class="form-group mt-4">
+                                <button type="button" class="btn btn-primary" id="addbutton" onclick="getinfo()">   <i class="fas fa-plus"></i> Add</button>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <table class="table table-bordered" id="checklist" style="margin-top:20px">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Product Name</th>
+                                <th>Return Quantity </th>
+                                <th>Unit</th>
+                                <th>Return Rate</th>                             
+                                <th>Total Amount</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="datashowlist">
+                        </tbody>
+                    </table>
+
+                    <div class="row mt-2">
+                        <div class="col-md-4"></div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <input type="submit" id="submitBtnsales" value="Add Confirm" class="btn btn-success" />
+                            </div>
+                        </div>
+                        <div class="col-md-4"></div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#Sales-Return').addClass('menu-open');
+            $('#SalesReturnsAddRecord').addClass('active');
+            product();
+            ff();
+        });
+
+        $("#salereturnfrom").submit(function (event) {
+            event.preventDefault();
+            var countid = datalist.length;
+            if (countid == 0) {
+                alert("Product Item is Zero ");
+            } else {
+                this.submit();
+            }
+        });
+        function ff() {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetAutoCompleteCustomerGet", "SalesReturns")",
+                datatype: "Json",
+                success: function (data) {
+                    if (data) {
+                        $("#CustomerId").empty();
+                        $("#CustomerId").append("<option value=''>Select Customer</option>");
+                        $(data).each(function (index, item) {
+                            $("#CustomerId").append("<option value='" + item.id + "'>" + item.name + "</option>");
+                        });
+                    }
+                }
+            });
+        };
+
+        $("#CustomerId").change(function () {
+            productsize = "";
+            var id = $("#CustomerId").val();
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetCustomer", "SalesReturns")",
+                datatype: "Json",
+                data: { id: id },
+                success: function (data) {
+                    if (data) {
+                        console.log("getproducteeee", data);
+                        if (data.id > 0) {
+                            $("#CustomerName").val(data.name);
+                            $("#CustomerMobile").val(data.mobile);
+                            $("#CustomerEmail").val(data.email);
+                            $("#CustomerAddress").val(data.address);
+                            $("#CustomerId").val(data.id);
+                        } 
+                    }
+                }
+            });
+        });
+
+
+        function product() {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetAutoCompleteProductGet", "SalesReturns")",
+                datatype: "Json",
+                success: function (data) {
+                    if (data) {
+                        $("#ProductId").empty();
+                        $("#ProductId").append("<option value=''>Select Product</option>");
+                        $(data).each(function (index, item) {
+                            $("#ProductId").append("<option value='" + item.id + "'>" + item.name + "</option>");
+                        });
+                    }
+                }
+            });
+        };
+        $("#ProductId").change(function () {
+            productsize = "";
+            var productid = $("#ProductId").val();
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("ProductGet", "Sales")",
+                datatype: "Json",
+                data: { id: productid },
+                success: function (data) {
+                    if (data) {
+                        console.log("getproducteeee", data);
+                        $("#unitid").text(data.unitNane);
+                        $("#Price").val(data.mrp);
+                        $("#AvailableStock").val(data.stockQuntity);
+                        var Quantity = $('#Quantity').val();
+                        if (Quantity > 0) {
+                            var total = Quantity * data.mrp;
+                            $('#TotalPrice').val(total);
+                        }
+                        if (data.stockQuntity > 0) {
+                            $('#addbutton').prop('disabled', false)
+                        }
+                        else {
+                            $('#addbutton').prop('disabled', true)
+                        }
+
+                    }
+                }
+            });
+        });
+
+        $("#Quantity").keyup(function () {
+            var Quantity = $('#Quantity').val();
+            var Price = $('#Price').val();
+            if (Quantity > 0) {
+                var total = Quantity * Price;
+                $('#TotalPrice').val(total);
+            }
+ 
+
+        })
+
+        $("#Price").keyup(function () {
+            var Quantity = $('#Quantity').val();
+            var Price = $('#Price').val();
+            if (Price > 0) {
+                var total = Quantity * Price;
+                $('#TotalPrice').val(total);
+            }
+
+        })
+
+
+
+        let datalist = [];
+        let productsize = "";
+        let GrossTotal = 0;
+        function getinfo() {
+            var productid = $('#ProductId').val();
+            var productname = $('#ProductId Option:selected').text();
+            var Quantity = $('#Quantity').val();
+            var Price = $('#Price').val();
+            var total = $('#TotalPrice').val();
+            var unit = $('#unitid').text();
+            if (productid > 0) {
+
+            } else {
+                alert("Add Product");
+                return;
+            }
+            if (Quantity > 0) {
+
+            } else {
+                alert("Add Quantity");
+                return;
+            }
+
+            if (Price > 0) {
+
+            } else {
+                alert("Add Price");
+                return;
+            }
+
+            var object = { ProductId: productid, ProductName: productname, ReturnQty: Quantity, ReturnRate: Price, ReturnAmount: total, UnitName: unit };
+            var res = datalist.find(x => x.ProductId == object.ProductId);
+            if (res == null) {
+                console.log("gggg", object);
+                datalist.push(object);
+                lodedata();
+            }
+            else {
+                alert("Product already added");
+            }
+        }
+
+
+        function lodedata() {
+            var countid = datalist.length;
+            let tag = '';
+            let TotalSales = 0;
+            let OtherCharge = $("#OtherCharge").val();
+            $("#datashowlist").empty();
+            if (countid > 0) {
+
+
+                $.each(datalist, function (key, item) {
+                    tag += '<tr id="' + key + '">';
+                    tag += '<td> ' + (key + 1) + '</td>';
+                    tag += '<td><input  type="hidden" name="MappVm[' + key + '].ProductId" value="' + item.ProductId + '"/>' + item.ProductName + '</td>';
+                    tag += '<td><input  type="hidden" id="' + key + item.ReturnQty + '" name="MappVm[' + key + '].ReturnQty" value="' + item.ReturnQty + '"/>' + item.ReturnQty + '</td>';
+                    tag += '<td><input  type="hidden" id="' + key + item.UnitName + '" name="MappVm[' + key + '].UnitName" value="' + item.UnitName + '"/>' + item.UnitName + '</td>';
+                    tag += '<td><input  type="hidden" id="' + key + item.ReturnRate + '" name="MappVm[' + key + '].ReturnRate" value="' + item.ReturnRate + '"/>' + item.ReturnRate + '</td>';
+                    tag += '<td><input  type="hidden" id="' + key + item.ReturnAmount + '" name="MappVm[' + key + '].ReturnAmount" value="' + item.ReturnAmount + '"/>' + item.ReturnAmount + '</td>';
+                    tag += '<td> <a onclick="removecell(' + item.ProductId + ',' + key + ')" class=" btn-danger btn-flat btn-sm sm"> <i class="fa fa-trash"></i></a>  </td>';
+                    tag += '</tr>';
+                    TotalSales += parseFloat(item.ReturnAmount);
+                });
+                tag += '<tr>';
+                tag += '<td colspan="5" style="text-align: right;"> <b>Total  </b></td>';
+                tag += '<td colspan="2" style="text-align: left;">' + TotalSales + ' </td>';
+                tag += '</tr>';
+
+                var Quantity = $('#Quantity').val(0);
+                var Price = $('#Price').val(0);
+                var total = $('#TotalPrice').val(0);
+                $('#datashowlist').html(tag);
+            }
+        }
+
+        function removecell(id, key) {
+            if (confirm("Are you sure to remove this?")) {
+                datalist.splice(datalist.findIndex(x => x.ProductId == id), 1);
+                $("#" + key).remove();
+                lodedata();
+            } else {
+                lodedata();
+            }
+        }
+
+        $("#submitBtn").click(function () {
+            // Get form data
+            var viewModel = {
+                Name: $("#Name").val(),
+                Email: $("#Email").val(),
+                Mobile: $("#Mobile").val(),
+                NID: $("#NID").val(),
+                Address: $("#Address").val(),
+                ACName: $("#ACName").val(),
+                ACNo: $("#ACNo").val(),
+                BankName: $("#BankName").val(),
+                BranchName: $("#BranchName").val(),
+                ContactName: $("#ContactName").val(),
+            };
+            console.log("viewModel", viewModel);
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("jasonAddRecord", "Supplier")",
+                datatype: "Json",
+                data: viewModel,
+                success: function (response) {
+                    if (response == 2) {
+                        console.log("Form submitted successfully!");
+                        ff();
+                        $('.bd-example-modal-lg').modal('hide');
+                        $('.modal-backdrop').remove();
+                    } else {
+                        alert("Supplier already added");
+                    }
+
+                },
+                error: function (error) {
+                    console.error("Error submitting form:", error);
+                }
+            });
+        });
+
+
+
+    </script>
+
+
+
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+
+

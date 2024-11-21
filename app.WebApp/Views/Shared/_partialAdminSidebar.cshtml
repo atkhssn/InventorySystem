@@ -1,0 +1,139 @@
+﻿@inject IAssigeMenus workcontect
+@inject IWorkContext getuser
+@{
+    var menulist = await workcontect.menulist();
+    var currentuse = await getuser.CurrentUserAsync();
+}
+<style>
+    [class*=sidebar-light-] .nav-sidebar > .nav-item.menu-open > .nav-link, [class*=sidebar-light-] .nav-sidebar > .nav-item:hover > .nav-link {
+        background-color: #C6DA72 !important;
+        color: #1E1E1E !important;
+        font-weight: 900;
+    }
+
+        [class*=sidebar-light-] .nav-sidebar > .nav-item.menu-open > .nav-link, [class*=sidebar-light-] .nav-sidebar > .nav-item:hover > .nav-link i {
+            color: #1E1E1E !important;
+        }
+
+    .nav-treeview > .nav-item > .nav-link.active, [class*=sidebar-light-] .nav-treeview > .nav-item > .nav-link.active:hover {
+        background-color: #f5ffcd !important;
+        color: #1E1E1E !important;
+        border: 1px solid #fff !important;
+        font-weight: 900;
+    }
+
+    .navbar-white {
+        /* background-color: #fff; */
+        color: #fbf3ea !important;
+        background-color: #0E9547;
+    }
+
+    .layout-navbar-fixed .wrapper .sidebar-light-info .brand-link:not([class*=navbar]) {
+        color: #fbf3ea;
+        background-color: #0E9547;
+        height: 51px;
+    }
+
+    .main-header .nav-link i {
+        color: #fbf3ea !important;
+    }
+
+    [class*=sidebar-light-] {
+        background-color: #ededed !important;
+    }
+
+    .main-sidebar .nav-link i {
+        color: #0E9547;
+    }
+
+    .nav-sidebar > .nav-item {
+        margin-bottom: 0;
+        border-bottom: 1px solid #C6DA72;
+    }
+
+    .sidebar-dark-info .nav-sidebar > .nav-item > .nav-link.active, .sidebar-light-info .nav-sidebar > .nav-item > .nav-link.active {
+        background-color: #C6DA72;
+        color: #fff;
+        border-radius: 0rem !important;
+    }
+
+    [class*=sidebar-light-] .nav-sidebar > .nav-item > .nav-treeview {
+        background-color: white;
+    }
+
+    .elevation-4 {
+        box-shadow: 0 14px 0px rgba(0,0,0,.25),0 10px 5px rgba(0,0,0,.22) !important;
+    }
+
+    .image-box-logo {
+        width: 100px;
+        height: 100px;
+        margin: 5px 0;
+        padding: 0
+    }
+
+    .main-app-logo {
+        width: 100%;
+    }
+
+    .user-name {
+        margin: 45px 0;
+    }
+
+</style>
+
+<aside class="main-sidebar sidebar-light-info elevation-4">
+    <a href="/Admin/Index" class="brand-link text-center"><b>@currentuse.Email</b></a>
+    <div class="sidebar">
+        <nav class="">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                <li class="nav-item">
+                    <div style="margin-bottom: 7px; display:flex;">
+                        <div class="image-box-logo">
+                            <img src="~/kgfile/mainlogo.png" class="main-app-logo" />
+                        </div>
+                        <p class="user-name">@currentuse.FullName</p>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a asp-controller="Admin" asp-action="Index" id="Dashboard" class="nav-link">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <p>
+                            Dashboard
+                        </p>
+                    </a>
+                </li>
+                @if (currentuse != null)
+                {
+                    @foreach (var item in menulist.MainMenuVM)
+                    {
+                        @if (item.menuItemVMs.Count() > 0)
+                        {
+                            <li class="nav-item" id="@item.Activeid">
+                                <a href="#" class="nav-link">
+                                    @Html.Raw(item.Icon)
+                                    <p>
+                                        @item.Name
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    @foreach (var menu in item.menuItemVMs)
+                                    {
+                                        <li class="nav-item">
+                                            <a asp-action="@menu.Action" asp-controller="@menu.Controller" id="@menu.Controller@menu.Action" class="nav-link">
+                                                @Html.Raw(menu.Icon)
+                                                <p>@menu.Name</p>
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </li>
+                        }
+
+                    }
+                }
+            </ul>
+        </nav>
+    </div>
+</aside>

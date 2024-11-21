@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable></Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="NewFolder\**" />
+    <EmbeddedResource Remove="NewFolder\**" />
+    <None Remove="NewFolder\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\app.EntityModel\app.EntityModel.csproj" />
+    <ProjectReference Include="..\app.Infrastructure\app.Infrastructure.csproj" />
+    <ProjectReference Include="..\app.Utility\app.Utility.csproj" />
+  </ItemGroup>
+
+</Project>

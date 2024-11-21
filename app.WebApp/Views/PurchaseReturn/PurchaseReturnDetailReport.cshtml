@@ -1,0 +1,359 @@
+﻿@model PurchaseReturnViewModel
+@{
+    Layout = null;
+    int SN = 1;
+    decimal totalpurches = Model.MappVm.Select(f => f.PurchaseReturnAmount).Sum();
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width" />
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <title> Purchase Return  Detail  of @Model.PurchaseReturnNo</title>
+    <!-- Bootstrap 3.3.7 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/onsen/2.10.6/css/ionicons/css/ionicons.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/2.4.8/css/AdminLTE.min.css">
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+         folder instead of downloading all of them to reduce the load. -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/2.4.8/css/skins/_all-skins.min.css">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!-- Google Font -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+
+    <style>
+
+
+        .trclass {
+            border: 1px solid #000;
+            font-size: 16px;
+            font-weight: 800;
+            background-color: #C0C0C0;
+            line-height: 20px;
+        }
+
+        #page {
+            background-color: #fff;
+            width: 900px;
+            margin: 0px auto;
+            position: relative;
+            font-size: 16px;
+        }
+
+
+
+        #topLogo {
+            float: left;
+        }
+
+
+        @@media print {
+            .trclass {
+                background-color: #C0C0C0 !important;
+                -webkit-print-color-adjust: exact;
+                line-height: 20px;
+            }
+
+            body {
+                margin-top: 5px;
+            }
+            /*body {
+                                                margin: 1.6cm;
+                                            }*/
+            #haderTitle {
+                color: white !important;
+                background-color: black !important;
+                font-weight: bold !important;
+                border-radius: 25px;
+                padding: 5px;
+            }
+
+            #haderTitleh3 {
+                background-color: black !important;
+                padding: 4px;
+            }
+
+            a[href]:after {
+                content: none !important;
+            }
+
+            #print, #print * {
+                display: none !important;
+            }
+        }
+ 
+        }
+
+        @@media(max-width: 700px) {
+            #page {
+                overflow-x: scroll !important;
+            }
+        }
+
+    </style>
+
+    <script>
+        function printDiv() {
+            window.print();
+        }
+    </script>
+</head>
+
+
+<body>
+
+    <div id="page">
+        <img style="opacity:0.09; position:absolute; margin-top:200px; width:500px; margin-left:200px;" src="@(Model.ImageUrl.Replace("~", ""))">
+        <div style="min-height: 900px;">
+            <div class="text-center">
+                <div class="row">
+
+                    <table width="100%">
+                        <tr>
+                            <td style="width:20%"></td>
+                            <td style="width:10%">
+                                <img height="80" width="220" id="topLogo" src="@(Model.ImageUrl.Replace("~", ""))" />
+
+                            </td>
+                            <td style="width:70%">
+
+                                <p style="text-align: left; font-size: 25px; font-weight: bold;margin-bottom: 0;">@Model.UserName</p>
+                                <p style="text-align: left; font-size: 16px; font-weight: bold; margin-bottom: 0;">@Model.UserAddress</p>
+                                <p style="text-align: left; font-size: 16px; font-weight: bold;margin-bottom: 0;">  Phone : @Model.UserMobile, Email : @Model.UserEmail</p>
+
+                            </td>
+                            <td style="width:20%"></td>
+
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="text-center">
+                <span id="print" style="float: right; position: fixed;right: 0; vertical-align: top; display: inline-block;" onclick="printDiv()" class="btn btn-default">
+                    Print
+                </span>
+                <table style="width:100%">
+                    <tr style="text-align:center">
+                        <td style="border-bottom:double;font-size:22px"><b>Purchase Return</b></td>
+                    </tr>
+                </table>
+            </div>
+            <br />
+            <table style="width: 100%">
+
+                <tbody>
+
+                    <tr>
+                        <th style="width:18%">
+                            Purchase Return No
+                        </th>
+                        <th style="width:2%">:</th>
+                        <td style="width:30%">
+                            @Model.PurchaseReturnNo
+                        </td>
+                        <th style="width:18%"> Purchase Return Date</th>
+                        <th style="width:2%">:</th>
+                        <td style="width:30%">@Model.PurchaseReturnDate.ToShortDateString()</td>
+                    </tr>
+
+                    <tr>
+                        <th style="width:18%">
+                            Supplier Name
+                        </th>
+                        <th style="width:2%">:</th>
+                        <td style="width:30%">
+                            @Model.SupplierName
+                        </td>
+                        <th style="width:18%"> Supplier Mobile</th>
+                        <th style="width:2%">:</th>
+                        <td style="width:30%">@Model.SupplierMobile</td>
+                    </tr>
+
+                    <tr>
+                        <th style="width:18%">
+                            Supplier Address
+                        </th>
+                        <th style="width:2%">:</th>
+                        <td style="width:30%">
+                            @Model.SupplierAddress
+                        </td>
+                        <th style="width:18%">Supplier Email </th>
+                        <th style="width:2%">:</th>
+                        <td style="width:30%">@Model.SupplierEmail</td>
+                    </tr>
+                    
+                </tbody>
+
+            </table>
+
+
+            <br />
+
+            <div style="font-weight: bold;font-size: 16px"> Item Details: </div>
+            <table id="tbl1" border="1" style="width: 100%; font-size: 16px; margin-top: 15px;">
+                <thead style="background-color:#c0c0c0">
+                    <tr>
+                        <th style="text-align: left;padding-left:5px;">SL</th>
+                        <th style="text-align: left;padding-left:5px;">Product</th>
+                        <th style="text-align: center;padding-left:5px;">Quantity</th>
+                        <th style="text-align: center;padding-left:5px;">Unit</th>
+                        <th style="text-align: center;padding-left:5px;">Price</th>
+                        <th style="text-align: left;padding-left:5px;">Total Amount</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.MappVm)
+                    {
+                        <tr>
+                            <td style="text-align: center">@(++SN)</td>
+
+                            <td style="text-align: left;padding-left:5px;">@item.ProductName</td>
+
+                            <td style="text-align: center">@item.ReturnQty</td>
+                            <th style="text-align: center">@item.UnitName</th>
+                            <th style="text-align: center">@item.PurchaseReturnRate</th>
+                            <th style="text-align: left;padding-left:5px;">@item.PurchaseReturnAmount</th>
+
+                        </tr>
+                    }
+                    <tr>
+                        <td colspan="5" style="text-align: right;padding-right:5px;"> <b>Total Return </b></td>
+                        <td colspan="2" style="text-align: left;padding-left:5px;">@totalpurches</td>
+                    </tr>
+
+
+
+                </tbody>
+
+                <tfoot>
+                </tfoot>
+            </table>
+
+
+        </div>
+
+
+
+
+        <div id="divfooter" class="divfooter text-center footer">
+            <table style="width:100%">
+                <thead>
+                    <tr>
+                        <td style="width: 25%"></td>
+                        <td style="width: 25%"></td>
+                        <td style="width: 25%"></td>
+                        <td style="width: 25%"></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+
+                        <td style="text-align: center;">
+                            <span style="border-top: 2px solid #000000;">
+                                <b>Prepared by</b>
+
+                            </span>
+                        </td>
+                        <td style="text-align: center;">
+                            <span style="border-top: 2px solid #000000;">
+                                <b> Customer's Signature </b>
+                            </span>
+
+                        </td>
+
+                        <td style="text-align: center;">
+                            <span style="border-top: 2px solid #000000;">
+                                <b>Checked by</b>
+                            </span>
+
+                        </td>
+                        <td style="text-align: center;">
+                            <span style="border-top: 2px solid #000000;text-align:right;">
+                                <b> Authorized Signature</b>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+
+    </div>
+    <!-- /.content -->
+    <!-- /.content-wrapper -->
+    <!-- ./wrapper -->
+    <!-- jQuery 3 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- Bootstrap 3.3.7 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- FastClick -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js"></script>
+    <!-- AdminLTE App -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/2.4.8/js/adminlte.min.js"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/2.4.8/js/demo.js"></script>
+
+    <script>
+        $(function () {
+            SummerizeTable('#tbl1', 1);
+            //SummerizeTable('#tbl1', 2);
+            //SummerizeTable('#tbl1', 5);
+        });
+        function SummerizeTable(table, indexno) {
+            $(table).each(function () {
+                $(table).find('td').each(function () {
+                    var $this = $(this);
+                    var col = indexno;
+                    var html = $this.html();
+                    var row = $(this).parent()[0].rowIndex;
+                    var span = 1;
+                    var cell_above = $($this.parent().prev().children()[col]);
+
+                    // look for cells one above another with the same text
+                    while (cell_above.html() === html) { // if the text is the same
+                        span += 1; // increase the span
+                        cell_above_old = cell_above; // store this cell
+                        cell_above = $(cell_above.parent().prev().children()[col]); // and go to the next cell above
+                    }
+
+                    // if there are at least two columns with the same value,
+                    // set a new span to the first and hide the other
+                    if (span > 1) {
+                        // console.log(span);
+                        $(cell_above_old).attr('rowspan', span);
+                        $this.hide();
+                    }
+
+                });
+            });
+        }
+    </script>
+</body>
+
+
+</html>
+
+
+
+

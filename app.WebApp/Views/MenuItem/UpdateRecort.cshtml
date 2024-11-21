@@ -1,0 +1,102 @@
+﻿@model MenuItemViewModel
+@{
+    ViewData["Title"] = "AddRecort";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+<div class="content-header">
+    <div class="container-fluid ">
+        <div class="breadcrumb d-flex justify-content-between align-items-center  pl-3 pr-3">
+            <ol class="breadcrumb mb-0 p-0">
+                <li class="breadcrumb-item"><a href="/Admin/Index">Home</a></li>
+                <li class="breadcrumb-item active"> MenuItem List </li>
+            </ol>
+            <div>
+                <a asp-action="Index"><i class="fa fa-list"></i>  MenuItem List </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title text-info">
+                    <i class="fas fa-plus"></i>
+                    Add New MenuItem
+                </h3>
+
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <form asp-action="UpdateRecort" method="post">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            @Html.HiddenFor(model => model.Id)
+                            <div class="form-group">
+                                <label asp-for="Name" class="control-label"></label>
+                                <input asp-for="Name" class="form-control" required />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>  
+                            <div class="form-group">
+                                <label asp-for="ShortName" class="control-label"></label>
+                                <input asp-for="ShortName" class="form-control" required />
+                                <span asp-validation-for="ShortName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="MenuId" class="control-label">Menu</label>
+                                <select asp-for="MenuId" class="form-control" required asp-items="ViewBag.Recort">
+                                    <option value="">-- Select Menu --</option>
+                                </select>
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Icon" class="control-label"></label>
+                                <input asp-for="Icon" class="form-control" required />
+                                <span asp-validation-for="Icon" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Action" class="control-label"></label>
+                                <input asp-for="Action" class="form-control" required />
+                                <span asp-validation-for="Action" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Controller" class="control-label"></label>
+                                <input asp-for="Controller" class="form-control" required />
+                                <span asp-validation-for="Controller" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="OrderNo" class="control-label"> Order No</label>
+                                <input asp-for="OrderNo" class="form-control" required />
+                                <span asp-validation-for="OrderNo" class="text-danger"></span>
+                            </div>
+                            <div class="form-group form-check">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" asp-for="IsActive" /> @Html.DisplayNameFor(model => model.IsActive)
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" value="Update" class="btn btn-warning" />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+
+
+
+

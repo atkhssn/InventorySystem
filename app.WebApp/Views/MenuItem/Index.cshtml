@@ -1,0 +1,121 @@
+﻿@model MenuItemViewModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    int SN = 1;
+}
+
+<div class="content-header">
+    <div class="container-fluid ">
+        <div class="breadcrumb d-flex justify-content-between align-items-center  pl-3 pr-3">
+            <ol class="breadcrumb mb-0 p-0">
+                <li class="breadcrumb-item"><a href="/Admin/Index">Home</a></li>
+                <li class="breadcrumb-item active"> MenuItem List </li>
+            </ol>
+            <div>
+                <a asp-action="AddRecort"><i class="fa fa-plus"></i>  Add New MenuItem </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <div class="row w-100">
+                    <div class="col-sm-3">
+                        <h5> <i class="fas fa-list"></i>  All MenuItem </h5>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered">
+                        <thead>
+                            <tr>
+                                <th>
+                                    #
+                                </th> 
+                                <th>
+                                    Menu
+                                </th>
+                                <th>
+                                    Name
+                                </th> 
+                                <th>
+                                    Short Name
+                                </th>
+                                <th class="text-center">
+                                    Icon
+                                </th>
+                                <th class="text-center">
+                                    OrderNo
+                                </th>
+                                <th class="text-center"> Status </th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var item in Model.datalist)
+                            {
+                                <tr>
+                                    <td>
+                                        @SN
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.MenuName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Name)
+                                    </td>  
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ShortName)
+                                    </td>
+                                    <td class="text-center">
+                                        @Html.Raw(item.Icon)
+                                    </td>
+                                    <td class="text-center">
+                                        @Html.DisplayFor(modelItem => item.OrderNo)
+                                    </td>
+                                    <td class="text-center">
+                                        @if (item.IsActive == false)
+                                        {
+                                            <b class="text-danger"> <i class="fas fa-times-circle fa-2x" style="font-size:20px"></i></b>
+                                        }
+                                        else
+                                        {
+                                            <b class="text-success"> <i class="fas fa-check-square" style="font-size:20px"></i></b>
+                                        }
+
+                                    </td>
+                                    <td class="text-center">
+                                        @Html.ActionLink("", "UpdateRecort", new {id=item.Id},new {@class = "text-danger fas fa-edit",  onclick = "return confirm('Are you sure you want to edit this?')" }) |
+                                        @Html.ActionLink("","Delete", new {  id=item.Id},new {@class = "text-danger fas fa-trash",  onclick = "return confirm('Are you sure you want to delete this?')" })
+                                    </td>
+                                </tr>
+                                SN++;
+                            }
+                        </tbody>
+
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#User-Managment').addClass('menu-open');
+            $('#MenuItemIndex').addClass('active');
+        });
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }

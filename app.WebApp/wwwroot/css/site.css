@@ -1,0 +1,25 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+#topLogo{margin-right:20px}
+
+.main-layout-footer{
+    max-height: 70px !important;
+    color: rebeccapurple !important;
+}

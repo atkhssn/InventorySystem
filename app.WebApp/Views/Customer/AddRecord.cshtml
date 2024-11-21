@@ -1,0 +1,140 @@
+﻿@model VendorViewModel
+@{
+    ViewData["Title"] = "AddRecord";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+
+<div class="content-header">
+    <div class="container-fluid ">
+        <div class="breadcrumb d-flex justify-content-between align-items-center  pl-3 pr-3">
+            <ol class="breadcrumb mb-0 p-0">
+                <li class="breadcrumb-item"><a href="/Admin/Index">Home</a></li>
+                <li class="breadcrumb-item active"> Customer </li>
+            </ol>
+            <div>
+                <a asp-action="Index"><i class="fa fa-list"></i> Customer List </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title text-info">
+                    <i class="fas fa-plus"></i>
+                    Add  Customer
+                </h3>
+
+            </div>
+            <div class="card-body">
+
+                <form asp-action="AddRecord" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    @Html.HiddenFor(model => model.VendorType)
+                    <div class="row">
+                        <div class="col-lg-12 col-md-10 col-sm-12">
+
+                            <div class="row">
+
+                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label asp-for="Name" class="control-label"> Name</label>
+                                        <input asp-for="Name" class="form-control" required />
+                                        <span asp-validation-for="Name" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label asp-for="Mobile" class="control-label"> Mobile</label>
+                                        <input asp-for="Mobile" class="form-control" required />
+                                        <span asp-validation-for="Mobile" class="text-danger"></span>
+                                    </div>
+                                </div>   
+                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label asp-for="Email" class="control-label">Email</label>
+                                        <input asp-for="Email" class="form-control"/>
+                                        <span asp-validation-for="Email" class="text-danger"></span>
+                                    </div>
+                                </div>  
+            
+                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label asp-for="CustomerType">Customer Type</label>
+                                        <select asp-for="CustomerType" class="form-control">
+                                            <option value="">-- Customer Type --</option>
+                                            @foreach (var option in Enum.GetValues(typeof(CustomerType)))
+                                            {
+                                                <option value="@option">@option</option>
+                                            }
+                                        </select>
+                                        <span asp-validation-for="CustomerType" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label asp-for="Address" class="control-label">Address</label>
+                                        <input asp-for="Address" class="form-control" required />
+                                        <span asp-validation-for="Address" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label asp-for="ContactName" class="control-label"> Contact Person</label>
+                                        <input asp-for="ContactName" class="form-control" />
+                                        <span asp-validation-for="ContactName" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label asp-for="NID" class="control-label">NID</label>
+                                        <input asp-for="NID" class="form-control" />
+                                        <span asp-validation-for="NID" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label asp-for="CreditLimit" class="control-label">Credit Limit</label>
+                                        <input asp-for="CreditLimit" class="form-control" required />
+                                        <span asp-validation-for="CreditLimit" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                     
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Create" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+</section>
+
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#Customer').addClass('menu-open');
+            $('#CustomerAddRecord').addClass('active');
+        });
+
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+
+
+

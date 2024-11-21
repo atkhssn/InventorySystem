@@ -1,0 +1,76 @@
+﻿@model MainMenuViewModel
+@{
+    ViewData["Title"] = "AddRecort";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<div class="content-header">
+    <div class="container-fluid ">
+        <div class="breadcrumb d-flex justify-content-between align-items-center  pl-3 pr-3">
+            <ol class="breadcrumb mb-0 p-0">
+                <li class="breadcrumb-item"><a href="/Admin/Index">Home</a></li>
+                <li class="breadcrumb-item active"> Menu List </li>
+            </ol>
+            <div>
+                <a asp-action="Index"><i class="fa fa-list"></i>  Menu List </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title text-info">
+                    <i class="fas fa-plus"></i>
+                    Add New Menu
+                </h3>
+
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <form asp-action="AddRecort" method="post">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group">
+                                <label asp-for="Name" class="control-label"></label>
+                                <input asp-for="Name" class="form-control" required />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Icon" class="control-label"></label>
+                                <input asp-for="Icon" class="form-control" required />
+                                <span asp-validation-for="Icon" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="OrderNo" class="control-label"> Order No</label>
+                                <input asp-for="OrderNo" class="form-control" required />
+                                <span asp-validation-for="OrderNo" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" value="Create" class="btn btn-primary" />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#User-Managment').addClass('menu-open');
+            $('#MainMenuAddRecort').addClass('active');
+        });
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+
+

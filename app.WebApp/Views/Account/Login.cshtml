@@ -1,0 +1,138 @@
+﻿@model LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+    
+}
+
+<style>
+    @@media (max-width:768px) {
+        .d-ui-card {
+            padding: 20px 6px 30px 6px;
+            border: none;
+            border-radius: 30px;
+        }
+    }
+
+    @@media (min-width:768px) {
+        .d-ui-card {
+            padding: 55px 100px 60px 100px;
+            border: none;
+            border-radius: 30px;
+        }
+    }
+
+    .d-ui-card .form-control {
+    }
+
+    .d-ui h2 {
+        color: rgb(51, 51, 51);
+        font-size: 36px;
+        font-weight: 600;
+        -webkit-font-smoothing: antialiased;
+        word-break: break-word;
+    }
+
+    .d-action input {
+        border: 0px;
+        height: 45px;
+        display: inline-block;
+        border-radius: 20px;
+        -webkit-font-smoothing: antialiased;
+        padding: 0px 18px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 10px;
+        vertical-align: middle;
+        text-align: center;
+        width: 100%;
+    }
+
+    .d-ui .form-control {
+        display: block;
+        width: 100%;
+        height: calc(1.6em + 1.4rem + 2px );
+        padding: 0.875rem 2rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: 1.75rem;
+        transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    }
+
+    .d-action .btn {
+        border-radius: 30px;
+    }
+
+    .d-action i {
+        text-align: left !important;
+        font-size: 26px;
+    }
+
+    .d-action .w-75 {
+        width: 75% !important;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    .di-logo {
+        text-align: center;
+        margin-bottom: 20px;
+        color: darkslateblue;
+    }
+
+        .di-logo a {
+            text-decoration: none !important;
+            color: rgb(0 0 0 / 90%);
+            font-size: 26px;
+        }
+</style>
+<br />
+
+<div class=" mt-5 mb-5 ">
+    <div class="container">
+        <div class=" row justify-content-center">
+            <div class="col-12 col-sm-10 col-lg-6 col-md-7 ">
+                <div class="card d-ui-card shadow">
+                    <div class="di-logo">
+                        <img src="~/kgfile/mainlogo.png"  style="width:180px;height:180px"/>
+                      @*  <span style="font-weight:700;color:#2196f3;font-size:40px">L</span>og<span style="font-weight: 700; color: #2196f3; font-size: 40px">i</span>n*@
+                    </div>
+                    <form class="d-ui" asp-action="Login">
+                        @Html.HiddenFor(s => s.ReturnUrl)
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group mb-3">
+                            <input type="text" class="form-control" required placeholder="Email address" asp-for="Email" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                            <span></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <input type="password" class="form-control" placeholder="******" required asp-for="Password" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                        <span asp-validation-for="IncorrectInput" class="text-danger"></span>
+                        <div class="row  justify-content-center d-action">
+                            <div class="col-12 text-left"> <a class="text-info" asp-area="" asp-controller="Account" asp-action="Forgottenpassword">Forgotten your password?</a> </div>
+                            <div class="col-12 text-center mt-3">  <input type="submit" class="btn btn-success w-100 " value="Login" />  </div>
+
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+

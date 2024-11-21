@@ -1,0 +1,111 @@
+﻿@model ProductSubCategoryViewModel
+@{
+    ViewData["Title"] = "AddRecort";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+<div class="content-header">
+    <div class="container-fluid ">
+        <div class="breadcrumb d-flex justify-content-between align-items-center  pl-3 pr-3">
+            <ol class="breadcrumb mb-0 p-0">
+                <li class="breadcrumb-item"><a href="/Admin/Index">Home</a></li>
+                <li class="breadcrumb-item active"> Product Sub Category </li>
+            </ol>
+            <div>
+                <a asp-action="Index"><i class="fa fa-list"></i> Product Sub Category List </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title text-info">
+                    <i class="fas fa-plus"></i>
+                    Add  Product Sub Category
+                </h3>
+
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-4 col-md-6 col-sm-12">
+                        <form asp-action="AddRecort" method="post">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group">
+                                <label asp-for="Name" class="control-label"></label>
+                                <input asp-for="Name" class="form-control" required />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="ProductType" class="control-label">Product Type</label>
+                                <select asp-for="ProductType" class="form-control" id="ProductTypeId" required>
+                                    <option value="">-- Select Product Type --</option>
+                                    <option value="R">Raw Product-</option>
+                                    <option value="F">Finish Product</option>
+                                </select>
+                                <span asp-validation-for="ProductType" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="ProductCategoryId" class="control-label"> Product Category</label>
+                                <select asp-for="ProductCategoryId" id="ProductCategoryId" class="form-control select2">
+                                    <option value="">Select ProductCategory</option>
+                                </select>
+                                <span asp-validation-for="ProductCategoryId" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" value="Create" class="btn btn-primary" />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#Configuration').addClass('menu-open');
+            $('#ProductSubCategoryAddRecort').addClass('active');
+        });
+
+
+        $("#ProductTypeId").change(function () {
+            var text = $("#ProductTypeId").val();
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetByProductCategoryList", "ProductCategory")",
+                datatype: "Json",
+                data: { id: text },
+                success: function (data) {
+                    if (data) {
+                        console.log("hhhhhhhhhh", data);
+                        $("#ProductCategoryId").empty();
+                        $("#ProductCategoryId").append("<option value=''>Select ProductCategory</option>");
+                        $(data.productCategoriesList).each(function (index, item) {
+                            $("#ProductCategoryId").append("<option value='" + item.id + "'>" + item.name + "</option>");
+                        });
+
+                    }
+                }
+            });
+        });
+
+
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+
+
+

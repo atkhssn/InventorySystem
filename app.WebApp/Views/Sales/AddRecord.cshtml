@@ -1,0 +1,707 @@
+﻿@model SalesViewModel
+@{
+    ViewData["Title"] = "AddRecord";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .text-sm .select2-container--default .select2-selection--single, select.form-control-sm ~ .select2-container--default .select2-selection--single {
+        height: calc(2.2rem + 2px) !important;
+    }
+
+    .table thead {
+        background-color: #d0d0d0 !important;
+    }
+</style>
+<div class="content-header">
+    <div class="container-fluid ">
+        <div class="breadcrumb d-flex justify-content-between align-items-center  pl-3 pr-3">
+            <ol class="breadcrumb mb-0 p-0">
+                <li class="breadcrumb-item"><a href="/Admin/Index">Home</a></li>
+                <li class="breadcrumb-item active"> Sales  </li>
+            </ol>
+            <div>
+
+                <a asp-action="Index"><i class="fa fa-list"></i> Sales</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h3 class="card-title text-info">
+                            <i class="fas fa-plus"></i>
+                            Sales
+                        </h3>
+                    </div>
+
+                    <div class="col-md-6"></div>
+
+                </div>
+
+
+            </div>
+            <div class="card-body">
+                <form asp-action="AddRecord" method="post" id="salefrom">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="CustomerId" id="CustomerId" />
+                    <div class="row">
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label asp-for="SalesDate" class="control-label"> Sales Date</label>
+                                <input asp-for="SalesDate" class="form-control" required />
+                                <span asp-validation-for="SalesDate" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label asp-for="CustomerMobile" class="control-label">  Customer Mobile </label>
+                                <input asp-for="CustomerMobile" class="form-control" required />
+                                <span asp-validation-for="CustomerMobile" class="text-danger"></span>
+                            </div>
+                        </div>
+
+
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label asp-for="CustomerName" class="control-label">  Customer Name </label>
+                                <input asp-for="CustomerName" class="form-control" required />
+                                <span asp-validation-for="CustomerName" class="text-danger"></span>
+                            </div>
+                        </div>
+
+
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label asp-for="CustomerEmail" class="control-label">  Customer Email </label>
+                                <input asp-for="CustomerEmail" class="form-control" />
+                                <span asp-validation-for="CustomerEmail" class="text-danger"></span>
+                            </div>
+                        </div>
+
+
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label asp-for="CustomerAddress" class="control-label">  Customer Address </label>
+                                <input asp-for="CustomerAddress" class="form-control" required />
+                                <span asp-validation-for="CustomerAddress" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label asp-for="DeliveryDate" class="control-label">Delivery Date</label>
+                                <input asp-for="DeliveryDate" class="form-control" />
+                                <span asp-validation-for="DeliveryDate" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label asp-for="DeliveryAddress" class="control-label">Delivery Address</label>
+                                <input asp-for="DeliveryAddress" class="form-control" />
+                                <span asp-validation-for="DeliveryAddress" class="text-danger"></span>
+                            </div>
+                        </div>
+
+
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label asp-for="OtherCharge" class="control-label">Other Charge</label>
+                                <input asp-for="OtherCharge" class="form-control" />
+                                <span asp-validation-for="OtherCharge" class="text-danger"></span>
+                            </div>
+                        </div>
+
+
+
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label asp-for="Description" class="control-label">Description</label>
+                                <input asp-for="Description" class="form-control">
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                            </div>
+                        </div>
+
+
+
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label asp-for="TermsAndCondition" class="control-label">Terms And Condition</label>
+                                <input asp-for="TermsAndCondition" class="form-control">
+                                <span asp-validation-for="TermsAndCondition" class="text-danger"></span>
+                            </div>
+                        </div>
+
+
+                        <div class="col-lg-4 col-md-2 col-sm-12">
+                            <div class="form-group">
+                                <label for="AvailableStock" class="control-label">Available Stock </label>
+                                <input name="AvailableStock" id="AvailableStock" readonly class="form-control" />
+
+                            </div>
+                        </div>
+
+                          <div class="col-lg-2 col-md-2 col-sm-12">
+                            <div class="form-group">
+                                <label for="AvgPrice" class="control-label">AVG Price </label>
+                                <input name="AvgPrice" id="AvgPrice" readonly class="form-control" />
+                            </div>
+                        </div
+                    </div>
+                    <div class="row" style="background:#00bcd41c;padding:10px">
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <label for="ProductId" class="control-label"> Product</label>
+                            <select id="ProductId" name="ProductId" class="form-control select2">
+                                <option value="">Select ProductId</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            <div class="form-group">
+                                <label for="Quantity" class="control-label"> Quantity </label>
+                                <div style="display:flex">
+                                    <input name="Quantity" id="Quantity" class="form-control" />
+                                    <span> <b id="unitid" class="text-danger"> </b></span>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            <div class="form-group">
+                                <label for="Price" class="control-label">MRP </label>
+                                <input name="Price" id="Price" class="form-control" />
+
+                            </div>
+                        </div>
+
+
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            <div class="form-group">
+                                <label for="DPersentage" class="control-label">Dis_Percentage  </label>
+                                <input name="DPersentage" id="DPersentage" class="form-control" />
+
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            <div class="form-group">
+                                <label for="DisAmt" class="control-label">Dis_Amount  </label>
+                                <input name="DisAmt" id="DisAmt" class="form-control" />
+
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            <div class="form-group">
+                                <label for="TotalPrice" class="control-label">Total Price </label>
+                                <input name="TotalPrice" id="TotalPrice" readonly class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            <div class="form-group mt-4">
+                                <button type="button" class="btn btn-primary" id="addbutton" onclick="getinfo()">   <i class="fas fa-plus"></i> Add</button>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <table class="table table-bordered" id="checklist" style="margin-top:20px">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Product Name</th>
+                                <th>Quantity </th>
+                                <th>Price</th>
+                                <th>Unit</th>                             
+                                <th>Dis_Percentage</th>
+                                <th>Dis_Amount</th>
+                                <th>Total Amount</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="datashowlist">
+                        </tbody>
+                    </table>
+@*                    <div id="checklist2">
+                    <table class="table table-bordered"  style="margin-top:20px">
+                        <tr>
+                            <td colspan="4" style="text-align: right;"> Sales Discount  :</td>
+                            <td>
+                                <div class="form-group">
+                                    <input asp-for="Discountpercentages" class="form-control" />
+                                    <span asp-validation-for="Discountpercentages" class="text-danger"></span>
+                                </div>
+                            </td>
+                            <td colspan="2">
+                                <div class="form-group">
+                                    <input asp-for="DiscountAmount" class="form-control" />
+                                    <span asp-validation-for="DiscountAmount" class="text-danger"></span>
+                                </div>
+                            </td>
+                        </tr>
+             
+                        <tr>
+                            <td colspan="5" style="text-align: right;"> <b> Gross Total </b></td>
+                            <td colspan="2" style="text-align: left;"> <span id="GrossTotal"> </span></td>
+                        </tr>
+
+                    </table>
+                    </div>*@
+                    <div class="row mt-2">
+                        <div class="col-md-4"></div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <input type="submit" id="submitBtnsales" value="Add Confirm" class="btn btn-success" />
+                            </div>
+                        </div>
+                        <div class="col-md-4"></div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .d-active{display:block}
+    .d-inactive{display:none}
+</style>
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#Sales').addClass('menu-open');
+            $('#SalesAddRecord').addClass('active');
+            $('#checklist2').addClass('d-inactive');
+            product();
+        });
+
+        $(document).ready(function () {
+
+        });
+
+
+        $("#salefrom").submit(function (event) {
+            event.preventDefault();
+            var countid = datalist.length;
+            if (countid == 0) {
+                alert("Product Item is Zero ");
+            } else {
+                this.submit();
+            }
+        });
+
+
+        $("#CustomerMobile").change(function () {
+            productsize = "";
+            var mobileno = $("#CustomerMobile").val();
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("customerGet", "Sales")",
+                datatype: "Json",
+                data: { mobile: mobileno },
+                success: function (data) {
+                    if (data) {
+                        console.log("getproducteeee", data);
+                        if (data.id > 0) {
+                            $("#CustomerName").val(data.name);
+                            $("#CustomerEmail").val(data.email);
+                            $("#CustomerAddress").val(data.address);
+                            $("#CustomerId").val(data.id);
+
+
+                            $('#CustomerName').prop('readonly', true);
+                            $('#CustomerEmail').prop('readonly', true);
+                            $('#CustomerAddress').prop('readonly', true);
+                        } else {
+                            $('#CustomerName').prop('readonly', false);
+                            $('#CustomerEmail').prop('readonly', false);
+                            $('#CustomerAddress').prop('readonly', false);
+                            $("#CustomerId").val(0);
+                            $("#CustomerName").val("");
+                            $("#CustomerEmail").val("");
+                            $("#CustomerAddress").val("");
+                        }
+                    }
+                }
+            });
+        });
+
+
+        function product() {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetAutoCompleteProductGet", "PurchaseOrder")",
+                datatype: "Json",
+                success: function (data) {
+                    if (data) {
+                        $("#ProductId").empty();
+                        $("#ProductId").append("<option value=''>Select Product</option>");
+                        $(data).each(function (index, item) {
+                            $("#ProductId").append("<option value='" + item.id + "'>" + item.name + "</option>");
+                        });
+                    }
+                }
+            });
+        };
+        $("#ProductId").change(function () {
+            productsize = "";
+            var productid = $("#ProductId").val();
+            AvailableStock = 0;
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("ProductGet", "Sales")",
+                datatype: "Json",
+                data: { id: productid },
+                success: function (data) {
+                    if (data) {
+                        console.log("getproducteeee", data);
+                        $("#unitid").text(data.unitNane);
+                        $("#Price").val(data.mrp);
+
+                        $("#AvailableStock").val(data.stockQuntity);
+                        $("#AvgPrice").val(data.avgPrice);
+                        AvailableStock = data.stockQuntity;
+                        var Quantity = $('#Quantity').val();
+                        if (Quantity > 0) {
+                            var total = Quantity * data.mrp;
+                            $('#TotalPrice').val(total);
+                        }
+                        if (data.stockQuntity > 0) {
+                            $('#addbutton').prop('disabled', false)
+                        }
+                        else {
+                            $('#addbutton').prop('disabled', true)
+                        }
+
+                    }
+                }
+            });
+        });
+
+
+        $("#Quantity").keyup(function () {
+            var Quantity = $('#Quantity').val();
+            var Price = $('#Price').val();
+            var DisAmt = $('#DisAmt').val();
+            if (Quantity > 0) {
+                let TotalPrice = 0;
+                var total = Quantity * Price;
+                if (DisAmt > 0) {
+                    TotalPrice = total - parseFloat(DisAmt);
+                    $('#TotalPrice').val(TotalPrice);
+                } else {
+                    var total = Quantity * Price;
+                    $('#TotalPrice').val(total);
+                }
+
+            }
+            var stockQuntity = $('#AvailableStock').val();
+
+            if (parseInt(stockQuntity) >= parseInt(Quantity)) {
+                $('#addbutton').prop('disabled', false)
+            }
+            else {
+                $('#addbutton').prop('disabled', true)
+            }
+
+        })
+
+        $("#Price").keyup(function () {
+            var Quantity = $('#Quantity').val();
+            var Price = $('#Price').val();
+            var DisAmt = $('#DisAmt').val();
+            if (Price > 0) {
+               let TotalPrice=0;
+                var total = Quantity * Price;
+                if (DisAmt > 0) {
+                    TotalPrice = total - parseFloat(DisAmt);
+                    $('#TotalPrice').val(TotalPrice);
+                }else{
+                    var total = Quantity * Price;
+                    $('#TotalPrice').val(total);
+                }
+
+            }
+
+        })
+
+        $("#DisAmt").keyup(function () {
+            var Quantity = $('#Quantity').val();
+            var Price = $('#Price').val();
+            var DisAmt = $('#DisAmt').val();
+            console.log("fff",DisAmt);
+            if (DisAmt > 0) {
+                let TotalPrice = 0;
+                var total = Quantity * Price;
+                if (DisAmt > 0) {
+                    var calculation = (DisAmt * 100) / (Quantity * Price);
+                    $("#DPersentage").val(calculation.toFixed(2));
+
+                    TotalPrice = total - parseFloat(DisAmt);
+                    $('#TotalPrice').val(TotalPrice);
+
+                } else {
+                    var total = Quantity * Price;
+                    $('#TotalPrice').val(total);
+                }
+
+            }
+
+        })
+
+        $("#DPersentage").keyup(function () {
+            var Quantity = $('#Quantity').val();
+            var Price = $('#Price').val();
+            var DPersentage = $('#DPersentage').val();
+            console.log("DPersentage", DPersentage);
+            if (DPersentage > 0) {
+                let TotalPrice = 0;
+                var total = Quantity * Price;
+                var calculation = (total * DPersentage) / 100;
+                $("#DisAmt").val(calculation.toFixed(2));
+                if (calculation > 0) {
+
+                    TotalPrice = total -calculation;
+                    $('#TotalPrice').val(TotalPrice);
+
+                } else {
+                    var total = Quantity * Price;
+                    $('#TotalPrice').val(total);
+                }
+
+            }
+
+        })
+
+
+
+        $("#BankCharg").keyup(function () {
+            lodedata();
+        })
+        $("#TransportCharges").keyup(function () {
+            lodedata();
+        })
+        $("#OtherCharge").keyup(function () {
+            lodedata();
+        })  
+        $("#DiscountAmount").keyup(function () {
+            var DiscountAmount = $("#DiscountAmount").val();
+            var calculation = (DiscountAmount * 100) / TotalSales;
+            $("#Discountpercentages").val(calculation.toFixed(2));
+            lodedata();
+        })
+        $("#Discountpercentages").keyup(function () {
+            var Discountpercentages = $("#Discountpercentages").val();
+            var calculation = (TotalSales * Discountpercentages) / 100;
+            $("#DiscountAmount").val(calculation.toFixed(2));
+            lodedata();
+        })
+        //$('#ReturnFeePercentage').keyup(function () {
+        //    var total = $("#TolalCollaction").val();
+        //    var Percentage = $("#ReturnFeePercentage").val();
+        //    var calculation = (total * Percentage) / 100;
+        //    console.log("ddddddd", calculation);
+        //    $("#ReturnFee").val(calculation);
+        //})
+
+        //$('#ReturnFee').keyup(function () {
+        //    var total = $("#TolalCollaction").val();
+        //    var ReturnFee = $("#ReturnFee").val();
+        //    var calculation = (ReturnFee * 100) / total;
+        //    $("#ReturnFeePercentage").val(calculation);
+        //})
+
+        let datalist = [];
+        let productsize = "";
+        let GrossTotal = 0;
+        let AvailableStock = 0;
+        let TotalSales = 0;
+        function getinfo() {
+            var productid = $('#ProductId').val();
+            var productname = $('#ProductId Option:selected').text();
+            var Quantity = $('#Quantity').val();
+            var Price = $('#Price').val();
+            var total = $('#TotalPrice').val();
+            var DPersentage = $('#DPersentage').val();
+            var DisAmt = $('#DisAmt').val();
+            var unit = $('#unitid').text();
+            if (productid > 0) {
+
+            } else {
+                alert("Add Product");
+                return;
+            }
+            if (Quantity > 0) {
+
+            } else {
+                alert("Add Quantity");
+                return;
+            }
+
+            if (Price > 0) {
+
+            } else {
+                alert("Add Price");
+                return;
+            }
+
+            var object = { ProductId: productid, ProductName: productname, SalesQty: Quantity, SalesRate: Price, SalesAmount: total, PackSize: unit, Discount_Persentage: DPersentage, Discount_Amount: DisAmt };
+            var res = datalist.find(x => x.ProductId == object.ProductId);
+            if (res == null) {
+                if (AvailableStock >= parseInt(Quantity)) {
+                    console.log("gggg", object);
+                    datalist.push(object);
+                    lodedata();
+                }
+                else {
+                    $.notify("Not Available Stock!", "error");
+                }
+            }
+            else {
+                alert("Product already added");
+            }
+        }
+
+    
+        function lodedata() {
+            var countid = datalist.length;
+            TotalSales = 0;
+            let tag = '';
+            let OtherCharge = $("#OtherCharge").val();
+            $("#datashowlist").empty();
+            if (countid > 0) {
+                $('#checklist2').addClass('d-active');
+                $('#checklist2').removeClass('d-inactive');
+
+                $.each(datalist, function (key, item) {
+                    tag += '<tr id="' + key + '">';
+                    tag += '<td> ' + (key + 1) + '</td>';
+                    tag += '<td><input  type="hidden" name="MappVm[' + key + '].ProductId" value="' + item.ProductId + '"/>' + item.ProductName + '</td>';
+                    tag += '<td><input  type="hidden" id="' + key + item.SalesQty + '" name="MappVm[' + key + '].SalesQty" value="' + item.SalesQty + '"/>' + item.SalesQty + '</td>';
+                    tag += '<td><input  type="hidden" id="' + key + item.SalesRate + '" name="MappVm[' + key + '].PackSize" value="' + item.PackSize + '"/>' + item.PackSize + '</td>';
+                    tag += '<td><input  type="hidden" id="' + key + item.PackSize+ '" name="MappVm[' + key + '].SalesRate" value="' + item.SalesRate + '"/>' + item.SalesRate + '</td>';
+                    tag += '<td><input  type="hidden" id="' + key + item.Discount_Persentage + '" name="MappVm[' + key + '].Discount_Persentage" value="' + item.Discount_Persentage + '"/>' + item.Discount_Persentage + ' %</td>';
+                    tag += '<td><input  type="hidden" id="' + key + item.Discount_Amount + '" name="MappVm[' + key + '].Discount_Amount" value="' + item.Discount_Amount + '"/>' + item.Discount_Amount + '</td>';
+                    tag += '<td><input  type="hidden" id="' + key + item.SalesAmount + '" name="MappVm[' + key + '].SalesAmount" value="' + item.SalesAmount + '"/>' + item.SalesAmount + '</td>';
+                    tag += '<td> <a onclick="removecell(' + item.ProductId + ',' + key + ')" class=" btn-danger btn-flat btn-sm sm"> <i class="fa fa-trash"></i></a>  </td>';
+                    tag += '</tr>';
+                    TotalSales += parseFloat(item.SalesAmount);
+                });
+                tag += '<tr>';
+                tag += '<td colspan="7" style="text-align: right;"> <b>Total Purches </b></td>';
+                tag += '<td colspan="2" style="text-align: left;">' + TotalSales + ' </td>';
+                tag += '</tr>';
+
+                tag += '<tr>';
+                tag += '<td colspan="7" style="text-align: right;"> <b>Other Charge</b></td>';
+                tag += '<td colspan="2" style="text-align: left;">' + OtherCharge + ' </td>';
+                tag += '</tr>';
+                var DiscountAmount = $("#DiscountAmount").val();
+                var GrossTotal = parseFloat(TotalSales) + parseFloat(OtherCharge);
+                let Total = 0;
+                if (parseFloat(DiscountAmount) > 0) {
+                    Total = GrossTotal - parseFloat(DiscountAmount);
+                    $("#GrossTotal").text(Total);
+                } else {
+                    Total = GrossTotal;
+                    $("#GrossTotal").text(Total);
+                }
+
+
+
+
+                tag += '<tr>';
+                tag += '<td colspan="5" style="text-align: right;"> <b> Total </b></td>';
+                tag += '<td colspan="2" style="text-align: left;">' + GrossTotal + ' </td>';
+                tag += '</tr>';
+
+
+                var Quantity = $('#Quantity').val(0);
+                var Price = $('#Price').val(0);
+                var total = $('#TotalPrice').val(0);
+                $('#datashowlist').html(tag);
+            }
+            else{
+                $('#checklist2').addClass('d-inactive');
+                $('#checklist2').removeClass('d-active');
+                $('#Discountpercentages').val(0);
+                $('#DiscountAmount').val(0);
+                
+            }
+        }
+
+        function removecell(id, key) {
+            if (confirm("Are you sure to remove this?")) {
+                datalist.splice(datalist.findIndex(x => x.ProductId == id), 1);
+                $("#" + key).remove();
+                lodedata();
+            } else {
+                lodedata();
+            }
+        }
+
+        $("#submitBtn").click(function () {
+            // Get form data
+            var viewModel = {
+                Name: $("#Name").val(),
+                Email: $("#Email").val(),
+                Mobile: $("#Mobile").val(),
+                NID: $("#NID").val(),
+                Address: $("#Address").val(),
+                ACName: $("#ACName").val(),
+                ACNo: $("#ACNo").val(),
+                BankName: $("#BankName").val(),
+                BranchName: $("#BranchName").val(),
+                ContactName: $("#ContactName").val(),
+            };
+            console.log("viewModel", viewModel);
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("jasonAddRecord", "Supplier")",
+                datatype: "Json",
+                data: viewModel,
+                success: function (response) {
+                    if (response == 2) {
+                        console.log("Form submitted successfully!");
+                        ff();
+                        $('.bd-example-modal-lg').modal('hide');
+                        $('.modal-backdrop').remove();
+                    } else {
+                        alert("Supplier already added");
+                    }
+
+                },
+                error: function (error) {
+                    console.error("Error submitting form:", error);
+                }
+            });
+        });
+
+
+
+    </script>
+
+
+
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+
+

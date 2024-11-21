@@ -1,0 +1,348 @@
+﻿@model PurchaseReturnViewModel
+@{
+    ViewData["Title"] = "AddRecord";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .text-sm .select2-container--default .select2-selection--single, select.form-control-sm ~ .select2-container--default .select2-selection--single {
+        height: calc(2.2rem + 2px) !important;
+    }
+
+    .table thead {
+        background-color: #d0d0d0 !important;
+    }
+</style>
+<div class="content-header">
+    <div class="container-fluid ">
+        <div class="breadcrumb d-flex justify-content-between align-items-center  pl-3 pr-3">
+            <ol class="breadcrumb mb-0 p-0">
+                <li class="breadcrumb-item"><a href="/Admin/Index">Home</a></li>
+                <li class="breadcrumb-item active">Purchase Return </li>
+            </ol>
+            <div>
+
+                <a asp-action="Index"><i class="fa fa-list"></i> Purchase Return </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h3 class="card-title text-info">
+                            <i class="fas fa-plus"></i>
+                            Purchase
+                        </h3>
+                    </div>
+
+                    <div class="col-md-6"></div>
+                  
+                </div>
+
+
+            </div>
+            <div class="card-body">
+                <form asp-action="AddRecord" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="row">
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label asp-for="PurchaseReturnDate" class="control-label"> Purchase Return Date </label>
+                                <input asp-for="PurchaseReturnDate" class="form-control" required />
+                                <span asp-validation-for="PurchaseReturnDate" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <label asp-for="SupplierId" class="control-label"> Supplier</label>
+                            <select asp-for="SupplierId" class="form-control select2" required>
+                                <option value="">Select Supplier</option>
+                            </select>
+                            <span asp-validation-for="SupplierId" class="text-danger"></span>
+                        </div>
+
+                        
+
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label asp-for="Reason" class="control-label">Reason</label>
+                                <textarea asp-for="Reason" class="form-control" rows="2"></textarea>
+                                <span asp-validation-for="Reason" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <label for="ProductId" class="control-label"> Product</label>
+                            <select id="ProductId" name="ProductId" class="form-control select2">
+                                <option value="">Select ProductId</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            <div class="form-group">
+                                <label for="Quantity" class="control-label"> Quantity </label>
+                                <div style="display:flex">
+                                    <input name="Quantity" id="Quantity" class="form-control" />
+                                    <span> <b id="unitid" class="text-danger"> </b></span>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            <div class="form-group">
+                                <label for="Price" class="control-label">Unit Price </label>
+                                <input name="Price" id="Price" class="form-control" />
+
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            <div class="form-group">
+                                <label for="TotalPrice" class="control-label">Total Price </label>
+                                <input name="TotalPrice" id="TotalPrice" readonly class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            <div class="form-group mt-4">
+                                <button type="button" class="btn btn-primary" onclick="getinfo()">   <i class="fas fa-plus"></i> Add</button>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <table class="table table-bordered" id="checklist" style="margin-top:20px">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Product Name</th>
+                                <th> Quantity </th>
+                                <th>Price</th>
+                                <th>Unit</th>
+                                <th>Total Amount</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="datashowlist">
+                        </tbody>
+                    </table>
+
+                    <div class="row mt-2">
+                        <div class="col-md-4"></div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <input type="submit" value="Add Confirm" class="btn btn-success" />
+                            </div>
+                        </div>
+                        <div class="col-md-4"></div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#Purchase-Return').addClass('menu-open');
+            $('#PurchaseReturnAddRecord').addClass('active');
+            ff();
+            product();
+        });
+
+        function ff() {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetAutoCompleteSupplierGet", "PurchaseOrder")",
+                datatype: "Json",
+                success: function (data) {
+                    if (data) {
+                        $("#SupplierId").empty();
+                        $("#SupplierId").append("<option value=''>Select Supplier</option>");
+                        $(data).each(function (index, item) {
+                            $("#SupplierId").append("<option value='" + item.id + "'>" + item.name + "</option>");
+                        });
+                    }
+                }
+            });
+        };
+
+
+        function product() {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetAutoCompleteProductGet", "PurchaseOrder")",
+                datatype: "Json",
+                success: function (data) {
+                    if (data) {
+                        $("#ProductId").empty();
+                        $("#ProductId").append("<option value=''>Select Product</option>");
+                        $(data).each(function (index, item) {
+                            $("#ProductId").append("<option value='" + item.id + "'>" + item.name + "</option>");
+                        });
+                    }
+                }
+            });
+        };
+        $("#ProductId").change(function () {
+            productsize = "";
+            var productid = $("#ProductId").val();
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("ProductGet", "PurchaseOrder")",
+                datatype: "Json",
+                data: { id: productid },
+                success: function (data) {
+                    if (data) {
+                        console.log("getproducteeee", data);
+                        $("#unitid").text(data.unitName);
+                    }
+                }
+            });
+        });
+
+        $("#Quantity").keyup(function () {
+            var Quantity = $('#Quantity').val();
+            var Price = $('#Price').val();
+            if (Quantity > 0) {
+                var total = Quantity * Price;
+                $('#TotalPrice').val(total);
+            }
+
+
+        })
+
+        $("#Price").keyup(function () {
+            var Quantity = $('#Quantity').val();
+            var Price = $('#Price').val();
+            if (Price > 0) {
+                var total = Quantity * Price;
+                $('#TotalPrice').val(total);
+            }
+
+        })
+
+        $("#BankCharg").keyup(function () {
+            lodedata();
+        })
+        $("#TransportCharges").keyup(function () {
+            lodedata();
+        })
+        $("#OtherCharge").keyup(function () {
+            lodedata();
+        })
+
+
+        let datalist = [];
+        let productsize = "";
+        let GrossTotal = 0;
+        function getinfo() {
+            var productid = $('#ProductId').val();
+            var productname = $('#ProductId Option:selected').text();
+            var Quantity = $('#Quantity').val();
+            var Price = $('#Price').val();
+            var total = $('#TotalPrice').val();
+            var unit = $('#unitid').text();
+            if (productid > 0) {
+
+            } else {
+                alert("Add Product");
+                return;
+            }
+            if (Quantity > 0) {
+
+            } else {
+                alert("Add Quantity");
+                return;
+            }
+
+            if (Price > 0) {
+
+            } else {
+                alert("Add Price");
+                return;
+            }
+            var object = { ProductId: productid, ProductName: productname, ReturnQty: Quantity, PurchaseReturnRate: Price, PurchaseReturnAmount: total, UnitName: unit };
+            var res = datalist.find(x => x.ProductId == object.ProductId);
+            if (res == null) {
+                datalist.push(object);
+                lodedata();
+            }
+            else {
+                alert("Product already added");
+            }
+        }
+
+
+        function lodedata() {
+            var countid = datalist.length;
+            let tag = '';
+            let TotalPurches = 0;
+            let BankCharg = $("#BankCharg").val();
+            let TransportCharges = $("#TransportCharges").val();
+            let OtherCharge = $("#OtherCharge").val();
+            $("#datashowlist").empty();
+            if (countid > 0) {
+
+
+                $.each(datalist, function (key, item) {
+                    tag += '<tr id="' + key + '">';
+                    tag += '<td> ' + (key + 1) + '</td>';
+                    tag += '<td><input  type="hidden" name="MappVm[' + key + '].ProductId" value="' + item.ProductId + '"/>' + item.ProductName + '</td>';
+                    tag += '<td><input  type="hidden" id="' + key + item.ReturnQty + '" name="MappVm[' + key + '].ReturnQty" value="' + item.ReturnQty + '"/>' + item.ReturnQty + '</td>';
+                    tag += '<td><input  type="hidden" id="' + key + item.UnitName + '" name="MappVm[' + key + '].UnitName" value="' + item.UnitName + '"/>' + item.UnitName + '</td>';
+                    tag += '<td><input  type="hidden" id="' + key + item.PurchaseReturnRate + '" name="MappVm[' + key + '].PurchaseReturnRate" value="' + item.PurchaseReturnRate + '"/>' + item.PurchaseReturnRate + '</td>';
+                    tag += '<td><input  type="hidden" id="' + key + item.PurchaseReturnAmount + '" name="MappVm[' + key + '].PurchaseReturnAmount" value="' + item.PurchaseReturnAmount + '"/>' + item.PurchaseReturnAmount + '</td>';
+                    tag += '<td> <a onclick="removecell(' + item.ProductId + ',' + key + ')" class=" btn-danger btn-flat btn-sm sm"> <i class="fa fa-trash"></i></a>  </td>';
+                    tag += '</tr>';
+                    TotalPurches += parseFloat(item.PurchaseReturnAmount);
+                });
+                tag += '<tr>';
+                tag += '<td colspan="5" style="text-align: right;"> <b>Total Purches Return </b></td>';
+                tag += '<td colspan="2" style="text-align: left;">' + TotalPurches + ' </td>';
+                tag += '</tr>';
+                tag += '<tr>';
+                tag += '<td colspan="5" style="text-align: right;"> <b>Gross Total </b></td>';
+                tag += '<td colspan="2" style="text-align: left;">' + TotalPurches + ' </td>';
+                tag += '</tr>';
+                var Quantity = $('#Quantity').val(0);
+                var Price = $('#Price').val(0);
+                var total = $('#TotalPrice').val(0);
+                $('#datashowlist').html(tag);
+            }
+        }
+
+        function removecell(id, key) {
+            if (confirm("Are you sure to remove this?")) {
+                datalist.splice(datalist.findIndex(x => x.ProductId == id), 1);
+                $("#" + key).remove();
+                lodedata();
+            } else {
+                lodedata();
+            }
+        }
+
+   
+    </script>
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }

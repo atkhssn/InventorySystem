@@ -1,0 +1,66 @@
+﻿@model PagedModel<VoucherViewModel>
+@{
+    var ff = Model;
+    int SN = Model.FirstSerialNumber;
+    PagedList pager = new PagedList();
+    int pageNo = 0;
+    if (Model.PagedList != null)
+    {
+        pager = Model.PagedList;
+        pageNo = Model.PagedList.PageIndex;
+        SN = ((Model.PagedList.PageIndex * Model.PagedList.PageSize) - Model.PagedList.PageSize) + 1;
+    }
+    string urlinstring = "OtherIncome/GetPaged";
+    Pager pagemodel = new Pager() { PagedList = pager, StringUrl = urlinstring };
+}
+
+<div class="card-body">
+    <div class="table-responsive">
+        <table class="table table-sm table-hover table-bordered">
+            <thead style="background-color:#a9a9a93d;">
+                <tr>
+                    <th>
+                        #
+                    </th>
+                    <th>
+                        Voucher Date
+
+                    </th>
+                    <th>
+                        Voucher No
+                    </th>
+                    <th>
+                        Narration
+                    </th>
+                    <th>
+                        Posting Date
+                    </th>
+                    <th class="text-center"> Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Models)
+                {
+                    <tr id="@SN">
+                        <td>
+                            @SN
+                        </td>
+                        <td>  @item.VoucherDate.ToShortDateString()</td>
+                        <td><a target="_blank" href="ExpensesDetalisReport?id=@item.Id"> @item.VoucherNo  </a></td>
+                        <td>  @Html.DisplayFor(modelItem => item.Narration) </td>
+                        <td>  @item.CreatedOn.ToShortDateString()</td>
+                        <td class="text-center">
+                            @Html.ActionLink("","ExpensesDetalis", new {  id=item.Id},new {@class = "text-info fas fa-eye" })
+                        </td>
+                    </tr>
+                    SN++;
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="card-footer">
+    <div class="text-left">
+        @await Html.PartialAsync("_pagingpartial", pagemodel)
+    </div>
+</div>

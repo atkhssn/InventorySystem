@@ -1,0 +1,76 @@
+﻿@model PagedModel<PurchaseReturnViewModel>
+@{
+    var ff = Model;
+    int SN = Model.FirstSerialNumber;
+    PagedList pager = new PagedList();
+    int pageNo = 0;
+    if (Model.PagedList != null)
+    {
+        pager = Model.PagedList;
+        pageNo = Model.PagedList.PageIndex;
+        SN = ((Model.PagedList.PageIndex * Model.PagedList.PageSize) - Model.PagedList.PageSize) + 1;
+    }
+    string urlinstring = "PurchaseReturn/GetPaged";
+    Pager pagemodel = new Pager() { PagedList = pager, StringUrl = urlinstring };
+}
+
+<div class="card-body">
+    <div class="table-responsive">
+        <table class="table table-sm table-hover table-bordered">
+            <thead style="background-color:#a9a9a93d;">
+                <tr>
+                    <th>
+                        #
+                    </th>
+                    <th> Return No</th>
+                    <th> Supplier</th>
+                    <th> Return Date</th>
+                    <th> Reason </th>
+                    <th> Status </th>
+                    <th class="text-center">
+                        Action
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Models)
+                {
+                    <tr id="@SN">
+                        <td>
+                            @SN
+                        </td>
+                        <td> <a target="_blank" href="~/PurchaseReturn/PurchaseReturnDetailReport?id=@item.Id"> @item.PurchaseReturnNo  </a>  </td>
+                        <td>@item.SupplierName </td>
+                        <td>@item.PurchaseReturnDate.ToShortDateString() </td>
+                        <td>@item.Reason </td>
+                        <td>
+                            @if (@item.IsSubmited == true)
+                            {
+                                <b class="text-success">  Submitted  </b>
+                            }
+                            else
+                            {
+                                <b>  @Html.ActionLink("Draft","ChangeStatus", new {  id=item.Id},new {@class = "btn btn-primary btn-sm",  onclick = "return confirm('Are you sure you want to Submit this?')" })</b>
+                            }
+                        </td>
+                        <td class="text-center">
+                            @Html.ActionLink("", "UpdateRecord", new {id=item.Id},new {@class = "text-warning fas fa-edit",  onclick = "return confirm('Are you sure you want to edit this?')" }) |
+                            @*@Html.ActionLink("","Delete", new {  id=item.Id},new {@class = "text-danger fas fa-trash",  onclick = "return confirm('Are you sure you want to delete this?')" })|*@
+                            @Html.ActionLink("","Detalis", new {  id=item.Id},new {@class = "text-info fas fa-eye" })
+                        </td>
+                    </tr>
+                    SN++;
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<div class="card-footer">
+    <div class="text-left">
+        @await Html.PartialAsync("_pagingpartial", pagemodel)
+    </div>
+</div>
+
+

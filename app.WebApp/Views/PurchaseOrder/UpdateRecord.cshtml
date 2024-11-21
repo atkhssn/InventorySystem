@@ -1,0 +1,426 @@
+﻿@model PurchaseOrderViewModel
+@{
+    ViewData["Title"] = "AddRecord";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    int SN = 1;
+    decimal grosstota = Model.OtherCharge + Model.BankCharg + Model.TransportCharges;
+    decimal totalpurches = Model.MappVm.Select(f => f.PurchaseAmount).Sum();
+}
+<style>
+    .text-sm .select2-container--default .select2-selection--single, select.form-control-sm ~ .select2-container--default .select2-selection--single {
+        height: calc(2.2rem + 2px) !important;
+    }
+
+    .table thead {
+        background-color: #d0d0d0 !important;
+    }
+</style>
+<div class="content-header">
+    <div class="container-fluid ">
+        <div class="breadcrumb d-flex justify-content-between align-items-center  pl-3 pr-3">
+            <ol class="breadcrumb mb-0 p-0">
+                <li class="breadcrumb-item"><a href="/Admin/Index">Home</a></li>
+                <li class="breadcrumb-item active"> Purchase  </li>
+            </ol>
+            <div>
+                <a asp-action="Index"><i class="fa fa-list"></i> Purchase  </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title text-info">
+                    <i class="fas fa-plus"></i>
+                    Purchase 
+                </h3>
+
+            </div>
+            <div class="card-body">
+                <form asp-action="UpdateRecord" method="post" style="background-color:aliceblue;margin-bottom:40px;padding:10px">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    @Html.HiddenFor(model => model.Id)
+                    <div class="row">
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label asp-for="PurchaseDate" class="control-label"> Purchase Date</label>
+                                <input asp-for="PurchaseDate" class="form-control" required />
+                                <span asp-validation-for="PurchaseDate" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label asp-for="SupplierPaymentMethodEnumFK" class="control-label"> Supplier Payment</label>
+                                <select asp-for="SupplierPaymentMethodEnumFK" class="form-control" required>
+                                    <option value="">-- Supplier Payment --</option>
+                                    @foreach (var option in Enum.GetValues(typeof(PaymentType)))
+                                    {
+                                        <option value="@option">@option</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="SupplierPaymentMethodEnumFK" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <label asp-for="SupplierId" class="control-label"> Supplier</label>
+                            <select asp-for="SupplierId" class="form-control select2" required>
+                                <option value="">Select Supplier</option>
+                            </select>
+                            <span asp-validation-for="SupplierId" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label asp-for="DeliveryDate" class="control-label">Delivery Date</label>
+                                <input asp-for="DeliveryDate" class="form-control" />
+                                <span asp-validation-for="DeliveryDate" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label asp-for="DeliveryAddress" class="control-label">Delivery Address</label>
+                                <input asp-for="DeliveryAddress" class="form-control" />
+                                <span asp-validation-for="DeliveryAddress" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label asp-for="BankCharg" class="control-label">Bank Charg</label>
+                                <input asp-for="BankCharg" class="form-control" />
+                                <span asp-validation-for="BankCharg" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label asp-for="TransportCharges" class="control-label">Transport Charges</label>
+                                <input asp-for="TransportCharges" class="form-control" />
+                                <span asp-validation-for="TransportCharges" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label asp-for="OtherCharge" class="control-label">Other Charge</label>
+                                <input asp-for="OtherCharge" class="form-control" />
+                                <span asp-validation-for="OtherCharge" class="text-danger"></span>
+                            </div>
+                        </div>
+
+
+
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label asp-for="Description" class="control-label">Description</label>
+                                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                            </div>
+                        </div>
+
+
+
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label asp-for="TermsAndCondition" class="control-label">Terms And Condition</label>
+                                <textarea asp-for="TermsAndCondition" class="form-control" rows="3"></textarea>
+                                <span asp-validation-for="TermsAndCondition" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    @if (Model.IsSubmited == false)
+                    {
+                        <div class="row mt-2">
+                            <div class="col-md-4"></div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <input type="submit" value="Update Confirm" class="btn btn-warning" />
+                                </div>
+                            </div>
+                            <div class="col-md-4"></div>
+                        </div>
+                    }
+                </form>
+
+                <div style="background-color:#f7f7f7;margin-bottom:20px;padding:10px">
+
+                    <div class="row">
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <label for="ProductId" class="control-label"> Product</label>
+                            <select id="ProductId" name="ProductId" class="form-control select2">
+                                <option value="">Select ProductId</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            <div class="form-group">
+                                <label for="Quantity" class="control-label"> Quantity </label>
+                                <div style="display:flex">
+                                    <input name="Quantity" id="Quantity" class="form-control" />
+                                    <span> <b id="unitid" class="text-danger"> </b></span>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            <div class="form-group">
+                                <label for="Price" class="control-label">Unit Price </label>
+                                <input name="Price" id="Price" class="form-control" />
+
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            <div class="form-group">
+                                <label for="TotalPrice" class="control-label">Total Price </label>
+                                <input name="TotalPrice" id="TotalPrice" readonly class="form-control" />
+                            </div>
+                        </div>
+                        @if (Model.IsSubmited == false)
+                        {
+                            <div class="col-lg-2 col-md-2 col-sm-12">
+                                <div class="form-group mt-4">
+                                    <button type="button" class="btn btn-primary" onclick="getinfo()">   <i class="fas fa-plus"></i> Add</button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+
+
+                    <div class="table-responsive mt-4">
+                        <table class="table table-sm table-hover table-bordered">
+                            <thead style="background-color:#a9a9a93d;">
+                                <tr>
+                                    <th>
+                                        #
+                                    </th>
+                                    <th>Product Name</th>
+                                    <th> Quantity </th>
+                                    <th>Unit</th>
+                                    <th>Price</th>
+                                    <th>Total Amount</th>
+                                    @if (Model.IsSubmited == false)
+                                    {
+                                        <th>Action</th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var vm in Model.MappVm)
+                                {
+                                    <tr id="@SN">
+                                        <td>
+                                            @SN
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => vm.ProductName)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => vm.PurchaseQty)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => vm.PackSize)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => vm.PurchaseRate)
+                                        </td>
+
+                                        <td>
+                                            @Html.DisplayFor(modelItem => vm.PurchaseAmount)
+                                        </td>
+                                        @if (Model.IsSubmited == false)
+                                        {
+                                            <td>
+                                                @Html.ActionLink("","DeletepurchaseOrderDetalis", new {  id=vm.Id},new {@class = "text-danger fas fa-trash",  onclick = "return confirm('Are you sure you want to delete this?')" })
+                                            </td>
+                                        }
+                                    </tr>
+
+                                    SN++;
+                                }
+
+                                <tr>
+                                    <td colspan="5" style="text-align: right;"> <b>Total Purches </b></td>
+                                    <td colspan="2" style="text-align: left;">@totalpurches</td>
+                                </tr>
+
+                                <tr>
+                                    <td colspan="5" style="text-align: right;"> <b>Bank Charg </b></td>
+                                    <td colspan="2" style="text-align: left;" id="tdBankCharg"> @Model.BankCharg </td>
+                                </tr>
+
+                                <tr>
+                                    <td colspan="5" style="text-align: right;"> <b>Transport Charges </b></td>
+                                    <td colspan="2" style="text-align: left;" id="tdTransportCharges"> @Model.TransportCharges</td>
+                                </tr>
+
+                                <tr>
+                                    <td colspan="5" style="text-align: right;"> <b>Other Charge </b></td>
+                                    <td colspan="2" style="text-align: left;" id="tdOtherCharge"> @Model.OtherCharge</td>
+                                </tr>
+
+                                <tr>
+                                    <td colspan="5" style="text-align: right;"> <b>Gross Total </b></td>
+                                    <td colspan="2" style="text-align: left;" id="tdtotalpurches">@(totalpurches + grosstota) </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+
+
+                </div>
+
+
+
+
+
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#Purchase').addClass('menu-open');
+            $('#PurchaseAddRecord').addClass('active');
+            ff();
+            product();
+        });
+
+        function ff() {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetAutoCompleteSupplierGet", "PurchaseOrder")",
+                datatype: "Json",
+                success: function (data) {
+                    if (data) {
+                        $("#SupplierId").empty();
+                        $("#SupplierId").append("<option value=''>Select Supplier</option>");
+                        $(data).each(function (index, item) {
+                            $("#SupplierId").append("<option value='" + item.id + "'>" + item.name + "</option>");
+                        });
+                        $("#SupplierId").val(@Model.SupplierId);
+                    }
+                }
+            });
+        };
+
+
+        function product() {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetAutoCompleteProductGet", "PurchaseOrder")",
+                datatype: "Json",
+                success: function (data) {
+                    if (data) {
+                        $("#ProductId").empty();
+                        $("#ProductId").append("<option value=''>Select Product</option>");
+                        $(data).each(function (index, item) {
+                            $("#ProductId").append("<option value='" + item.id + "'>" + item.name + "</option>");
+                        });
+                    }
+                }
+            });
+        };
+        $("#ProductId").change(function () {
+            productsize = "";
+            var productid = $("#ProductId").val();
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("ProductGet", "PurchaseOrder")",
+                datatype: "Json",
+                data: { id: productid },
+                success: function (data) {
+                    if (data) {
+                        console.log("getproducteeee", data);
+                        $("#unitid").text(data.unitName);
+                    }
+                }
+            });
+        });
+
+        $("#Quantity").keyup(function () {
+            var Quantity = $('#Quantity').val();
+            var Price = $('#Price').val();
+            if (Quantity > 0) {
+                var total = Quantity * Price;
+                $('#TotalPrice').val(total);
+            }
+
+
+        })
+
+        $("#Price").keyup(function () {
+            var Quantity = $('#Quantity').val();
+            var Price = $('#Price').val();
+            if (Price > 0) {
+                var total = Quantity * Price;
+                $('#TotalPrice').val(total);
+            }
+
+        })
+
+        $("#BankCharg").keyup(function () {
+            lodedata();
+        })
+        $("#TransportCharges").keyup(function () {
+            lodedata();
+        })
+        $("#OtherCharge").keyup(function () {
+            lodedata();
+        })
+
+        function lodedata() {
+            let BankCharg = $("#BankCharg").val();
+            let TransportCharges = $("#TransportCharges").val();
+            let OtherCharge = $("#OtherCharge").val();
+            $("#tdBankCharg").text(BankCharg);
+            $("#tdTransportCharges").text(TransportCharges);
+            $("#tdOtherCharge").text(OtherCharge);
+            var res = @totalpurches+parseFloat(BankCharg) + parseFloat(TransportCharges) + parseFloat(OtherCharge);
+            $("#tdtotalpurches").text(res);
+        }
+
+        function getinfo() {
+            var productid = $('#ProductId').val();
+            let datalist = [];
+            datalist = @Html.Raw(Json.Serialize(Model.MappVm.ToList()));
+            var res = datalist.find(x => x.productId == productid);
+            console.log("fffff", datalist);
+            if (res != null) {
+                alert("Product already added");
+                return;
+            }
+            var productname = $('#ProductId Option:selected').text();
+            var Quantity = $('#Quantity').val();
+            var Price = $('#Price').val();
+            var total = $('#TotalPrice').val();
+            var unit = $('#unitid').text();
+            var object = { ProductId: productid, ProductName: productname, PurchaseQty: Quantity, PurchaseRate: Price, PurchaseAmount: total, PackSize: unit, PurchaseOrderId: @Model.Id };
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("AddpurchaseOrderDetalis", "PurchaseOrder")",
+                datatype: "Json",
+                data: object,
+                success: function (data) {
+                    if (data > 0) {
+                        location.reload();
+                    }
+                }
+            });
+        }
+
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }

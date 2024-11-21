@@ -1,0 +1,150 @@
+﻿@model UserViewModel
+@{
+    ViewData["Title"] = "AddRecort";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="content-header">
+    <div class="container-fluid ">
+        <div class="breadcrumb d-flex justify-content-between align-items-center  pl-3 pr-3">
+            <ol class="breadcrumb mb-0 p-0">
+                <li class="breadcrumb-item"><a href="/Admin/Index">Home</a></li>
+                <li class="breadcrumb-item active"> Users List </li>
+            </ol>
+            <div>
+                <a asp-action="Index"><i class="fa fa-list"></i>  Users List </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title text-info">
+                    <i class="fas fa-plus"></i>
+              Update User
+                </h3>
+
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <form asp-action="UpdateRecort" method="post" enctype="multipart/form-data">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            @Html.HiddenFor(model => model.UserId)
+                            @Html.HiddenFor(model => model.ImageUrl)
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="FullName" class="control-label">Full Name</label>
+                                        <input asp-for="FullName" class="form-control" required />
+                                        <span asp-validation-for="FullName" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="RoleName" class="control-label">Role Name</label>
+                                        <select asp-for="RoleName" class="form-control" required asp-items="ViewBag.Recort">
+                                            <option value="">-- Select Role --</option>
+                                        </select>
+                                        <span asp-validation-for="RoleName" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="Email" class="control-label"></label>
+                                        <input asp-for="Email" class="form-control" required />
+                                        <span asp-validation-for="Email" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="Mobile" class="control-label"></label>
+                                        <input asp-for="Mobile" class="form-control" required />
+                                        <span asp-validation-for="Mobile" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label asp-for="Addreass" class="control-label"> Addreass</label>
+                                        <input asp-for="Addreass" class="form-control" required />
+                                        <span asp-validation-for="Addreass" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label asp-for="ImageFile" class="control-label col-md-4"> User Logo  </label>
+                                    <div class="col-md-8">
+
+                                        @if (Model.ImageUrl == "")
+                                        {
+
+                                            <input type="file" asp-for="ImageFile" class="form-control dropify">
+                                        }
+                                        else
+                                        {
+                                            <input type="file" asp-for="ImageFile" class="form-control dropify" data-default-file="@Url.Content(Model.ImageUrl)">
+                                        }
+
+                                        <span asp-validation-for="ImageFile" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="SubscriptionFee" class="control-label"> Subscription Fee</label>
+                                        <input asp-for="SubscriptionFee" class="form-control" required />
+                                        <span asp-validation-for="SubscriptionFee" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6"></div>
+                                <div class="col-md-6">
+                                    <div class="form-group form-check">
+                                        <label class="form-check-label">
+                                            <input class="form-check-input" asp-for="IsBill" /> @Html.DisplayNameFor(model => model.IsBill)
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group form-check">
+                                        <label class="form-check-label">
+                                            <input class="form-check-input" asp-for="IsActive" /> @Html.DisplayNameFor(model => model.IsActive)
+                                        </label>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" value="Update" class="btn btn-warning" />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#User-Managment').addClass('menu-open');
+            $('#LogUserIndex').addClass('active');
+            $('.dropify').dropify();
+        });
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+
+
+

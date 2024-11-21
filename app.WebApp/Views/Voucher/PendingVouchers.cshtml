@@ -1,0 +1,84 @@
+﻿@{
+    ViewData["Title"] = "Pending Vouchers";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    // int SN = 1;
+}
+
+<div class="content-header">
+    <div class="container-fluid ">
+        <div class="breadcrumb d-flex justify-content-between align-items-center  pl-3 pr-3">
+            <ol class="breadcrumb mb-0 p-0">
+                <li class="breadcrumb-item"><a href="/Admin/Index">Home</a></li>
+                <li class="breadcrumb-item active"> Pending Vouchers</li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title text-info">
+                    <i class="fas fa-list"></i>
+                    List of Pending Voucher
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered">
+                        <thead>
+                            <tr class="bg-gradient-gray">
+                                <th class="text-center">#</th>
+                                <th class="text-center">Vouche No</th>
+                                <th class="text-center">Vouche Type</th>
+                                <th class="text-center">Voucher Date</th>
+                                <th class="text-center">Cost Center Name</th>
+                                <th class="text-center">Amount</th>
+                                <th class="text-center">Approved</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>PV01161124001</td>
+                                <td>[PV]-Payment Voucher</td>
+                                <td>16 November, 2024</td>
+                                <td>Test Cost Center Name</td>
+                                <td class="text-center">125000</td>
+                                <td class="text-center">
+                                    @if (true)
+                                    {
+                                        <b class="text-danger"> <i class="fas fa-times-circle fa-2x" style="font-size:20px"></i></b>
+                                    }
+                                    else
+                                    {
+                                        <b class="text-success"> <i class="fas fa-check-square" style="font-size:20px"></i></b>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @Html.ActionLink("Approve", "ApprovedVoucher", new { id = 1 }, new { @class = "text-info fas fa-check", onclick = "return confirm('Are you sure you want to edit this?')" })
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#Voucher').addClass('menu-open');
+            $('#VoucherPendingVouchers').addClass('active');
+        });
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

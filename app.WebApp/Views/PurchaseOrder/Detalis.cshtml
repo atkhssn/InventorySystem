@@ -1,0 +1,178 @@
+﻿@model PurchaseOrderViewModel
+@{
+    ViewData["Title"] = "Detalis";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    int SN = 1;
+    decimal grosstota = Model.OtherCharge + Model.BankCharg + Model.TransportCharges;
+    decimal totalpurches = Model.MappVm.Select(f => f.PurchaseAmount).Sum();
+}
+
+
+<div class="content-header">
+    <div class="container-fluid ">
+        <div class="breadcrumb d-flex justify-content-between align-items-center  pl-3 pr-3">
+            <ol class="breadcrumb mb-0 p-0">
+                <li class="breadcrumb-item"><a href="/Admin/Index">Home</a></li>
+                <li class="breadcrumb-item active"> Purchase Order Detalis </li>
+            </ol>
+            <div>
+                <a target="_blank" class="btn btn-sm btn-default mr-4" href="~/PurchaseOrder/PurchaseOrderDetailReport?id=@Model.Id"> Print </a>
+                <a asp-action="Index"><i class="fa fa-list"></i> Purchase Order List</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title text-info">
+                    <i class="fas fa-plus"></i>
+                    Purchase Detalis
+                </h3>
+
+            </div>
+            <div class="card-body">
+
+                <table class="table">
+                    <tr>
+                        <th style="width:18%">
+                            Purchase No
+                        </th>
+                        <th style="width:2%">:</th>
+                        <td style="width:30%">
+                            @Model.PurchaseOrderNo
+                        </td>
+                        <th style="width:18%"> Purchase Date</th>
+                        <th style="width:2%">:</th>
+                        <td style="width:30%">@Model.PurchaseDate.ToShortDateString()</td>
+                    </tr>
+
+                    <tr>
+                        <th style="width:18%">
+                            Supplier Name
+                        </th>
+                        <th style="width:2%">:</th>
+                        <td style="width:30%">
+                            @Model.SupplierName
+                        </td>
+                        <th style="width:18%"> Supplier Mobile</th>
+                        <th style="width:2%">:</th>
+                        <td style="width:30%">@Model.SupplierMobile</td>
+                    </tr>
+
+                    <tr>
+                        <th style="width:18%">
+                            Supplier Address
+                        </th>
+                        <th style="width:2%">:</th>
+                        <td style="width:30%">
+                            @Model.SupplierAddress
+                        </td>
+                        <th style="width:18%"> Payment Method</th>
+                        <th style="width:2%">:</th>
+                        <td style="width:30%">@Model.SupplierPaymentMethodEnumFK</td>
+                    </tr>
+                    <tr>
+                        <th style="width:18%">
+                            Delivery Date
+                        </th>
+                        <th style="width:2%">:</th>
+                        <td style="width:30%">
+                            @Model.DeliveryDate.ToShortDateString()
+                        </td>
+                        <th style="width:18%"> Delivery Address</th>
+                        <th style="width:2%">:</th>
+                        <td style="width:30%">@Model.DeliveryAddress</td>
+                    </tr>
+
+                </table>
+                <div class="table-responsive mt-4">
+                    <table class="table table-sm table-hover table-bordered">
+                        <thead style="background-color:#a9a9a93d;">
+                            <tr>
+                                <th>
+                                    #
+                                </th>
+                                <th>Product Name</th>
+                                <th> Quantity </th>
+                                <th>Unit</th>
+                                <th>Price</th>
+                                <th>Total Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var vm in Model.MappVm)
+                            {
+                                <tr id="@SN">
+                                    <td>
+                                        @SN
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => vm.ProductName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => vm.PurchaseQty)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => vm.PackSize)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => vm.PurchaseRate)
+                                    </td>
+
+                                    <td>
+                                        @Html.DisplayFor(modelItem => vm.PurchaseAmount)
+                                    </td>
+                                </tr>
+
+                                SN++;
+                            }
+                         
+                            <tr>                             
+                                <td colspan="5" style="text-align: right;"> <b>Total Purches </b></td>
+                                <td colspan="2" style="text-align: left;">@totalpurches</td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="5" style="text-align: right;"> <b>Bank Charg </b></td>
+                                <td colspan="2" style="text-align: left;"> @Model.BankCharg </td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="5" style="text-align: right;"> <b>Transport Charges </b></td>
+                                <td colspan="2" style="text-align: left;"> @Model.TransportCharges</td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="5" style="text-align: right;"> <b>Other Charge </b></td>
+                                <td colspan="2" style="text-align: left;"> @Model.OtherCharge</td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="5" style="text-align: right;"> <b>Gross Total </b></td>
+                                <td colspan="2" style="text-align: left;">@(totalpurches+grosstota) </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="row">
+                   <div class="col-md-3"></div> 
+                   <div class="col-md-6 text-center">
+                       @if(Model.IsSubmited==true){
+                            <h5> <b class="text-success"> "Purchase submitted successfully and stock added."  </b> </h5>
+                        }
+                       else{
+                            <b>  @Html.ActionLink("Confirm Submit","ChangeStatus", new {  id=Model.Id},new {@class = "btn btn-primary",  onclick = "return confirm('Are you sure you want to Submit this?')" })</b>
+                       }
+                   </div> 
+                   <div class="col-md-3"></div> 
+                </div>
+            </div>
+        </div>
+   
+    
+    </div>
+</section>

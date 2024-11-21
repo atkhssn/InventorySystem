@@ -1,0 +1,296 @@
+﻿@{
+    ViewData["Title"] = "Voucher Types";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    // int SN = 1;
+}
+
+<div class="content-header">
+    <div class="container-fluid ">
+        <div class="breadcrumb d-flex justify-content-between align-items-center  pl-3 pr-3">
+            <ol class="breadcrumb mb-0 p-0">
+                <li class="breadcrumb-item"><a href="/Admin/Index">Home</a></li>
+                <li class="breadcrumb-item active"> Voucher Types</li>
+            </ol>
+            <div>
+                <a asp-action="AddVoucherType" class="btn btn-outline-primary"><i class="fa fa-plus"></i> New Voucher Type</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title text-info">
+                    <i class="fas fa-list"></i>
+                    List of Voucher Type
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered">
+                        <thead>
+                            <tr class="bg-gradient-gray">
+                                <th class="text-center">#</th>
+                                <th class="text-center">Short Name</th>
+                                <th class="text-center">Voucher Type Name</th>
+                                <th class="text-center">Active</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>PV</td>
+                                <td>Payment Voucher</td>
+                                <td class="text-center">
+                                    @if (!true)
+                                    {
+                                        <b class="text-danger">
+                                            <i class="fas fa-times-circle fa-2x" style="font-size:20px"></i>
+                                        </b>
+                                    }
+                                    else
+                                    {
+                                        <b class="text-success">
+                                            <i class="fas fa-check-square" style="font-size:20px"></i>
+                                        </b>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @Html.ActionLink("", "UpdateVoucherType", new { id = 1 },
+                                             new { @class = "text-info fas fa-edit", onclick = "return confirm('Are you sure you want to edit this?')" }) |
+                                    @Html.ActionLink("", "DeleteVoucherType", new { id = 1 },
+                                             new { @class = "text-danger fas fa-trash", onclick = "return confirm('Are you sure you want to delete this?')" })
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>2</td>
+                                <td>RV</td>
+                                <td>Receipt Voucher</td>
+                                <td class="text-center">
+                                    @if (!true)
+                                    {
+                                        <b class="text-danger">
+                                            <i class="fas fa-times-circle fa-2x" style="font-size:20px"></i>
+                                        </b>
+                                    }
+                                    else
+                                    {
+                                        <b class="text-success">
+                                            <i class="fas fa-check-square" style="font-size:20px"></i>
+                                        </b>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @Html.ActionLink("", "UpdateVoucherType", new { id = 1 },
+                                             new { @class = "text-info fas fa-edit", onclick = "return confirm('Are you sure you want to edit this?')" }) |
+                                    @Html.ActionLink("", "DeleteVoucherType", new { id = 1 },
+                                             new { @class = "text-danger fas fa-trash", onclick = "return confirm('Are you sure you want to delete this?')" })
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>3</td>
+                                <td>JV</td>
+                                <td>Journal Voucher</td>
+                                <td class="text-center">
+                                    @if (!true)
+                                    {
+                                        <b class="text-danger">
+                                            <i class="fas fa-times-circle fa-2x" style="font-size:20px"></i>
+                                        </b>
+                                    }
+                                    else
+                                    {
+                                        <b class="text-success">
+                                            <i class="fas fa-check-square" style="font-size:20px"></i>
+                                        </b>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @Html.ActionLink("", "UpdateVoucherType", new { id = 1 },
+                                             new { @class = "text-info fas fa-edit", onclick = "return confirm('Are you sure you want to edit this?')" }) |
+                                    @Html.ActionLink("", "DeleteVoucherType", new { id = 1 },
+                                             new { @class = "text-danger fas fa-trash", onclick = "return confirm('Are you sure you want to delete this?')" })
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>4</td>
+                                <td>CV</td>
+                                <td>Contra Voucher</td>
+                                <td class="text-center">
+                                    @if (!true)
+                                    {
+                                        <b class="text-danger">
+                                            <i class="fas fa-times-circle fa-2x" style="font-size:20px"></i>
+                                        </b>
+                                    }
+                                    else
+                                    {
+                                        <b class="text-success">
+                                            <i class="fas fa-check-square" style="font-size:20px"></i>
+                                        </b>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @Html.ActionLink("", "UpdateVoucherType", new { id = 1 },
+                                             new { @class = "text-info fas fa-edit", onclick = "return confirm('Are you sure you want to edit this?')" }) |
+                                    @Html.ActionLink("", "DeleteVoucherType", new { id = 1 },
+                                             new { @class = "text-danger fas fa-trash", onclick = "return confirm('Are you sure you want to delete this?')" })
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>5</td>
+                                <td>SV</td>
+                                <td>Sales Voucher</td>
+                                <td class="text-center">
+                                    @if (!true)
+                                    {
+                                        <b class="text-danger">
+                                            <i class="fas fa-times-circle fa-2x" style="font-size:20px"></i>
+                                        </b>
+                                    }
+                                    else
+                                    {
+                                        <b class="text-success">
+                                            <i class="fas fa-check-square" style="font-size:20px"></i>
+                                        </b>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @Html.ActionLink("", "UpdateVoucherType", new { id = 1 },
+                                             new { @class = "text-info fas fa-edit", onclick = "return confirm('Are you sure you want to edit this?')" }) |
+                                    @Html.ActionLink("", "DeleteVoucherType", new { id = 1 },
+                                             new { @class = "text-danger fas fa-trash", onclick = "return confirm('Are you sure you want to delete this?')" })
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>6</td>
+                                <td>SV</td>
+                                <td>Purchase Voucher</td>
+                                <td class="text-center">
+                                    @if (!true)
+                                    {
+                                        <b class="text-danger">
+                                            <i class="fas fa-times-circle fa-2x" style="font-size:20px"></i>
+                                        </b>
+                                    }
+                                    else
+                                    {
+                                        <b class="text-success">
+                                            <i class="fas fa-check-square" style="font-size:20px"></i>
+                                        </b>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @Html.ActionLink("", "UpdateVoucherType", new { id = 1 },
+                                             new { @class = "text-info fas fa-edit", onclick = "return confirm('Are you sure you want to edit this?')" }) |
+                                    @Html.ActionLink("", "DeleteVoucherType", new { id = 1 },
+                                             new { @class = "text-danger fas fa-trash", onclick = "return confirm('Are you sure you want to delete this?')" })
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>7</td>
+                                <td>DN</td>
+                                <td>Debit Note</td>
+                                <td class="text-center">
+                                    @if (!true)
+                                    {
+                                        <b class="text-danger">
+                                            <i class="fas fa-times-circle fa-2x" style="font-size:20px"></i>
+                                        </b>
+                                    }
+                                    else
+                                    {
+                                        <b class="text-success">
+                                            <i class="fas fa-check-square" style="font-size:20px"></i>
+                                        </b>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @Html.ActionLink("", "UpdateVoucherType", new { id = 1 },
+                                             new { @class = "text-info fas fa-edit", onclick = "return confirm('Are you sure you want to edit this?')" }) |
+                                    @Html.ActionLink("", "DeleteVoucherType", new { id = 1 },
+                                             new { @class = "text-danger fas fa-trash", onclick = "return confirm('Are you sure you want to delete this?')" })
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>8</td>
+                                <td>CN</td>
+                                <td>Credit Note</td>
+                                <td class="text-center">
+                                    @if (!true)
+                                    {
+                                        <b class="text-danger">
+                                            <i class="fas fa-times-circle fa-2x" style="font-size:20px"></i>
+                                        </b>
+                                    }
+                                    else
+                                    {
+                                        <b class="text-success">
+                                            <i class="fas fa-check-square" style="font-size:20px"></i>
+                                        </b>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @Html.ActionLink("", "UpdateVoucherType", new { id = 1 },
+                                             new { @class = "text-info fas fa-edit", onclick = "return confirm('Are you sure you want to edit this?')" }) |
+                                    @Html.ActionLink("", "DeleteVoucherType", new { id = 1 },
+                                             new { @class = "text-danger fas fa-trash", onclick = "return confirm('Are you sure you want to delete this?')" })
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>9</td>
+                                <td>CV</td>
+                                <td>Correction Voucher</td>
+                                <td class="text-center">
+                                    @if (!true)
+                                    {
+                                        <b class="text-danger">
+                                            <i class="fas fa-times-circle fa-2x" style="font-size:20px"></i>
+                                        </b>
+                                    }
+                                    else
+                                    {
+                                        <b class="text-success">
+                                            <i class="fas fa-check-square" style="font-size:20px"></i>
+                                        </b>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @Html.ActionLink("", "UpdateVoucherType", new { id = 1 },
+                                             new { @class = "text-info fas fa-edit", onclick = "return confirm('Are you sure you want to edit this?')" }) |
+                                    @Html.ActionLink("", "DeleteVoucherType", new { id = 1 },
+                                             new { @class = "text-danger fas fa-trash", onclick = "return confirm('Are you sure you want to delete this?')" })
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#Voucher').addClass('menu-open');
+            $('#VoucherVoucherTypes').addClass('active');
+        });
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

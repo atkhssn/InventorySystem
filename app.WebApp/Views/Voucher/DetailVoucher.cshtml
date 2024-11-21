@@ -1,0 +1,128 @@
+﻿@model MenuItemViewModel
+@{
+    ViewData["Title"] = "Detail Voucher";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="content-header">
+    <div class="container-fluid ">
+        <div class="breadcrumb d-flex justify-content-between align-items-center  pl-3 pr-3">
+            <ol class="breadcrumb mb-0 p-0">
+                <li class="breadcrumb-item"><a href="/Admin/Index">Home</a></li>
+                <li class="breadcrumb-item active"> Detail Voucher</li>
+            </ol>
+            <div>
+                <a asp-action="Vouchers" class="btn btn-outline-primary"><i class="fa fa-list"></i> Vouchers</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title text-info">
+                    <i class="fa fa-info-circle" aria-hidden="true"></i>
+                    Detail Voucher
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 mr-auto">
+                        <div class="table-responsive w-75" style="margin: 0 auto">
+                            <table class="table table-sm table-borderless">
+                                <tbody>
+                                    <tr class="border-bottom">
+                                        <th class="text-left" width="110px">Voucher Date:</th>
+                                        <td class="text-left">16 November, 2024</td>
+                                        <th class="text-left" width="110px">Voucher No:</th>
+                                        <td class="text-left">PV01161124001</td>
+                                        <th class="text-left" width="110px">Voucher Status:</th>
+                                        <td class="text-left"><span class="text-success">Approved</span></td>
+                                    </tr>
+                                    <tr class="border-bottom">
+                                        <th class="text-left" width="110px">Cost Center:</th>
+                                        <td class="text-left">Others Purchase</td>
+                                        <th class="text-left" width="110px">Voucher Type:</th>
+                                        <td class="text-left">[PV]-Payment Voucher</td>
+                                        <th class="text-left" width="110px">Created By:</th>
+                                        <td class="text-left">Atik Hassan</td>
+                                    </tr>
+                                    <tr class="border-bottom">
+                                        <th class="text-left" width="110px">Narration:</th>
+                                        <td class="text-left" colspan="4">The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered">
+                                <thead>
+                                    <tr class="bg-gradient-gray">
+                                        <th class="text-center">#</th>
+                                        <th class="text-center">GL Code</th>
+                                        <th class="text-center">GL Head</th>
+                                        <th class="text-center">Particular</th>
+                                        <th class="text-center">Debit</th>
+                                        <th class="text-center">Credit</th>
+                                        <th class="text-center">Action</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>130010001</td>
+                                        <td>Cash in Hand</td>
+                                        <td>Test credit amount</td>
+                                        <td class="text-right">0.000</td>
+                                        <td class="text-right">5000.000</td>
+                                        <td class="text-center">
+                                            @Html.ActionLink("", "DetailVoucher", new { id = 1 }, new { @class = "text-info fas fa-trash", onclick = "return confirm('Are you sure you want to edit this?')" })
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>110010001</td>
+                                        <td>Others Cost</td>
+                                        <td>Test debit amount</td>
+                                        <td class="text-right">5000.000</td>
+                                        <td class="text-right">0.000</td>
+                                        <td class="text-center">
+                                            @Html.ActionLink("", "DetailVoucher", new { id = 1 }, new { @class = "text-info fas fa-trash", onclick = "return confirm('Are you sure you want to edit this?')" })
+                                        </td>
+                                    </tr>
+                                </tbody>
+
+                                <tfoot class="bg-gray">
+                                    <tr>
+                                        <td class="text-right" colspan="4">Total</td>
+                                        <td class="text-right">500.00</td>
+                                        <td class="text-right">500.00</td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#Voucher').addClass('menu-open');
+            $('#VoucherVouchers').addClass('active');
+        });
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

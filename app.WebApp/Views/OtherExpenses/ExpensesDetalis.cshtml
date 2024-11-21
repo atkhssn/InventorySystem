@@ -1,0 +1,120 @@
+﻿@model VoucherViewModel
+@{
+    ViewData["Title"] = "ExpensesDetalis";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    int SN = 1;
+}
+
+
+<div class="content-header">
+    <div class="container-fluid ">
+        <div class="breadcrumb d-flex justify-content-between align-items-center  pl-3 pr-3">
+            <ol class="breadcrumb mb-0 p-0">
+                <li class="breadcrumb-item"><a href="/Admin/Index">Home</a></li>
+                <li class="breadcrumb-item active"> Voucher Details </li>
+            </ol>
+            <div>
+                <a target="_blank" class="btn btn-sm btn-default mr-4" href="~/OtherExpenses/ExpensesDetalisReport?id=@Model.Id"> Print </a>
+                <a asp-action="Index"><i class="fa fa-list"></i> Voucher List</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title text-info">
+                    <i class="fas fa-plus"></i>
+                    Voucher Detalis
+                </h3>
+
+            </div>
+            <div class="card-body">
+
+                <table class="table">
+                    <tr>
+                        <th style="width:18%">
+                            Voucher No
+                        </th>
+                        <th style="width:2%">:</th>
+                        <td style="width:30%">
+                            @Model.VoucherNo
+                        </td>
+                        <th style="width:18%"> Voucher Date</th>
+                        <th style="width:2%">:</th>
+                        <td style="width:30%">@Model.VoucherDate.ToShortDateString()</td>
+                    </tr>
+
+                    <tr>
+                        <th style="width:18%">
+                            Created Date
+                        </th>
+                        <th style="width:2%">:</th>
+                        <td style="width:30%">
+                            @Model.CreatedOn.ToShortDateString()
+                        </td>
+                        <th style="width:18%"> Created By</th>
+                        <th style="width:2%">:</th>
+                        <td style="width:30%">@Model.CreatedBy</td>
+                    </tr>
+                    <tr>
+                        <th style="width:18%">
+                            Narration
+                        </th>
+                        <th style="width:2%">:</th>
+                        <td style="width:30%">
+                            @Model.Narration
+                        </td>
+                        <th style="width:18%"> Created By</th>
+                        <th style="width:2%">:</th>
+                        <td style="width:30%">@Model.CreatedBy</td>
+                    </tr>
+                </table>
+                <div class="table-responsive mt-4">
+                    <table class="table table-sm table-hover table-bordered">
+                        <thead style="background-color:#a9a9a93d;">
+                            <tr>
+                                <th>
+                                    #
+                                </th>
+                                <th>Titel</th>
+                                <th>Prticular</th>
+                                <th>Amount </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var vm in Model.voucherDetalisViewModels)
+                            {
+                                <tr id="@SN">
+                                    <td>
+                                        @SN
+                                    </td>
+                                    <td>
+                                        @vm.Titel
+                                    </td>
+                                    <td>
+                                        @vm.Particular
+                                    </td>
+                                    <td>
+                                        @vm.DebitAmount
+                                    </td>
+                                </tr>
+                                SN++;
+                            }
+                            <tr>
+                                <td colspan="3" style="text-align: right;"> <b>Total Amount </b></td>
+                                <td style="text-align: left;">@Model.voucherDetalisViewModels.Sum(f=>f.DebitAmount)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+

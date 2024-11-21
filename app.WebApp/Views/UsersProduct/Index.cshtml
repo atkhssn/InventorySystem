@@ -1,0 +1,284 @@
+﻿@model UserProductServiceViewModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var user = ViewBag.Recort;
+}
+<style>
+    .text-sm .select2-container--default .select2-selection--single, select.form-control-sm ~ .select2-container--default .select2-selection--single {
+        height: calc(2.18rem + 2px) !important;
+    }
+
+</style>
+<div class="content-header">
+    <div class="container-fluid ">
+        <div class="breadcrumb d-flex justify-content-between align-items-center  pl-3 pr-3">
+            <ol class="breadcrumb mb-0 p-0">
+                <li class="breadcrumb-item"><a href="/Admin/Index">Home</a></li>
+                <li class="breadcrumb-item active"> Products </li>
+            </ol>
+            <div>
+                <a asp-action="Index"><i class="fa fa-list"></i>  Products </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title text-info">
+                    <i class="fas fa-plus"></i>
+                      Products
+                </h3>
+
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <input id="userId2" type="hidden" value="@user.Id" class="form-control" />
+                    <div class="col-lg-3 col-md-4 col-sm-12">
+                        <div class="form-group">
+                            <label asp-for="ProductType" class="control-label">Product Type</label>
+                            <select asp-for="ProductType" class="form-control" id="ProductTypeId" required>
+                                <option value="">-- Select Product Type --</option>
+                                <option value="R">Raw Product-</option>
+                                <option value="F">Finish Product</option>
+                            </select>
+                            <span asp-validation-for="ProductType" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-sm-12">
+                        <div class="form-group">
+                            <label asp-for="ProductCategoryId" class="control-label"> Product Category</label>
+                            <select asp-for="ProductCategoryId" id="ProductCategoryId" class="form-control select2">
+                                <option value="">Select Product Category</option>
+                            </select>
+                            <span asp-validation-for="ProductCategoryId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-sm-12">
+                        <div class="form-group">
+                            <label asp-for="ProductSubCategoryId" class="control-label"> Product Sub Category</label>
+                            <select asp-for="ProductSubCategoryId" id="ProductSubCategoryId" class="form-control select2">
+                                <option value="">Select Product Sub Category</option>
+                            </select>
+                            <span asp-validation-for="ProductSubCategoryId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-4 col-sm-12">
+                        <div class="form-group">
+                            <label asp-for="CompanyId" class="control-label">Company</label>
+                            <select asp-for="CompanyId" class="form-control" required asp-items="ViewBag.company">
+                                <option value="">-- Select Company --</option>
+                            </select>
+                            <span asp-validation-for="CompanyId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                </div>
+@*                <div class="row">
+                    <div class="col-lg-3 col-md-4 col-sm-12"> </div>
+                    <div class="col-lg-3 col-md-6 col-sm-12 mt-1">
+                        <button type="button" class="btn btn-outline-primary w-100 mt-4" id="btnShow">Show Product</button>
+                    </div>
+                    <div class="col-lg-6 col-md-4 col-sm-12"> </div>
+                </div>*@
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                 
+                                    <th scope="col">Product Category</th>
+                                    <th scope="col">Product Sub Category</th>
+                                    <th scope="col">Company</th>
+                                    <th scope="col">Product</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productlist">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#Products').addClass('menu-open');
+            $('#ProductsIndex').addClass('active');
+            Company();
+        });
+
+        let productList = new Array();
+
+
+        function Company() {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("CompanyGet", "UsersProduct")",
+                datatype: "Json",
+                success: function (data) {
+                    if (data) {
+                        console.log("hhhhhhhhhh", data);
+                        $("#CompanyId").empty();
+                        $("#CompanyId").append("<option value=''>Select Company</option>");
+                        $(data).each(function (index, item) {
+                            $("#CompanyId").append("<option value='" + item.id + "'>" + item.name + "</option>");
+                        });
+
+                    }
+                }
+            });
+        };
+
+
+        $("#ProductTypeId").change(function () {
+            var text = $("#ProductTypeId").val();
+            console.log("hhhhhhhhhh", text);
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetByProductCategoryList", "ProductCategory")",
+                datatype: "Json",
+                data: { id: text },
+                success: function (data) {
+                    if (data) {
+                        console.log("hhhhhhhhhh", data);
+                        $("#ProductCategoryId").empty();
+                        $("#ProductCategoryId").append("<option value=''>Select ProductCategory</option>");
+                        $(data.productCategoriesList).each(function (index, item) {
+                            $("#ProductCategoryId").append("<option value='" + item.id + "'>" + item.name + "</option>");
+                        });
+
+                    }
+                }
+            });
+        });
+
+        $("#ProductCategoryId").change(function () {
+            var ProductCategoryId = $("#ProductCategoryId").val();
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetByProductCategoryList", "ProductSubCategory")",
+                datatype: "Json",
+                data: { id: ProductCategoryId },
+                success: function (data) {
+                    if (data) {
+                        $("#ProductSubCategoryId").empty();
+                        $("#ProductSubCategoryId").append("<option value=''>Select Product Sub Category</option>");
+                        $(data.productSubCategoriesList).each(function (index, item) {
+                            $("#ProductSubCategoryId").append("<option value='" + item.id + "'>" + item.name + "</option>");
+                        });
+                        lodedata();
+                    }
+                }
+            });
+        });
+
+
+
+
+        $("#btnShow").click(function () {
+            lodedata();
+        })
+        $("#ProductSubCategoryId").change(function () {
+            lodedata();
+        })
+        $("#CompanyId").change(function () {
+            lodedata();
+        })
+        function lodedata() {
+            var userId = $("#userId2").val();
+            var CompanyId = $("#CompanyId").val();
+            var catagoryId = $("#ProductCategoryId").val();
+            var subcatagoryid = $("#ProductSubCategoryId").val();
+           
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("AdvanceSurachproductlist", "UsersProduct")",
+                datatype: "Json",
+                data: { catagoryId: catagoryId, subcatagoryid: subcatagoryid, companyid: CompanyId },
+                success: function (data) {
+                    console.log("company", data);
+                    if (data) {
+                        productList = data;
+                        if (productList.length > 0) {
+                            var tag = '';
+                            $.each(productList, function (key, item) {
+                                tag += '<tr id="' + key + '">';
+                                tag += '<td> ' + (key + 1) + '</td>';
+                                tag += '<td> ' + item.pcName + '</td>';
+                                tag += '<td> ' + item.pscName + '</td>';
+                                tag += '<td> ' + item.cName + '</td>';
+                                tag += '<td> ' + item.name + '</td>';
+                                if (item.isAssigen == true) {
+                                    tag += '<td> <a onclick="actives(' + item.id + ',' + key + ')" class="text-success"><b> <i class="fa fa-check-square"></i> </b></a> </td>';
+                                } else {
+                                    tag += '<td> <a onclick="inactives(' + item.id + ',' + key + ')" class="text-primary"><b> <i class="fa fa-square"></i> </b></a> </td>';
+                                }
+                                tag += '</tr>';
+                            });
+                            $('#productlist').empty();
+                            $('#productlist').html(tag);
+                        } else {
+                            $('#productlist').empty();
+                        }
+                    }
+                }
+            });
+        }
+
+
+        function actives(id, key) {
+            var userId = $("#userId2").val();
+            var CompanyId = $("#CompanyId").val();
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("AssigenProduct", "UsersProduct")",
+                datatype: "Json",
+                data: { companyid: CompanyId, userId: userId, productId: id },
+                success: function (data) {
+                    if (data == true) {
+                        $.notify("Update successfully", "success");
+                        lodedata();
+                    } else {
+                        $.notify("Sommething went wrong!", "error");
+                    }
+                }
+            })
+        }
+        function inactives(id, key) {
+            var userId = $("#userId2").val();
+            var CompanyId = $("#CompanyId").val();
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("AssigenProduct", "UsersProduct")",
+                datatype: "Json",
+                data: { companyid: CompanyId, userId: userId, productId: id },
+                success: function (data) {
+                    if (data == true) {
+                        $.notify("Update successfully", "success");
+                        lodedata();
+                    } else {
+                        $.notify("Sommething went wrong!", "error");
+                    }
+                }
+            })
+        }
+
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+
+
+

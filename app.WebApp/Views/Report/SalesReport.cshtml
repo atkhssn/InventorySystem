@@ -1,0 +1,181 @@
+﻿@model ReportsViewModel
+@{
+    ViewData["Title"] = "SalesReport";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .text-sm .select2-container--default .select2-selection--single, select.form-control-sm ~ .select2-container--default .select2-selection--single {
+        height: calc(2.2rem + 2px) !important;
+    }
+
+    .table thead {
+        background-color: #d0d0d0 !important;
+    }
+</style>
+<div class="content-header">
+    <div class="container-fluid ">
+        <div class="breadcrumb d-flex justify-content-between align-items-center shadow">
+            <ol class="breadcrumb mb-0 p-0">
+                <li class="breadcrumb-item"><a href="/Admin/Index">Home</a></li>
+                <li class="breadcrumb-item active"> Sales Report  </li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+
+<section class="">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <div class="row w-100 mb-4">
+                    <div class=" col-md-4 col-sm-12">
+                        <h5> <i class="fas fa-list"></i> Sales Report </h5>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-4 col-md-6 col-sm-12">
+                                <div class="form-group">
+                                    <label asp-for="StartDate" class="control-label"> Start Date</label>
+                                    <input asp-for="StartDate" class="form-control" required />
+                                    <span asp-validation-for="StartDate" class="text-danger"></span>
+                                </div>
+                            </div>
+                       
+                            <div class="col-lg-4 col-md-6 col-sm-12">
+                                <div class="form-group">
+                                    <label asp-for="EndDate" class="control-label"> End Date </label>
+                                    <input asp-for="EndDate" class="form-control" required />
+                                    <span asp-validation-for="EndDate" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-md-6 col-sm-12">
+                                <label asp-for="CustomerId" class="control-label"> Customer</label>
+                                <select asp-for="CustomerId" class="form-control select2" >
+                                    <option value="">Select Customer</option>
+                                </select>
+                                <span asp-validation-for="CustomerId" class="text-danger"></span>
+                            </div>
+                            <div class="col-lg-4 col-md-6 col-sm-12">
+                                <div class="form-group">
+                                    <label asp-for="CompanyId" class="control-label">Company</label>
+                                    <select asp-for="CompanyId" class="form-control" >
+                                        <option value="">-- Select Company --</option>
+                                    </select>
+                                    <span asp-validation-for="CompanyId" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6 col-sm-12">
+                                <div class="form-group">
+                                    <label asp-for="ProductId" class="control-label">Product</label>
+                                    <select asp-for="ProductId" class="form-control" >
+                                        <option value="">-- Select Product --</option>
+                                    </select>
+                                    <span asp-validation-for="ProductId" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-1"></div>
+                            <div class="col-md-3">
+                                <div class="form-group mt-4">
+                                <input type="button" onclick="btnrepot2()" value="View Report" class=" btn btn-success btn-lg btn-block" />
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</section>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#Report').addClass('menu-open');
+            $('#ReportSalesReport').addClass('active');
+            ff();
+            Company();
+        });
+        function ff() {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetAutoCompleteCustomerGet", "PurchaseOrder")",
+                datatype: "Json",
+                success: function (data) {
+                    if (data) {
+                        $("#CustomerId").empty();
+                        $("#CustomerId").append("<option value=''>Select Customer</option>");
+                        $(data).each(function (index, item) {
+                            $("#CustomerId").append("<option value='" + item.id + "'>" + item.name + "</option>");
+                        });
+                    }
+                }
+            });
+        };
+
+        function Company() {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("CompanyGet", "UsersProduct")",
+                datatype: "Json",
+                success: function (data) {
+                    if (data) {
+                        console.log("hhhhhhhhhh", data);
+                        $("#CompanyId").empty();
+                        $("#CompanyId").append("<option value=''>Select Company</option>");
+                        $(data).each(function (index, item) {
+                            $("#CompanyId").append("<option value='" + item.id + "'>" + item.name + "</option>");
+                        });
+
+                    }
+                }
+            });
+        };
+
+        $("#CompanyId").change(function () {
+            var CompanyId = $("#CompanyId").val();
+            console.log("company", CompanyId);
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("productbyCompany", "Report")",
+                datatype: "Json",
+                data: { companyid: CompanyId },
+                success: function (data) {
+                    console.log("product", data);
+                    $("#ProductId").empty();
+                    $("#ProductId").append("<option value=''>Select Product</option>");
+                    $(data).each(function (index, item) {
+                        $("#ProductId").append("<option value='" + item.id + "'>" + item.name + "</option>");
+                    });
+                }
+
+            })
+        })
+
+
+        function btnrepot2() {
+                    
+            var CompanyId = $("#CompanyId").val();
+            var ProductId = $("#ProductId").val();
+            var CustomerId = $("#CustomerId").val();
+            var StartDate = $("#StartDate").val();
+            var EndDate = $("#EndDate").val();
+            window.open(
+                'SalesReportPrintView?StartDate=' + StartDate + '&&EndDate=' +EndDate + '&&CustomerId=' + CustomerId + '&&CompanyId=' + CompanyId + '&&ProductId=' + ProductId + '',
+                '_blank'
+            );
+
+        }
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+
+
+

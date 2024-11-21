@@ -1,0 +1,150 @@
+﻿@model UserpermissionViewModel
+@{
+    ViewData["Title"] = "AddPermission";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="content-header">
+    <div class="container-fluid ">
+        <div class="breadcrumb d-flex justify-content-between align-items-center  pl-3 pr-3">
+            <ol class="breadcrumb mb-0 p-0">
+                <li class="breadcrumb-item"><a href="/Admin/Index">Home</a></li>
+                <li class="breadcrumb-item active"> Permission List </li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <div class="row w-100">
+                    <div class="col-sm-3">
+                        <h5> <i class="fas fa-list"></i>  All Permission </h5>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+
+                    <div class="col-md-5">
+                        <div class="form-group">
+                            <label asp-for="UserId" class="control-label"> User Name </label>
+                            <select asp-for="UserId" id="UserId" class="form-control select2">
+                                <option value="">Select User Name</option>
+                                @foreach (var item in ViewBag.Recort.datalist)
+                                {
+                                    <option value="@item.UserId"> @item.FullName _ @item.Email _ @item.Mobile</option>
+                                }
+
+                            </select>
+                            <span asp-validation-for="UserId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-3"></div>
+                    <div class="col-md-4"></div>
+                </div>
+                @foreach (var item in Model.datalist)
+                {
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h6 class="mb-2"> <b class="text-info">@item.MenuName </b></h6>
+                            <div class="progress" style="height: 1px;">
+                                <div class="progress-bar" role="progressbar" style="width:100%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div class="row mt-2">
+                                @foreach (var menu in item.menuitemlist)
+                                {
+                                    <div class="col-md-3 mb-3">
+                                        @if (menu.IsPermission == true)
+                                        {
+                                            <a id="cust+@menu.Id" style="cursor:pointer" onclick="actives(@menu.Id)">   <b class="text-success"> <i class="fa fa-check-square"> </i>  @menu.Name </b></a>
+                                        }
+                                        else
+                                        {
+                                            <a id="cust+@menu.Id" style="cursor:pointer" onclick="inactives(@menu.Id)">   <b class="text-primary"> <i class="fa fa-square"> </i>  @menu.Name </b></a>
+                                        }
+
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+                </>
+            </div>
+        </div>
+
+</section>
+
+
+@section Scripts {
+
+    <script>
+        $(document).ready(function () {
+            $('#User-Managment').addClass('menu-open');
+            $('#UserpermissionAddPermission').addClass('active');
+        });
+
+
+        $("#UserId").change(function () {
+            var userid = $("#UserId option:selected").val();
+            window.location.href = "/Userpermission/AddPermission?id=" + userid + "";
+        })
+        function actives(id) {
+            var userid = $("#UserId option:selected").val();
+            if (userid == "") {
+                $.notify("please select user first !", "error");
+                return;
+            }
+            console.log(userid);
+            if (confirm("Are you sure you went to change  Permission?")) {
+                $.ajax({
+                    url: "/Userpermission/ChangePermission?id=" + id + "&&userid=" + userid + "",
+                    typr: "GET",
+                    success: function (data) {
+                        console.log("111", data);
+                        if (data) {
+                            $.notify("Update successfully", "success");
+                            setTimeout(function () {
+                                var userid = $("#UserId option:selected").val();
+                                window.location.href = "/Userpermission/AddPermission?id=" + userid + "";
+                            }, 1000);
+                        } else {
+                            $.notify("Sommething went wrong!", "error");
+                        }
+                    },
+                });
+            }
+        }
+        function inactives(id) {
+            var userid = $("#UserId option:selected").val();
+            console.log(userid);
+            if (userid=="") {
+                $.notify("please select user first !", "error");
+                return;
+            }
+
+          
+            if (confirm("Are you sure you went to change Permission?")) {
+                $.ajax({
+                    url: "/Userpermission/ChangePermission?id=" + id + "&&userid=" + userid + "",
+                    typr: "GET",
+                    success: function (data) {                      
+                        if (data) {
+                            $.notify("Update successfully", "success");
+                            setTimeout(function () {
+                                var userid = $("#UserId option:selected").val();
+                                window.location.href = "/Userpermission/AddPermission?id=" + userid + "";
+                            }, 1000);
+                        } else {
+                            $.notify("Sommething went wrong!", "error");
+                        }
+                    },
+                });
+            }
+        }
+    </script>  
+}

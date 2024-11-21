@@ -1,0 +1,160 @@
+﻿@model PagedModel<ProductCategoryViewModel>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var ff = Model;
+    int SN = Model.FirstSerialNumber;
+    PagedList pager = new PagedList();
+    int pageNo = 0;
+    if (Model.PagedList != null)
+    {
+        pager = Model.PagedList;
+        pageNo = Model.PagedList.PageIndex;
+        SN = ((Model.PagedList.PageIndex * Model.PagedList.PageSize) - Model.PagedList.PageSize) + 1;
+    }
+    string urlinstring = "ProductCategory/GetPaged";
+    Pager pagemodel = new Pager() { PagedList = pager, StringUrl = urlinstring };
+}
+
+<div class="content-header">
+    <div class="container-fluid ">
+        <div class="breadcrumb d-flex justify-content-between align-items-center shadow">
+            <ol class="breadcrumb mb-0 p-0">
+                <li class="breadcrumb-item"><a href="/Admin/Index">Home</a></li>
+                <li class="breadcrumb-item active">  Product Category List  </li>
+            </ol>
+            <div>
+                <a asp-action="AddRecort"><i class="fa fa-plus"></i>  Add Product Category </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <div class="row w-100 mb-4">
+                    <div class="col-md-5">
+                        <h5> <i class="fas fa-list"></i>  All Product Category </h5>
+                    </div>
+                    <div class="col-md-5 col-sm-12">
+                        <label for="ProductCategoryId" class="control-label"> Search by Name, </label>
+                        <div class="input-group">
+
+                            <input type="text" class="form-control" name="Searchvalue" placeholder="Search Product Category Name" id="Searchvalue">
+                            <div class="input-group-append">
+                                <button class="btn btn-info" type="button" onclick="LoadPagination('@pagemodel.StringUrl', 1)"> Search </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="text-right" style="float:right !important">
+                            <strong class="card-title">
+                                Show
+                                <select id="sizeperpageselect" onchange="LoadPagination('@pagemodel.StringUrl', 1)">
+                                    <option value="10">10</option>
+                                    <option value="15" selected>15</option>
+                                    <option value="20">20</option>
+                                    <option value="25">25</option>
+                                    <option value="30">30</option>
+                                    <option value="40">40</option>
+                                    <option value="50">50</option>
+                                    <option value="60">60</option>
+                                </select> per page
+                            </strong>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div id="paginatedsection">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover table-bordered">
+                                <thead style="background-color:#a9a9a93d;">
+                                    <tr>
+                                        <th>
+                                            #
+                                        </th>
+                                        <th>
+                                            Name
+                                        </th> 
+                                        <th>
+                                            Product Type
+                                        </th> 
+                                        @if (Model.UserType==1)
+                                        {
+                                            <th>
+                                                User Name
+                                            </th>
+                                        }
+                                        <th class="text-center">
+                                          Action
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.Models)
+                                    {
+                                        <tr id="@SN">
+                                            <td>
+                                                @SN
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Name)
+                                            </td>  
+                                            <td>
+                                               @if(item.ProductType=="R"){
+                                                    <span> Raw Product</span>
+                                                }
+                                                @if (item.ProductType == "F")
+                                                {
+                                                    <span> Finish Product </span>
+                                                }
+                                            </td>
+                                            @if (Model.UserType == 1)
+                                            {
+                                                <th>
+                                                    @Html.DisplayFor(modelItem => item.UserName)
+                                                </th>
+                                            }
+                                            <td class="text-center">
+                                                    @Html.ActionLink("", "UpdateRecort", new {id=item.Id},new {@class = "text-danger fas fa-edit",  onclick = "return confirm('Are you sure you want to edit this?')" }) |
+                                                    @Html.ActionLink("","Delete", new {  id=item.Id},new {@class = "text-danger fas fa-trash",  onclick = "return confirm('Are you sure you want to delete this?')" })
+                                            </td>
+                                        </tr>
+                                        SN++;
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+
+                    <div class="card-footer">
+
+                        <div class="text-left">
+                            @await Html.PartialAsync("_pagingpartial", pagemodel)
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#Configuration').addClass('menu-open');
+            $('#ProductCategoryIndex').addClass('active');
+        });
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+

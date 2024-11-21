@@ -1,0 +1,112 @@
+﻿@model MenuItemViewModel
+@{
+    ViewData["Title"] = "New Voucher";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="content-header">
+    <div class="container-fluid ">
+        <div class="breadcrumb d-flex justify-content-between align-items-center  pl-3 pr-3">
+            <ol class="breadcrumb mb-0 p-0">
+                <li class="breadcrumb-item"><a href="/Admin/Index">Home</a></li>
+                <li class="breadcrumb-item active"> New Voucher</li>
+            </ol>
+            <div>
+                <a asp-action="Vouchers" class="btn btn-outline-primary"><i class="fa fa-list"></i> Vouchers</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title text-info">
+                    <i class="fas fa-edit"></i>
+                    New Voucher
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12">
+                        <form asp-action="AddVoucher" method="post" class="row">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group col-4">
+                                <label class="control-label">Voucher Date</label>
+                                <input type="date" class="form-control" required />
+                                <span class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-4">
+                                <label class="control-label">Voucher Type</label>
+                                <select id="voucherType" class="form-control">
+                                    <option selected>--Select Here--</option>
+                                    <option>Payment Voucher</option>
+                                    <option>Receipt Voucher</option>
+                                    <option>Journal Voucher</option>
+                                </select>
+                                <span class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-4">
+                                <label class="control-label">Cost Center</label>
+                                <select id="costCenter" class="form-control">
+                                    <option selected>--Select Here--</option>
+                                    <option>Cost Center 1</option>
+                                    <option>Cost Center 2</option>
+                                    <option>Cost Center 3</option>
+                                </select>
+                                <span class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group col-12">
+                                <label class="control-label">Narration</label>
+                                <textarea class="form-control"></textarea>
+                                <span class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group col-6">
+                                <label class="control-label">GL Head [GL Code]</label>
+                                <input class="form-control" required />
+                                <span class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group col-3">
+                                <label class="control-label">Debit Amount</label>
+                                <input class="form-control" required />
+                                <span class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group col-3">
+                                <label class="control-label">Credit Amount</label>
+                                <input class="form-control" required />
+                                <span class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group col-12">
+                                <label class="control-label">Particular</label>
+                                <textarea class="form-control"></textarea>
+                                <span class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group col-12 text-right">
+                                <input type="submit" value="Create Voucher" class="btn btn-primary text-right" />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#Voucher').addClass('menu-open');
+            $('#VoucherAddVoucher').addClass('active');
+        });
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

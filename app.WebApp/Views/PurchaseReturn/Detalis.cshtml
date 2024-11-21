@@ -1,0 +1,160 @@
+﻿@model PurchaseReturnViewModel
+@{
+    ViewData["Title"] = "Detalis";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    int SN = 1;
+    decimal totalpurches = Model.MappVm.Select(f => f.PurchaseReturnAmount).Sum();
+}
+
+
+<div class="content-header">
+    <div class="container-fluid ">
+        <div class="breadcrumb d-flex justify-content-between align-items-center  pl-3 pr-3">
+            <ol class="breadcrumb mb-0 p-0">
+                <li class="breadcrumb-item"><a href="/Admin/Index">Home</a></li>
+                <li class="breadcrumb-item active"> Purchase Return Detalis </li>
+            </ol>
+            <div>
+                <a target="_blank" class="btn btn-sm btn-default mr-4" href="~/PurchaseReturn/PurchaseReturnDetailReport?id=@Model.Id"> Print </a>
+                <a asp-action="Index"><i class="fa fa-list"></i> Purchase Return List</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title text-info">
+                    <i class="fas fa-plus"></i>
+                    Return Detalis
+                </h3>
+
+            </div>
+            <div class="card-body">
+
+                <table class="table">
+                    <tr>
+                        <th style="width:18%">
+                            Return No
+                        </th>
+                        <th style="width:2%">:</th>
+                        <td style="width:30%">
+                            @Model.PurchaseReturnNo
+                        </td>
+                        <th style="width:18%"> Return Date</th>
+                        <th style="width:2%">:</th>
+                        <td style="width:30%">@Model.PurchaseReturnDate.ToShortDateString()</td>
+                    </tr>
+
+                    <tr>
+                        <th style="width:18%">
+                            Supplier Name
+                        </th>
+                        <th style="width:2%">:</th>
+                        <td style="width:30%">
+                            @Model.SupplierName
+                        </td>
+                        <th style="width:18%"> Supplier Mobile</th>
+                        <th style="width:2%">:</th>
+                        <td style="width:30%">@Model.SupplierMobile</td>
+                    </tr>
+
+                    <tr>
+                        <th style="width:18%">
+                            Supplier Address
+                        </th>
+                        <th style="width:2%">:</th>
+                        <td style="width:30%">
+                            @Model.SupplierAddress
+                        </td>
+                        <th style="width:18%"> Supplier Email </th>
+                        <th style="width:2%">:</th>
+                        <td style="width:30%">@Model.SupplierEmail</td>
+                    </tr>
+  
+
+                </table>
+                <div class="table-responsive mt-4">
+                    <table class="table table-sm table-hover table-bordered">
+                        <thead style="background-color:#a9a9a93d;">
+                            <tr>
+                                <th>
+                                    #
+                                </th>
+                                <th>Product Name</th>
+                                <th>Return Quantity </th>
+                                <th>Unit</th>
+                                <th>Return Price</th>
+                                <th>Total Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var vm in Model.MappVm)
+                            {
+                                <tr id="@SN">
+                                    <td>
+                                        @SN
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => vm.ProductName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => vm.ReturnQty)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => vm.UnitName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => vm.PurchaseReturnRate)
+                                    </td>
+
+                                    <td>
+                                        @Html.DisplayFor(modelItem => vm.PurchaseReturnAmount)
+                                    </td>
+                                </tr>
+
+                                SN++;
+                            }
+
+                            <tr>
+                                <td colspan="5" style="text-align: right;"> <b>Total  Return </b></td>
+                                <td colspan="2" style="text-align: left;">@totalpurches</td>
+                            </tr>
+
+                           
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-6 text-center">
+                        @if (Model.IsSubmited == true)
+                        {
+                            <h5> <b class="text-success"> "Purchase submitted successfully and stock added."  </b> </h5>
+                        }
+                        else
+                        {
+                            <b>  @Html.ActionLink("Confirm Submit","ChangeStatus", new {  id=Model.Id},new {@class = "btn btn-primary",  onclick = "return confirm('Are you sure you want to Submit this?')" })</b>
+                        }
+                    </div>
+                    <div class="col-md-3"></div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</section>
+
+                            
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#Purchase-Return').addClass('menu-open');
+        });
+        </script>
+        }
+

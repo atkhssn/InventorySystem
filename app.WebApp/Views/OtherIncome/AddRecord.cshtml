@@ -1,0 +1,196 @@
+﻿@model VoucherViewModel
+@{
+    ViewData["Title"] = "AddRecord";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="content-header">
+    <div class="container-fluid ">
+        <div class="breadcrumb d-flex justify-content-between align-items-center  pl-3 pr-3">
+            <ol class="breadcrumb mb-0 p-0">
+                <li class="breadcrumb-item"><a href="/Admin/Index">Home</a></li>
+                <li class="breadcrumb-item active"> Other Income </li>
+            </ol>
+            <div>
+                <a asp-action="Index"><i class="fa fa-list"></i> Other Income List </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title text-info">
+                    <i class="fas fa-plus"></i>
+                    Other Income
+                </h3>
+
+            </div>
+            <div class="card-body">
+
+                <form asp-action="AddRecord" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    @Html.HiddenFor(model => model.VoucherTypeId)
+                    @Html.HiddenFor(model => model.VoucherTypeCode)
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label asp-for="VoucherDate" class="control-label"> Voucher Date</label>
+                                <input asp-for="VoucherDate" class="form-control" required />
+                                <span asp-validation-for="VoucherDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label asp-for="ReferenceNo" class="control-label"> Reference </label>
+                                <input asp-for="ReferenceNo" class="form-control" />
+                                <span asp-validation-for="ReferenceNo" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label asp-for="Narration" class="control-label"> Narration </label>
+                                <input asp-for="Narration" class="form-control" required />
+                                <span asp-validation-for="Narration" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="mt-4 mb-2" style="color: #66bb6a!important"> <b> Add Details </b> </h4>
+                        <div class="progress mb-3" style="height: 3px;">
+                            <div class="progress-bar" role="progressbar" style="width:11%;background:#66bb6a!important" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="OtherExpensesTypeId">Income Type</label>
+                                <input id="Titel" name="Titel" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-lg-5 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="Description" class="control-label"> Description </label>
+                                <input id="Description" name="Description" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="Amount" class="control-label"> Amount </label>
+                                <input id="Amount" name="Amount" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-md-6 col-sm-12">
+                            <div class="form-group mt-4">
+                                <button type="button" onclick="getinfo()" class="btn btn-primary btn-lg btn-block">Add Item</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <table class="table table-bordered" id="checklist" style="margin-top:20px">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Income Type</th>
+                                <th> Description </th>
+                                <th> Amount</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="datashowlist">
+                        </tbody>
+                    </table>
+
+
+                    <div class="form-group mt-3">
+                        <input type="submit" value="Create Confirm" class="btn btn-success" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+</section>
+
+
+
+
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+           $('#Other-Income').addClass('menu-open');
+            $('#OtherIncomeAddRecord').addClass('active');
+        });
+
+        let datalist = [];
+        let GrossTotal = 0;
+        function getinfo() {
+            var count = datalist.length
+            var Id=0;
+            if (count==0){
+                Id = 1;
+            }else{
+                Id = Id + parseFloat(count)
+            }
+            var Titel = $('#Titel').val();
+            var Description = $('#Description').val();
+            var Amount = $('#Amount').val();
+            var object = { ReferenceId: Id, Titel: Titel, Particular: Description, DebitAmount: Amount };
+            var res = datalist.find(x => x.Titel == object.Titel);
+            if (res == null) {
+                datalist.push(object);
+                lodedata();
+            }
+            else {
+                alert("Product already added");
+            }
+        }
+        function lodedata() {
+            var countid = datalist.length;
+            let tag = '';
+            let TotalAmount = 0;
+            $("#datashowlist").empty();
+            if (countid > 0) {
+                $.each(datalist, function (key, item) {
+                    tag += '<tr id="' + key + '">';
+                    tag += '<td> ' + (key + 1) + '</td>';
+                    tag += '<td> <input  type="hidden" id="' + key + item.Titel + '"  name="voucherDetalisViewModels[' + key + '].Titel" value="' + item.Titel + '"/><input  type="hidden" name="voucherDetalisViewModels[' + key + '].ReferenceId" value="' + item.ReferenceId + '"/>' + item.Titel + '</td>';
+                    tag += '<td><input  type="hidden" id="' + key + item.Particular + '" name="voucherDetalisViewModels[' + key + '].Particular" value="' + item.Particular + '"/>' + item.Particular + '</td>';
+                    tag += '<td><input  type="hidden" id="' + key + item.DebitAmount + '" name="voucherDetalisViewModels[' + key + '].DebitAmount" value="' + item.DebitAmount + '"/>' + item.DebitAmount + '</td>';
+                    tag += '<td  class="text-center"> <a onclick="removecell(' + item.ReferenceId + ',' + key + ')" class=" btn-danger btn-flat btn-sm sm"> <i class="fa fa-trash"></i></a>  </td>';
+                    tag += '</tr>';
+                    TotalAmount += parseFloat(item.DebitAmount);
+                });
+                tag += '<tr>';
+                tag += '<td colspan="3" style="text-align: right;"> <b>Total Amount </b></td>';
+                tag += '<td colspan="2" style="text-align: left;">' + TotalAmount + ' </td>';
+                tag += '</tr>';
+
+                $('#Titel').val("");
+                $('#Description').val("");
+                $('#Amount').val(0);
+                $('#datashowlist').html(tag);
+            }
+        }
+        function removecell(id, key) {
+            if (confirm("Are you sure to remove this?")) {
+                datalist.splice(datalist.findIndex(x => x.ReferenceId == id), 1);
+                $("#" + key).remove();
+                lodedata();
+            } else {
+                lodedata();
+            }
+        }
+
+    </script>
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
