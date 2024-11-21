@@ -10,6 +10,6 @@ namespace app.Services.Accounting
         [Display(Name = "Full Name")]
         public string Name { get; set; }
         public List<CostCenterViewModel> CostCenterViewModels { get; set; }
-        public ResponseViewModel responseViewModel { get; set; }
+        public ResponseViewModel ResponseViewModel { get; set; }
     }
 }

@@ -17,7 +17,7 @@ namespace app.Services.Accounting
 
         #region Cost Center
 
-        public async Task<CostCenterViewModel> GetAllRecordAsync()
+        public async Task<CostCenterViewModel> CostCentersAsync()
         {
             CostCenterViewModel model = new CostCenterViewModel();
             model.CostCenterViewModels = await _dbContext.CostCenter.Where(x => x.IsActive).Select(x => new CostCenterViewModel
@@ -35,7 +35,7 @@ namespace app.Services.Accounting
             return model;
         }
 
-        public async Task<CostCenterViewModel> GetRecordDetailAync(long Id)
+        public async Task<CostCenterViewModel> CostCenterAync(long Id)
         {
             CostCenterViewModel model = new CostCenterViewModel();
             model = await _dbContext.CostCenter.Where(x => x.Id == Id && x.IsActive).Select(x => new CostCenterViewModel
@@ -53,7 +53,7 @@ namespace app.Services.Accounting
             return model;
         }
 
-        public async Task<ResponseViewModel> AddRecordAsync(CostCenterViewModel model)
+        public async Task<ResponseViewModel> AddCostCenterAsync(CostCenterViewModel model)
         {
             ResponseViewModel response = new ResponseViewModel();
             var user = await _workContext.GetCurrentUserAsync();
@@ -99,7 +99,7 @@ namespace app.Services.Accounting
             return await Task.Run(() => response);
         }
 
-        public async Task<ResponseViewModel> UpdateRecordAync(CostCenterViewModel model)
+        public async Task<ResponseViewModel> UpdateCostCenterAync(CostCenterViewModel model)
         {
             ResponseViewModel response = new ResponseViewModel();
             var user = await _workContext.GetCurrentUserAsync();
@@ -136,7 +136,7 @@ namespace app.Services.Accounting
             return await Task.Run(() => response);
         }
 
-        public async Task<ResponseViewModel> DeleteRecordAync(long Id)
+        public async Task<ResponseViewModel> DeleteCostCenterAync(long Id)
         {
             ResponseViewModel response = new ResponseViewModel();
             var user = await _workContext.GetCurrentUserAsync();
