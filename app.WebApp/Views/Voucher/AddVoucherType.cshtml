@@ -1,4 +1,5 @@
-﻿@model MenuItemViewModel
+﻿@using app.Services.Vouchern
+@model VoucherTypesViewModel
 @{
     ViewData["Title"] = "New Voucher Type";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
@@ -30,7 +31,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-4">
-                        <form asp-action="AddRecort" method="post">
+                        <form asp-action="AddVoucherType" method="post">
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                             <div class="form-group">
                                 <label asp-for="ShortName" class="control-label"></label>
@@ -48,6 +49,42 @@
                         </form>
                     </div>
                 </div>
+
+                <div class="position-absolute response-alert" id="response">
+                    @if (Model is not null)
+                    {
+                        if (Model.ResponseViewModel is not null)
+                        {
+                            if (Model.ResponseViewModel.ResponseCode == 400)
+                            {
+                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                    <strong>Bad Request!</strong> @Model.ResponseViewModel.ResponseMessage
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            }
+                            else if (Model.ResponseViewModel.ResponseCode == 404)
+                            {
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>Not Found!</strong> @Model.ResponseViewModel.ResponseMessage
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>Internal Error!</strong> @Model.ResponseViewModel.ResponseMessage
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            }
+                        }
+                    }
+                </div>
             </div>
         </div>
     </div>
@@ -58,6 +95,10 @@
         $(document).ready(function () {
             $('#Voucher').addClass('menu-open');
             $('#VoucherVoucherTypes').addClass('active');
+
+            setTimeout(function() {
+                $('#response').hide();
+            }, 5000);
         });
     </script>
     @{

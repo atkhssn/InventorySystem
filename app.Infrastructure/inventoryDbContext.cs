@@ -47,6 +47,7 @@ namespace app.Infrastructure
         public virtual DbSet<PurchaseReturnDetails> PurchaseReturnDetails { get; set; }
         public virtual DbSet<BillGenerated> BillGenerated { get; set; }
         public virtual DbSet<CostCenter> CostCenter { get; set; }
+        public virtual DbSet<VoucherTypes> VoucherTypes { get; set; }
 
         [NotMapped]
         public virtual DbSet<StockView> StockView { get; set; }

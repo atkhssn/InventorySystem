@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using app.Services.Vouchern;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace app.WebApp.AdminControllers
@@ -6,36 +7,75 @@ namespace app.WebApp.AdminControllers
     [Authorize]
     public class VoucherController : Controller
     {
+        private readonly IVoucherServices _voucherServices;
+        public VoucherController(IVoucherServices voucherServices)
+        {
+            _voucherServices = voucherServices;
+        }
+
         #region Voucher type
 
         [HttpGet]
-        public IActionResult VoucherTypes()
+        public async Task<IActionResult> VoucherTypes()
         {
-            return View();
+            var response = await _voucherServices.VoucherTypesAsync();
+            ViewBag.Message = TempData["Message"]?.ToString();
+            return await Task.Run(() => View(response));
         }
 
         [HttpGet]
-        public IActionResult VoucherTypeDetail(long id)
+        public async Task<IActionResult> VoucherTypeDetail(long id)
         {
-            return View();
+            var response = await _voucherServices.VoucherTypeAsync(id);
+            return View(response);
         }
 
         [HttpGet]
-        public IActionResult AddVoucherType()
+        public async Task<IActionResult> AddVoucherType()
         {
-            return View();
+            return await Task.Run(() => View());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddVoucherType(VoucherTypesViewModel voucherTypesViewModel)
+        {
+            var request = await _voucherServices.AddVoucherTypeAsync(voucherTypesViewModel);
+            if (request.ResponseCode == 200)
+            {
+                TempData["Message"] = request.ResponseMessage;
+                return await Task.Run(() => RedirectToAction("VoucherTypes"));
+            }
+            voucherTypesViewModel.ResponseViewModel = request;
+            return await Task.Run(() => View(voucherTypesViewModel));
         }
 
         [HttpGet]
-        public IActionResult UpdateVoucherType()
+        public async Task<IActionResult> UpdateVoucherType(long id)
         {
-            return View();
+            var response = await _voucherServices.VoucherTypeAsync(id);
+            return await Task.Run(() => View(response));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateVoucherType(VoucherTypesViewModel voucherTypesViewModel)
+        {
+            var request = await _voucherServices.UpdateVoucherTypeAync(voucherTypesViewModel);
+            if (request.ResponseCode == 200)
+            {
+                TempData["Message"] = request.ResponseMessage;
+                return await Task.Run(() => RedirectToAction("VoucherTypes"));
+            }
+            voucherTypesViewModel.ResponseViewModel = request;
+            return await Task.Run(() => View(voucherTypesViewModel));
         }
 
         [HttpGet]
-        public IActionResult DeleteVoucherType(long id)
+        public async Task<IActionResult> DeleteCostCenter(long id)
         {
-            return View();
+            var request = await _voucherServices.DeleteVoucherTypeAync(id);
+            if (request.ResponseCode == 200)
+                TempData["Message"] = request.ResponseMessage;
+            return await Task.Run(() => RedirectToAction("VoucherTypes"));
         }
 
         #endregion
