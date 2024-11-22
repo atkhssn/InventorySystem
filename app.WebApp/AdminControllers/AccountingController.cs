@@ -16,9 +16,9 @@ namespace app.WebApp.AdminControllers
         #region Chart of Account
 
         [HttpGet]
-        public IActionResult ChartOfAccounts()
+        public async Task<IActionResult> ChartOfAccounts()
         {
-            return View();
+            return await Task.Run(() => View());
         }
 
         [HttpGet]
@@ -36,14 +36,15 @@ namespace app.WebApp.AdminControllers
         [HttpGet]
         public async Task<IActionResult> CostCenters()
         {
-            var response = await _accountingService.GetAllRecordAsync();
-            return View(response);
+            var response = await _accountingService.CostCentersAsync();
+            ViewBag.Message = TempData["Message"]?.ToString();
+            return await Task.Run(() => View(response));
         }
 
         [HttpGet]
         public async Task<IActionResult> CostCenterDetail(long id)
         {
-            var response = await _accountingService.GetRecordDetailAync(id);
+            var response = await _accountingService.CostCenterAync(id);
             return View(response);
         }
 
@@ -56,29 +57,43 @@ namespace app.WebApp.AdminControllers
         [HttpPost]
         public async Task<IActionResult> AddCostCenter(CostCenterViewModel costCenterViewModel)
         {
-            var response = await _accountingService.AddRecordAsync(costCenterViewModel);
-            return RedirectToAction("CostCenters");
+            var request = await _accountingService.AddCostCenterAsync(costCenterViewModel);
+            if (request.ResponseCode == 200)
+            {
+                TempData["Message"] = request.ResponseMessage;
+                return await Task.Run(() => RedirectToAction("CostCenters"));
+            }
+            costCenterViewModel.ResponseViewModel = request;
+            return await Task.Run(() => View(costCenterViewModel));
         }
 
         [HttpGet]
         public async Task<IActionResult> UpdateCostCenter(long id)
         {
-            var response = await _accountingService.GetRecordDetailAync(id);
-            return View(response);
+            var response = await _accountingService.CostCenterAync(id);
+            return await Task.Run(() => View(response));
         }
 
         [HttpPost]
         public async Task<IActionResult> UpdateCostCenter(CostCenterViewModel costCenterViewModel)
         {
-            var response = await _accountingService.UpdateRecordAync(costCenterViewModel);
-            return RedirectToAction("CostCenters");
+            var request = await _accountingService.UpdateCostCenterAync(costCenterViewModel);
+            if (request.ResponseCode == 200)
+            {
+                TempData["Message"] = request.ResponseMessage;
+                return await Task.Run(() => RedirectToAction("CostCenters"));
+            }
+            costCenterViewModel.ResponseViewModel = request;
+            return await Task.Run(() => View(costCenterViewModel));
         }
 
         [HttpGet]
         public async Task<IActionResult> DeleteCostCenter(long id)
         {
-            var response = await _accountingService.DeleteRecordAync(id);
-            return RedirectToAction("CostCenters");
+            var request = await _accountingService.DeleteCostCenterAync(id);
+            if (request.ResponseCode == 200)
+                TempData["Message"] = request.ResponseMessage;
+            return await Task.Run(() => RedirectToAction("CostCenters"));
         }
 
         #endregion

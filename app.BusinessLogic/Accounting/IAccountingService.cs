@@ -2,10 +2,10 @@
 {
     public interface IAccountingService
     {
-        Task<CostCenterViewModel> GetAllRecordAsync();
-        Task<CostCenterViewModel> GetRecordDetailAync(long Id);
-        Task<bool> AddRecordAsync(CostCenterViewModel model);
-        Task<bool> UpdateRecordAync(CostCenterViewModel model);
-        Task<bool> DeleteRecordAync(long Id);
+        Task<CostCenterViewModel> CostCentersAsync();
+        Task<CostCenterViewModel> CostCenterAync(long Id);
+        Task<ResponseViewModel> AddCostCenterAsync(CostCenterViewModel model);
+        Task<ResponseViewModel> UpdateCostCenterAync(CostCenterViewModel model);
+        Task<ResponseViewModel> DeleteCostCenterAync(long Id);
     }
 }

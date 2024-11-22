@@ -13,7 +13,7 @@
                 <li class="breadcrumb-item active"> Update Cost Center</li>
             </ol>
             <div>
-                <a asp-action="CostCenters" class="btn btn-outline-primary"><i class="fa fa-list"></i> Cost Centers</a>
+                <a asp-action="CostCenters" class="btn btn-outline-primary"><i class="fa fa-list" aria-hidden="true"></i> Cost Centers</a>
             </div>
         </div>
     </div>
@@ -24,19 +24,19 @@
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title text-info">
-                    <i class="fas fa-edit"></i>
+                    <i class="fa fa-edit" aria-hidden="true"></i>
                     Update Cost Center
                 </h3>
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-4">
                         <form asp-action="UpdateCostCenter" method="post">
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                             <input asp-for="Id" class="form-control" required hidden />
                             <div class="form-group">
                                 <label asp-for="ShortName" class="control-label"></label>
-                                <input asp-for="ShortName" class="form-control" required />
+                                <input asp-for="ShortName" class="form-control" required readonly />
                                 <span asp-validation-for="ShortName" class="text-danger"></span>
                             </div>
                             <div class="form-group">
@@ -50,6 +50,42 @@
                         </form>
                     </div>
                 </div>
+
+                <div class="position-absolute response-alert" id="response">
+                    @if (Model is not null)
+                    {
+                        if (Model.ResponseViewModel is not null)
+                        {
+                            if (Model.ResponseViewModel.ResponseCode == 400)
+                            {
+                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                    <strong>Bad Request!</strong> @Model.ResponseViewModel.ResponseMessage
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            }
+                            else if (Model.ResponseViewModel.ResponseCode == 404)
+                            {
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>Not Found!</strong> @Model.ResponseViewModel.ResponseMessage
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>Internal Error!</strong> @Model.ResponseViewModel.ResponseMessage
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            }
+                        }
+                    }
+                </div>
             </div>
         </div>
     </div>
@@ -60,6 +96,10 @@
         $(document).ready(function () {
             $('#Accounting').addClass('menu-open');
             $('#AccountingChartOfAccounts').addClass('active');
+
+            setTimeout(function() {
+                $('#response').hide();
+            }, 4000);
         });
     </script>
     @{

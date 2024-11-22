@@ -13,7 +13,7 @@
                 <li class="breadcrumb-item active"> New Cost Center</li>
             </ol>
             <div>
-                <a asp-action="CostCenters" class="btn btn-outline-primary"><i class="fa fa-list"></i> Cost Centers</a>
+                <a asp-action="CostCenters" class="btn btn-outline-primary"><i class="fa fa-list" aria-hidden="true"></i> Cost Centers</a>
             </div>
         </div>
     </div>
@@ -24,7 +24,7 @@
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title text-info">
-                    <i class="fas fa-edit"></i>
+                    <i class="fa fa-plus" aria-hidden="true"></i>
                     New Cost Center
                 </h3>
             </div>
@@ -49,6 +49,42 @@
                         </form>
                     </div>
                 </div>
+
+                <div class="position-absolute response-alert" id="response">
+                    @if (Model is not null)
+                    {
+                        if (Model.ResponseViewModel is not null)
+                        {
+                            if (Model.ResponseViewModel.ResponseCode == 400)
+                            {
+                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                    <strong>Bad Request!</strong> @Model.ResponseViewModel.ResponseMessage
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            }
+                            else if (Model.ResponseViewModel.ResponseCode == 404)
+                            {
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>Not Found!</strong> @Model.ResponseViewModel.ResponseMessage
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>Internal Error!</strong> @Model.ResponseViewModel.ResponseMessage
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            }
+                        }
+                    }
+                </div>
             </div>
         </div>
     </div>
@@ -59,6 +95,10 @@
         $(document).ready(function () {
             $('#Accounting').addClass('menu-open');
             $('#AccountingCostCenters').addClass('active');
+
+            setTimeout(function() {
+                $('#response').hide();
+            }, 4000);
         });
     </script>
     @{

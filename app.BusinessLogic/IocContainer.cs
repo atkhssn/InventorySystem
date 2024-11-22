@@ -22,6 +22,7 @@ using app.Services.UserProduct_Service;
 using app.Services.UserServices;
 using app.Services.Vendor_Service;
 using app.Services.Voucher_Service;
+using app.Services.Vouchern;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -54,6 +55,7 @@ namespace app.Services
             services.AddTransient<IDashboard_Services, Dashboard_Services>();
             services.AddTransient<IBillGeneratedService, BillGeneratedService>();
             services.AddTransient<IAccountingService, AccountingService>();
+            services.AddTransient<IVoucherServices, VoucherServices>();
             return services;
         }
     }
