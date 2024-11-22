@@ -11,7 +11,6 @@ namespace app.Services.Vouchern
         public string Name { get; set; }
 
         public List<VoucherTypesViewModel> VoucherTypesViewModels { get; set; }
-
         public ResponseViewModel ResponseViewModel { get; set; }
     }
 }

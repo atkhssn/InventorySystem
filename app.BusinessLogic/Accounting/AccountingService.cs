@@ -17,10 +17,10 @@ namespace app.Services.Accounting
 
         #region Cost Center
 
-        public async Task<CostCenterViewModel> CostCentersAsync()
+        public async Task<CostCentersViewModel> CostCentersAsync()
         {
-            CostCenterViewModel model = new CostCenterViewModel();
-            model.CostCenterViewModels = await _dbContext.CostCenters.Where(x => x.IsActive).Select(x => new CostCenterViewModel
+            CostCentersViewModel model = new CostCentersViewModel();
+            model.CostCenterViewModels = await _dbContext.CostCenters.Where(x => x.IsActive).Select(x => new CostCentersViewModel
             {
                 Id = x.Id,
                 ShortName = x.ShortName,
@@ -35,10 +35,10 @@ namespace app.Services.Accounting
             return model;
         }
 
-        public async Task<CostCenterViewModel> CostCenterAync(long Id)
+        public async Task<CostCentersViewModel> CostCenterAync(long Id)
         {
-            CostCenterViewModel model = new CostCenterViewModel();
-            model = await _dbContext.CostCenters.Where(x => x.Id == Id && x.IsActive).Select(x => new CostCenterViewModel
+            CostCentersViewModel model = new CostCentersViewModel();
+            model = await _dbContext.CostCenters.Where(x => x.Id == Id && x.IsActive).Select(x => new CostCentersViewModel
             {
                 Id = x.Id,
                 ShortName = x.ShortName,
@@ -53,7 +53,7 @@ namespace app.Services.Accounting
             return model;
         }
 
-        public async Task<ResponseViewModel> AddCostCenterAsync(CostCenterViewModel model)
+        public async Task<ResponseViewModel> AddCostCenterAsync(CostCentersViewModel model)
         {
             ResponseViewModel response = new ResponseViewModel();
             var user = await _workContext.GetCurrentUserAsync();
@@ -99,7 +99,7 @@ namespace app.Services.Accounting
             return await Task.Run(() => response);
         }
 
-        public async Task<ResponseViewModel> UpdateCostCenterAync(CostCenterViewModel model)
+        public async Task<ResponseViewModel> UpdateCostCenterAync(CostCentersViewModel model)
         {
             ResponseViewModel response = new ResponseViewModel();
             var user = await _workContext.GetCurrentUserAsync();

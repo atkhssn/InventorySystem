@@ -1,20 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace app.Utility
+﻿namespace app.Utility
 {
     public enum ProductType
     {
-        Raw_Product ='R',
-        Finish_Product ='F',
+        Raw_Product = 'R',
+        Finish_Product = 'F',
     }
 
     public enum Unit
     {
-        KG ,
+        KG,
         Pcs,
         Packet,
         Gm,
@@ -23,12 +17,12 @@ namespace app.Utility
     {
         Supplier = 1,
         Customer = 2,
-    }  
+    }
     public enum PaymentType
     {
-        Credit=1,
-        Cash=2,
-        Special=3,
+        Credit = 1,
+        Cash = 2,
+        Special = 3,
     }
     public enum PaymentMethod
     {
@@ -38,9 +32,9 @@ namespace app.Utility
     }
     public enum CustomerType
     {
-        Dealer=1,
-        Retail=2,
-        Corporate=3,
+        Dealer = 1,
+        Retail = 2,
+        Corporate = 3,
         Individual = 4,
     }
     public enum StockType
@@ -52,16 +46,26 @@ namespace app.Utility
     }
     public enum OtherExpensesType
     {
-        Rent =1,
-        Repairs =2,
-        Insurance =3,
-        Rates_and_Taxes =4,
+        Rent = 1,
+        Repairs = 2,
+        Insurance = 3,
+        Rates_and_Taxes = 4,
         Tax_Penalties = 5,
-        Conveyance=6,
+        Conveyance = 6,
         Consumptions_of_Spares = 7,
-        Salary= 8,
+        Salary = 8,
         Refresment = 9,
         Utility_Bill = 10,
-       Others = 20,
+        Others = 20,
+    }
+
+    public enum VoucherStatus
+    {
+        Created = 1,
+        Updated = 2,
+        Deleted = 3,
+        Submitted = 4,
+        Approved = 5,
+        Rejected = 6,
     }
 }

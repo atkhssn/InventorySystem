@@ -55,7 +55,7 @@ namespace app.WebApp.AdminControllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddCostCenter(CostCenterViewModel costCenterViewModel)
+        public async Task<IActionResult> AddCostCenter(CostCentersViewModel costCenterViewModel)
         {
             var request = await _accountingService.AddCostCenterAsync(costCenterViewModel);
             if (request.ResponseCode == 200)
@@ -75,7 +75,7 @@ namespace app.WebApp.AdminControllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateCostCenter(CostCenterViewModel costCenterViewModel)
+        public async Task<IActionResult> UpdateCostCenter(CostCentersViewModel costCenterViewModel)
         {
             var request = await _accountingService.UpdateCostCenterAync(costCenterViewModel);
             if (request.ResponseCode == 200)
