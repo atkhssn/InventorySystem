@@ -20,7 +20,7 @@ namespace app.Services.Accounting
         public async Task<CostCenterViewModel> CostCentersAsync()
         {
             CostCenterViewModel model = new CostCenterViewModel();
-            model.CostCenterViewModels = await _dbContext.CostCenter.Where(x => x.IsActive).Select(x => new CostCenterViewModel
+            model.CostCenterViewModels = await _dbContext.CostCenters.Where(x => x.IsActive).Select(x => new CostCenterViewModel
             {
                 Id = x.Id,
                 ShortName = x.ShortName,
@@ -38,7 +38,7 @@ namespace app.Services.Accounting
         public async Task<CostCenterViewModel> CostCenterAync(long Id)
         {
             CostCenterViewModel model = new CostCenterViewModel();
-            model = await _dbContext.CostCenter.Where(x => x.Id == Id && x.IsActive).Select(x => new CostCenterViewModel
+            model = await _dbContext.CostCenters.Where(x => x.Id == Id && x.IsActive).Select(x => new CostCenterViewModel
             {
                 Id = x.Id,
                 ShortName = x.ShortName,
@@ -57,8 +57,8 @@ namespace app.Services.Accounting
         {
             ResponseViewModel response = new ResponseViewModel();
             var user = await _workContext.GetCurrentUserAsync();
-            var findCostCenter = _dbContext.CostCenter.Where(x => x.Name.ToUpper() == model.Name.ToUpper()).FirstOrDefault();
-            var findCostCenterShort = _dbContext.CostCenter.Where(x => x.ShortName.ToUpper() == model.ShortName.ToUpper()).FirstOrDefault();
+            var findCostCenter = _dbContext.CostCenters.Where(x => x.Name.ToUpper() == model.Name.ToUpper()).FirstOrDefault();
+            var findCostCenterShort = _dbContext.CostCenters.Where(x => x.ShortName.ToUpper() == model.ShortName.ToUpper()).FirstOrDefault();
 
             if (findCostCenter is not null)
             {
@@ -74,7 +74,7 @@ namespace app.Services.Accounting
                 return await Task.Run(() => response);
             }
 
-            CostCenter costCenter = new CostCenter
+            CostCenters costCenter = new CostCenters
             {
                 Id = model.Id,
                 ShortName = model.ShortName.ToUpper(),
@@ -85,7 +85,7 @@ namespace app.Services.Accounting
                 IsActive = true
             };
 
-            _dbContext.CostCenter.Add(costCenter);
+            _dbContext.CostCenters.Add(costCenter);
 
             if (await _dbContext.SaveChangesAsync() > 0)
             {
@@ -103,8 +103,8 @@ namespace app.Services.Accounting
         {
             ResponseViewModel response = new ResponseViewModel();
             var user = await _workContext.GetCurrentUserAsync();
-            var getCostCenter = _dbContext.CostCenter.Where(x => x.Id == model.Id && x.ShortName.ToUpper() == model.ShortName.ToUpper()).FirstOrDefault();
-            var findCostCenter = _dbContext.CostCenter.Where(x => x.Name.ToUpper() == model.Name.ToUpper()).FirstOrDefault();
+            var getCostCenter = _dbContext.CostCenters.Where(x => x.Id == model.Id && x.ShortName.ToUpper() == model.ShortName.ToUpper()).FirstOrDefault();
+            var findCostCenter = _dbContext.CostCenters.Where(x => x.Name.ToUpper() == model.Name.ToUpper()).FirstOrDefault();
 
             if (getCostCenter is null)
             {
@@ -140,7 +140,7 @@ namespace app.Services.Accounting
         {
             ResponseViewModel response = new ResponseViewModel();
             var user = await _workContext.GetCurrentUserAsync();
-            var findCostCenter = _dbContext.CostCenter.Where(x => x.Id == Id).FirstOrDefault();
+            var findCostCenter = _dbContext.CostCenters.Where(x => x.Id == Id).FirstOrDefault();
 
             if (findCostCenter is null)
             {
