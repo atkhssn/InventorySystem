@@ -23,10 +23,25 @@ body {
 
 .main-layout-footer {
     max-height: 70px !important;
-    color: rebeccapurple !important;
+    color: #00a090 !important;
 }
 
 .response-alert {
     top: 10px !important;
     right: 20px !important;
+}
+
+.btn-bg-color {
+    background-color: #00a090 !important;
+}
+
+.sidebar-logo-text-box {
+    padding: 5px;
+    margin: 40px 0;
+}
+
+.sidebar-logo-text {
+    padding: 0;
+    margin: 0;
+    line-height: 1;
 }

@@ -61,11 +61,11 @@
 
     public enum VoucherStatus
     {
-        Created = 1,
-        Updated = 2,
-        Deleted = 3,
-        Submitted = 4,
-        Approved = 5,
-        Rejected = 6,
+        CREATED = 1,
+        UPDATED = 2,
+        DELETED = 3,
+        SUBMITTED = 4,
+        APPROVED = 5,
+        REJECTED = 6,
     }
 }

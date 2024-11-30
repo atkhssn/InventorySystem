@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace app.Services.Vouchern
 {
@@ -12,7 +13,7 @@ namespace app.Services.Vouchern
 
         public VouchersViewModel VouchersViewModel { get; set; }
 
-        [Display(Name = "GL Head")]
+        [Display(Name = "Accounting Head (GL Code)")]
         public string GlHeadId { get; set; }
 
         [Display(Name = "Debit Amount")]
@@ -23,6 +24,11 @@ namespace app.Services.Vouchern
 
         [Display(Name = "Particular")]
         public string Particular { get; set; }
+
+        [Display(Name = "Attachment")]
+        public IFormFile Attachment { get; set; }
+
+        public string AttachmentPath { get; set; }
 
         public List<VouchersLinesViewModel> VouchersLinesViewModels { get; set; }
         public ResponseViewModel ResponseViewModel { get; set; }

@@ -90,16 +90,20 @@
             color: rgb(0 0 0 / 90%);
             font-size: 26px;
         }
+
+    .btn-bg-color{
+        background-color: #00a090 !important;
+    }
 </style>
 <br />
 
-<div class=" mt-5 mb-5 ">
+<div class="my-3">
     <div class="container">
         <div class=" row justify-content-center">
             <div class="col-12 col-sm-10 col-lg-6 col-md-7 ">
                 <div class="card d-ui-card shadow">
                     <div class="di-logo">
-                        <img src="~/kgfile/mainlogo.png"  style="width:180px;height:180px"/>
+                        <img src="~/Logo/InventorySystem.jpg"  style="width:180px;height:180px; border-radius: 100%"/>
                       @*  <span style="font-weight:700;color:#2196f3;font-size:40px">L</span>og<span style="font-weight: 700; color: #2196f3; font-size: 40px">i</span>n*@
                     </div>
                     <form class="d-ui" asp-action="Login">
@@ -117,7 +121,7 @@
                         <span asp-validation-for="IncorrectInput" class="text-danger"></span>
                         <div class="row  justify-content-center d-action">
                             <div class="col-12 text-left"> <a class="text-info" asp-area="" asp-controller="Account" asp-action="Forgottenpassword">Forgotten your password?</a> </div>
-                            <div class="col-12 text-center mt-3">  <input type="submit" class="btn btn-success w-100 " value="Login" />  </div>
+                            <div class="col-12 text-center mt-3">  <input type="submit" class="btn btn-success w-100 btn-bg-color" value="Login" />  </div>
 
                         </div>
                     </form>

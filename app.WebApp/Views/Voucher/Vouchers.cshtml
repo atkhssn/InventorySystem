@@ -55,18 +55,18 @@
                                     <td>@item.VoucherTypesViewModel.Name</td>
                                     <td>@item.VoucherDate.ToString("dd MMMM, yyyy")</td>
                                     <td>@item.CostCenterViewModel.Name</td>
-                                    <td class="text-center">@item.TotalDebitAmount</td>
-                                    <td class="text-center">@item.TotalCreditAmount</td>
+                                    <td class="text-right">@item.TotalDebitAmount</td>
+                                    <td class="text-right">@item.TotalCreditAmount</td>
                                     <td class="text-center">
-                                        @if (item.VoucherStatus.Equals(VoucherStatus.Created))
+                                        @if (item.VoucherStatus.Equals(VoucherStatus.CREATED))
                                         {
                                             <span class="badge badge-pill badge-primary">@item.VoucherStatus</span>
                                         }
-                                        else if (item.VoucherStatus.Equals(VoucherStatus.Submitted))
+                                        else if (item.VoucherStatus.Equals(VoucherStatus.SUBMITTED))
                                         {
                                             <span class="badge badge-pill badge-info">@item.VoucherStatus</span>
                                         }
-                                        else if (item.VoucherStatus.Equals(VoucherStatus.Approved))
+                                        else if (item.VoucherStatus.Equals(VoucherStatus.APPROVED))
                                         {
                                             <span class="badge badge-pill badge-success">@item.VoucherStatus</span>
                                         }

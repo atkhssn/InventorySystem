@@ -11,5 +11,6 @@ namespace app.EntityModel.CoreModel
         public decimal DebitAmount { get; set; }
         public decimal CreditAmount { get; set; }
         public string Particular { get; set; }
+        public string AttachmentPath { get; set; }
     }
 }

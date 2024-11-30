@@ -275,7 +275,7 @@ namespace app.Services.Vouchern
         public async Task<VouchersViewModel> VoucherByVoucherNoAsync(string voucherNo)
         {
             VouchersViewModel viewModel = new VouchersViewModel();
-            viewModel = await _dbContext.Vouchers.Where(x => x.VoucherNo.Equals(voucherNo) && x.Status.Equals(VoucherStatus.Submitted) && x.IsActive).Select(x => new VouchersViewModel
+            viewModel = await _dbContext.Vouchers.Where(x => x.VoucherNo.Equals(voucherNo) && x.Status.Equals(VoucherStatus.SUBMITTED) && x.IsActive).Select(x => new VouchersViewModel
             {
                 Id = x.Id,
                 VoucherNo = x.VoucherNo,
@@ -299,7 +299,7 @@ namespace app.Services.Vouchern
 
         public async Task<VouchersViewModel> UnapprovedVoucherList()
         {
-            int statusId = Convert.ToInt32(VoucherStatus.Submitted);
+            int statusId = Convert.ToInt32(VoucherStatus.SUBMITTED);
             VouchersViewModel viewModel = new VouchersViewModel();
             viewModel.VouchersViewModels = await _dbContext.Vouchers
                 .Where(x => x.Status.Equals(statusId) && x.IsActive)
@@ -374,7 +374,7 @@ namespace app.Services.Vouchern
                         TotalDebitAmount = model.VouchersLinesViewModel.DebitAmount,
                         TotalCreditAmount = model.VouchersLinesViewModel.CreditAmount,
                         Narration = model.Narration,
-                        Status = Convert.ToInt32(VoucherStatus.Created),
+                        Status = Convert.ToInt32(VoucherStatus.CREATED),
                         TrakingId = user.UserName,
                         CreatedBy = user.FullName,
                         CreatedOn = DateTime.Now,
@@ -435,7 +435,7 @@ namespace app.Services.Vouchern
                 return await Task.Run(() => response);
             }
 
-            if (Convert.ToInt32(VoucherStatus.Created).Equals(findVoucher.Status))
+            if (Convert.ToInt32(VoucherStatus.CREATED).Equals(findVoucher.Status))
             {
                 response.ResponseCode = 400;
                 response.ResponseMessage = $"Approved vouchers cannot be deleted.";
@@ -545,7 +545,7 @@ namespace app.Services.Vouchern
                 return await Task.Run(() => response);
             }
 
-            if (!findVoucher.Status.Equals(Convert.ToInt32(VoucherStatus.Created)))
+            if (!findVoucher.Status.Equals(Convert.ToInt32(VoucherStatus.CREATED)))
             {
                 response.ResponseCode = 400;
                 response.ResponseMessage = $"Voucher is already submitted or approved.";
@@ -559,7 +559,7 @@ namespace app.Services.Vouchern
                 return await Task.Run(() => response);
             }
 
-            findVoucher.Status = Convert.ToInt32(VoucherStatus.Submitted);
+            findVoucher.Status = Convert.ToInt32(VoucherStatus.SUBMITTED);
             findVoucher.UpdatedBy = user.FullName;
             findVoucher.UpdatedOn = DateTime.Now;
 
@@ -588,14 +588,14 @@ namespace app.Services.Vouchern
                 return await Task.Run(() => response);
             }
 
-            if (!findVoucher.Status.Equals(Convert.ToInt32(VoucherStatus.Submitted)))
+            if (!findVoucher.Status.Equals(Convert.ToInt32(VoucherStatus.SUBMITTED)))
             {
                 response.ResponseCode = 400;
                 response.ResponseMessage = $"Voucher is not submitted.";
                 return await Task.Run(() => response);
             }
 
-            if (findVoucher.Status.Equals(Convert.ToInt32(VoucherStatus.Approved)))
+            if (findVoucher.Status.Equals(Convert.ToInt32(VoucherStatus.APPROVED)))
             {
                 response.ResponseCode = 400;
                 response.ResponseMessage = $"Voucher is already approved.";
@@ -609,7 +609,7 @@ namespace app.Services.Vouchern
                 return await Task.Run(() => response);
             }
 
-            findVoucher.Status = Convert.ToInt32(VoucherStatus.Approved);
+            findVoucher.Status = Convert.ToInt32(VoucherStatus.APPROVED);
             findVoucher.UpdatedBy = user.FullName;
             findVoucher.UpdatedOn = DateTime.Now;
 

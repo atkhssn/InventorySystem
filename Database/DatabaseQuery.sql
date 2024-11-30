@@ -53,6 +53,7 @@ CREATE TABLE New.VouchersLines(
 	DebitAmount DECIMAL(18,3) NOT NULL,
 	CreditAmount DECIMAL(18,3) NOT NULL,
 	Particular NVARCHAR(250) NULL,
+	AttachmentPath NVARCHAR(250) NULL,
 	TrakingId NVARCHAR(100) NOT NULL,
 	CreatedBy NVARCHAR(150) NOT NULL,
 	CreatedOn DATETIME NOT NULL,

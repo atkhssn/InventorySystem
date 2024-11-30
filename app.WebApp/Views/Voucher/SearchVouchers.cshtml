@@ -87,10 +87,10 @@
                                             <td>@item.VoucherTypesViewModel.Name</td>
                                             <td>@item.VoucherDate.ToString("dd MMMM, yyyy")</td>
                                             <td>@item.CostCenterViewModel.Name</td>
-                                            <td class="text-center">@item.TotalDebitAmount</td>
-                                            <td class="text-center">@item.TotalCreditAmount</td>
+                                            <td class="text-right">@item.TotalDebitAmount</td>
+                                            <td class="text-right">@item.TotalCreditAmount</td>
                                             <td class="text-center">
-                                                @if (!item.VoucherStatus.Equals(VoucherStatus.Approved))
+                                                @if (!item.VoucherStatus.Equals(VoucherStatus.APPROVED))
                                                 {
                                                     <b class="text-danger"> <i class="fas fa-times-circle fa-2x" style="font-size:20px"></i></b>
                                                 }

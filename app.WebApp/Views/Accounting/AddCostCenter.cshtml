@@ -34,12 +34,12 @@
                         <form asp-action="AddCostCenter" method="post">
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                             <div class="form-group">
-                                <label asp-for="ShortName" class="control-label"></label>
+                                <label asp-for="ShortName" class="control-label"></label><sup><b class="text-danger">*</b></sup>
                                 <input asp-for="ShortName" class="form-control" required />
                                 <span asp-validation-for="ShortName" class="text-danger"></span>
                             </div>
                             <div class="form-group">
-                                <label asp-for="Name" class="control-label"></label>
+                                <label asp-for="Name" class="control-label"></label><sup><b class="text-danger">*</b></sup>
                                 <input asp-for="Name" class="form-control" required />
                                 <span asp-validation-for="Name" class="text-danger"></span>
                             </div>
