@@ -12,8 +12,8 @@ namespace app.Services.Vouchern
 
         public VouchersViewModel VouchersViewModel { get; set; }
 
-        [Display(Name = "GlHead")]
-        public long GlHeadId { get; set; }
+        [Display(Name = "GL Head")]
+        public string GlHeadId { get; set; }
 
         [Display(Name = "Debit Amount")]
         public decimal DebitAmount { get; set; }

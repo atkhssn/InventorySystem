@@ -1,7 +1,9 @@
-﻿@model MenuItemViewModel
+﻿@using app.Services.Vouchern
+@model VouchersViewModel
 @{
     ViewData["Title"] = "New Voucher";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    int Sl = 1;
 }
 
 <div class="content-header">
@@ -29,70 +31,146 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-12">
+                    <div class="col-12 mr-auto">
                         <form asp-action="AddVoucher" method="post" class="row">
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                            <div class="form-group col-4">
-                                <label class="control-label">Voucher Date</label>
-                                <input type="date" class="form-control" required />
-                                <span class="text-danger"></span>
-                            </div>
-                            <div class="form-group col-4">
-                                <label class="control-label">Voucher Type</label>
-                                <select id="voucherType" class="form-control">
-                                    <option selected>--Select Here--</option>
-                                    <option>Payment Voucher</option>
-                                    <option>Receipt Voucher</option>
-                                    <option>Journal Voucher</option>
-                                </select>
-                                <span class="text-danger"></span>
-                            </div>
-                            <div class="form-group col-4">
-                                <label class="control-label">Cost Center</label>
-                                <select id="costCenter" class="form-control">
-                                    <option selected>--Select Here--</option>
-                                    <option>Cost Center 1</option>
-                                    <option>Cost Center 2</option>
-                                    <option>Cost Center 3</option>
-                                </select>
-                                <span class="text-danger"></span>
-                            </div>
+                            @if (Model.Id > 0)
+                            {
+                                <input asp-for="Id" value="@Model.Id" class="form-control" required hidden />
+                                <div class="table-responsive w-75" style="margin: 0 auto">
+                                    <table class="table table-sm table-borderless">
+                                        <tbody>
+                                            <tr class="border-bottom">
+                                                <th class="text-left" width="110px">Voucher Date:</th>
+                                                <td class="text-left">@Model.VoucherDate.ToString("dd MMMM, yyyy")</td>
+                                                <th class="text-left" width="110px">Voucher No:</th>
+                                                <td class="text-left">@Model.VoucherNo</td>
+                                                <th class="text-left" width="110px">Voucher Status:</th>
+                                                <td class="text-left"><span class="text-success">@Model.VoucherStatus</span></td>
+                                            </tr>
+                                            <tr class="border-bottom">
+                                                <th class="text-left" width="110px">Cost Center:</th>
+                                                <td class="text-left">[@Model.CostCenterViewModel.ShortName]@Model.CostCenterViewModel.Name</td>
+                                                <th class="text-left" width="110px">Voucher Type:</th>
+                                                <td class="text-left">[@Model.VoucherTypesViewModel.Name]@Model.VoucherTypesViewModel.Name</td>
+                                                <th class="text-left" width="110px">Created By:</th>
+                                                <td class="text-left">@Model.CreatedBy</td>
+                                            </tr>
+                                            <tr class="border-bottom">
+                                                <th class="text-left" width="110px">Narration:</th>
+                                                <td class="text-left" colspan="4">@Model.Narration</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="form-group col-4">
+                                    <label asp-for="VoucherDate" class="control-label"></label>
+                                    <input type="date" asp-for="VoucherDate" value="@DateTime.Now.ToString("dd/MM/yyyy")" class="form-control" required />
+                                    <span asp-validation-for="VoucherDate" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-4">
+                                    <label asp-for="VoucherTypesId" class="control-label"></label>
+                                    @Html.DropDownListFor(m => m.VoucherTypesId, new SelectList(Model.VoucherTypesViewModel.VoucherTypesViewModels, "Id", "Name"), "--Select Here--", new { @class = "form-control", @required = "required" })
+                                    <span asp-validation-for="VoucherTypesId" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-4">
+                                    <label asp-for="CostCentersId" class="control-label"></label>
+                                    @Html.DropDownListFor(m => m.CostCentersId, new SelectList(Model.CostCenterViewModel.CostCenterViewModels, "Id", "Name"), "--Select Here--", new { @class = "form-control", @required = "required" })
+                                    <span asp-validation-for="CostCentersId" class="text-danger"></span>
+                                </div>
 
-                            <div class="form-group col-12">
-                                <label class="control-label">Narration</label>
-                                <textarea class="form-control"></textarea>
-                                <span class="text-danger"></span>
-                            </div>
+                                <div class="form-group col-12">
+                                    <label asp-for="Narration" class="control-label"></label>
+                                    <textarea asp-for="Narration" class="form-control"></textarea>
+                                    <span asp-validation-for="Narration" class="text-danger"></span>
+                                </div>
+                            }
 
-                            <div class="form-group col-6">
-                                <label class="control-label">GL Head [GL Code]</label>
-                                <input class="form-control" required />
-                                <span class="text-danger"></span>
-                            </div>
+                            @if (!Convert.ToInt32(VoucherStatus.Approved).Equals(Convert.ToInt32(Model.VoucherStatus)) && !Convert.ToInt32(VoucherStatus.Submitted).Equals(Convert.ToInt32(Model.VoucherStatus)))
+                            {
+                                <div class="form-group col-6">
+                                    <label asp-for="VouchersLinesViewModel.GlHeadId" class="control-label"></label>
+                                    <input asp-for="VouchersLinesViewModel.GlHeadId" class="form-control" required />
+                                    <span asp-validation-for="VouchersLinesViewModel.GlHeadId" class="text-danger"></span>
+                                </div>
 
-                            <div class="form-group col-3">
-                                <label class="control-label">Debit Amount</label>
-                                <input class="form-control" required />
-                                <span class="text-danger"></span>
-                            </div>
+                                <div class="form-group col-3">
+                                    <label asp-for="VouchersLinesViewModel.DebitAmount" class="control-label"></label>
+                                    <input asp-for="VouchersLinesViewModel.DebitAmount" value="0.000" class=" form-control" required />
+                                    <span asp-validation-for="VouchersLinesViewModel.DebitAmount" class="text-danger"></span>
+                                </div>
 
-                            <div class="form-group col-3">
-                                <label class="control-label">Credit Amount</label>
-                                <input class="form-control" required />
-                                <span class="text-danger"></span>
-                            </div>
+                                <div class="form-group col-3">
+                                    <label asp-for="VouchersLinesViewModel.CreditAmount" class="control-label"></label>
+                                    <input asp-for="VouchersLinesViewModel.CreditAmount" value="0.000" class="form-control" required />
+                                    <span asp-validation-for="VouchersLinesViewModel.CreditAmount" class="text-danger"></span>
+                                </div>
 
-                            <div class="form-group col-12">
-                                <label class="control-label">Particular</label>
-                                <textarea class="form-control"></textarea>
-                                <span class="text-danger"></span>
-                            </div>
+                                <div class="form-group col-12">
+                                    <label asp-for="VouchersLinesViewModel.Particular" class="control-label"></label>
+                                    <textarea asp-for="VouchersLinesViewModel.Particular" class="form-control"></textarea>
+                                    <span asp-validation-for="VouchersLinesViewModel.Particular" class="text-danger"></span>
+                                </div>
 
-                            <div class="form-group col-12 text-right">
-                                <input type="submit" value="Create Voucher" class="btn btn-primary text-right" />
-                            </div>
+                                <div class="form-group col-12 text-right">
+                                    <input type="Submit" value="@(Model.Id > 0 ? "Add Voucher Detail" : "Create Voucher")" class="btn btn-primary text-right" />
+                                </div>
+                            }
                         </form>
                     </div>
+                    @if (Model.Id > 0)
+                    {
+                        <div class="col-12 mr-auto">
+                            <form asp-action="SubmitVoucher" method="post" class="row">
+                                <input asp-for="Id" value="@Model.Id" class="form-control" required hidden />
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-bordered">
+                                        <thead>
+                                            <tr class="bg-gradient-gray">
+                                                <th class="text-center">#</th>
+                                                <th class="text-center">GL Head [Code]</th>
+                                                <th class="text-center">Particular</th>
+                                                <th class="text-center">Debit</th>
+                                                <th class="text-center">Credit</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            @foreach (var item in Model.VouchersLinesViewModels)
+                                            {
+                                                <tr>
+                                                    <td>@Sl</td>
+                                                    <td>@item.GlHeadId</td>
+                                                    <td>@item.Particular</td>
+                                                    <td class="text-right">@item.DebitAmount</td>
+                                                    <td class="text-right">@item.CreditAmount</td>
+                                                </tr>
+                                                Sl++;
+                                            }
+                                        </tbody>
+
+                                        <tfoot class="bg-gray">
+                                            <tr>
+                                                <td class="text-right" colspan="3">Total</td>
+                                                <td class="text-right">@Model.VouchersLinesViewModels.Select(x => x.DebitAmount).Sum()</td>
+                                                <td class="text-right">@Model.VouchersLinesViewModels.Select(x => x.CreditAmount).Sum()</td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+
+                                @if (Model.VouchersLinesViewModels.Select(x => x.DebitAmount).Sum().Equals(Model.VouchersLinesViewModels.Select(x => x.CreditAmount).Sum()) && Model.VoucherStatus.Equals(VoucherStatus.Created))
+                                {
+                                    <div class="form-group col-12 text-right">
+                                        <input type="Submit" value="Submit Voucher" class="btn btn-primary text-right" />
+                                    </div>
+                                }
+                            </form>
+                        </div>
+                    }
                 </div>
             </div>
         </div>

@@ -1,7 +1,9 @@
-﻿@model MenuItemViewModel
+﻿@using app.Services.Vouchern
+@model VouchersViewModel
 @{
     ViewData["Title"] = "Detail Voucher";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    int Sl = 1;
 }
 
 <div class="content-header">
@@ -35,23 +37,23 @@
                                 <tbody>
                                     <tr class="border-bottom">
                                         <th class="text-left" width="110px">Voucher Date:</th>
-                                        <td class="text-left">16 November, 2024</td>
+                                        <td class="text-left">@Model.VoucherDate.ToString("dd,MMMM,yyyy")</td>
                                         <th class="text-left" width="110px">Voucher No:</th>
-                                        <td class="text-left">PV01161124001</td>
+                                        <td class="text-left">@Model.VoucherNo</td>
                                         <th class="text-left" width="110px">Voucher Status:</th>
-                                        <td class="text-left"><span class="text-success">Approved</span></td>
+                                        <td class="text-left"><span class="text-success">@Model.VoucherStatus</span></td>
                                     </tr>
                                     <tr class="border-bottom">
                                         <th class="text-left" width="110px">Cost Center:</th>
-                                        <td class="text-left">Others Purchase</td>
+                                        <td class="text-left">@Model.CostCenterViewModel.Name</td>
                                         <th class="text-left" width="110px">Voucher Type:</th>
-                                        <td class="text-left">[PV]-Payment Voucher</td>
+                                        <td class="text-left">@Model.VoucherTypesViewModel.Name</td>
                                         <th class="text-left" width="110px">Created By:</th>
-                                        <td class="text-left">Atik Hassan</td>
+                                        <td class="text-left">@Model.CreatedBy</td>
                                     </tr>
                                     <tr class="border-bottom">
                                         <th class="text-left" width="110px">Narration:</th>
-                                        <td class="text-left" colspan="4">The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.</td>
+                                        <td class="text-left" colspan="4">@Model.Narration</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -64,46 +66,32 @@
                                 <thead>
                                     <tr class="bg-gradient-gray">
                                         <th class="text-center">#</th>
-                                        <th class="text-center">GL Code</th>
-                                        <th class="text-center">GL Head</th>
+                                        <th class="text-center">GL Head [Code]</th>
                                         <th class="text-center">Particular</th>
                                         <th class="text-center">Debit</th>
                                         <th class="text-center">Credit</th>
-                                        <th class="text-center">Action</th>
                                     </tr>
                                 </thead>
 
                                 <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>130010001</td>
-                                        <td>Cash in Hand</td>
-                                        <td>Test credit amount</td>
-                                        <td class="text-right">0.000</td>
-                                        <td class="text-right">5000.000</td>
-                                        <td class="text-center">
-                                            @Html.ActionLink("", "DetailVoucher", new { id = 1 }, new { @class = "text-info fas fa-trash", onclick = "return confirm('Are you sure you want to edit this?')" })
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td>110010001</td>
-                                        <td>Others Cost</td>
-                                        <td>Test debit amount</td>
-                                        <td class="text-right">5000.000</td>
-                                        <td class="text-right">0.000</td>
-                                        <td class="text-center">
-                                            @Html.ActionLink("", "DetailVoucher", new { id = 1 }, new { @class = "text-info fas fa-trash", onclick = "return confirm('Are you sure you want to edit this?')" })
-                                        </td>
-                                    </tr>
+                                    @foreach (var item in Model.VouchersLinesViewModels)
+                                    {
+                                        <tr>
+                                            <td>@Sl</td>
+                                            <td>@item.GlHeadId</td>
+                                            <td>@item.Particular</td>
+                                            <td class="text-right">@item.DebitAmount</td>
+                                            <td class="text-right">@item.CreditAmount</td>
+                                        </tr>
+                                        Sl++;
+                                    }
                                 </tbody>
 
                                 <tfoot class="bg-gray">
                                     <tr>
-                                        <td class="text-right" colspan="4">Total</td>
-                                        <td class="text-right">500.00</td>
-                                        <td class="text-right">500.00</td>
-                                        <td></td>
+                                        <td class="text-right" colspan="3">Total</td>
+                                        <td class="text-right">@Model.VouchersLinesViewModels.Select(x => x.DebitAmount).Sum()</td>
+                                        <td class="text-right">@Model.VouchersLinesViewModels.Select(x => x.CreditAmount).Sum()</td>
                                     </tr>
                                 </tfoot>
                             </table>

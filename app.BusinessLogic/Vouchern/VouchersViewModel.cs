@@ -33,7 +33,7 @@ namespace app.Services.Vouchern
         public VoucherStatus VoucherStatus { get; set; }
 
         public VouchersLinesViewModel VouchersLinesViewModel { get; set; }
-        public List<VouchersViewModel> Vouchers { get; set; }
+        public List<VouchersViewModel> VouchersViewModels { get; set; }
         public List<VouchersLinesViewModel> VouchersLinesViewModels { get; set; }
         public ResponseViewModel ResponseViewModel { get; set; }
     }

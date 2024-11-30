@@ -10,6 +10,7 @@
 
         Task<VouchersViewModel> VouchersAsync();
         Task<VouchersViewModel> VoucherAsync(long Id);
+        Task<VouchersViewModel> UnapprovedVoucherList();
         Task<VouchersViewModel> VoucherByVoucherNoAsync(string voucherNo);
         Task<VouchersViewModel> AddVoucherAsync(VouchersViewModel model);
         Task<ResponseViewModel> DeleteVoucherAync(long Id);
@@ -18,6 +19,10 @@
         Task<VouchersLinesViewModel> VoucherLineAsync(long Id);
         Task<VouchersLinesViewModel> VoucherLinesByVoucherIdAsync(long Id);
         Task<VouchersViewModel> AddVoucherLineAsync(VouchersViewModel model);
-        Task<ResponseViewModel> SubmitVoucherAync(long Id);
+        Task<ResponseViewModel> MakeSubmitVoucherAync(long Id);
+        Task<ResponseViewModel> MakeApproveVoucherAsync(string voucherNo);
+
+        Task<SearchVoucherViewModel> SearchVoucherAsync(SearchVoucherViewModel model);
+
     }
 }

@@ -1,7 +1,9 @@
-﻿@{
+﻿@using app.Services.Vouchern
+@model SearchVoucherViewModel
+@{
     ViewData["Title"] = "Search Vouchers";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
-    // int SN = 1;
+    int Sl = 1;
 }
 
 <div class="content-header">
@@ -27,27 +29,22 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-12">
-                        <form asp-action="SearchVoucher" method="post" class="row">
+                        <form asp-action="SearchVouchers" method="post" class="row">
                             <div class="form-group col">
-                                <label class="control-label">Voucher No</label>
-                                <input class="form-control" />
+                                <label asp-for="VoucherTypesId" class="control-label"></label>
+                                @Html.DropDownListFor(m => m.VoucherTypesId, new SelectList(Model.VoucherTypesViewModel.VoucherTypesViewModels, "Id", "Name"), "--Select Here--", new { @class = "form-control" })
                             </div>
                             <div class="form-group col">
-                                <label class="control-label">Voucher Type</label>
-                                <select id="voucherType" class="form-control">
-                                    <option selected>--Select Here--</option>
-                                    <option>Payment Voucher</option>
-                                    <option>Receipt Voucher</option>
-                                    <option>Journal Voucher</option>
-                                </select>
+                                <label asp-for="CostCentersId" class="control-label"></label>
+                                @Html.DropDownListFor(m => m.CostCentersId, new SelectList(Model.CostCenterViewModel.CostCenterViewModels, "Id", "Name"), "--Select Here--", new { @class = "form-control" })
                             </div>
                             <div class="form-group col">
-                                <label class="control-label">From Date</label>
-                                <input type="date" class="form-control" />
+                                <label asp-for="FromDate" class="control-label"></label>
+                                <input type="date" asp-for="FromDate" value="@DateTime.Now.ToString("dd/MM/yyyy")" class="form-control" />
                             </div>
                             <div class="form-group col">
-                                <label class="control-label">To Date</label>
-                                <input type="date"  class="form-control" />
+                                <label asp-for="ToDate" class="control-label"></label>
+                                <input type="date" asp-for="ToDate" value="@DateTime.Now.ToString("dd/MM/yyyy")" class="form-control" />
                             </div>
                             <div class="form-group col mt-2" style="margin-top: 4px">
                                 <label class="control-label"></label>
@@ -57,35 +54,62 @@
                     </div>
                 </div>
 
-                <div class="table-responsive">
-                    <table class="table table-sm table-bordered">
-                        <thead>
-                            <tr class="bg-gradient-gray">
-                                <th class="text-center">#</th>
-                                <th class="text-center">Vouche No</th>
-                                <th class="text-center">Vouche Type</th>
-                                <th class="text-center">Voucher Date</th>
-                                <th class="text-center">Cost Center Name</th>
-                                <th class="text-center">Amount</th>
-                                <th class="text-center">Action</th>
-                            </tr>
-                        </thead>
+                @if (Model.VouchersViewModels is not null)
+                {
+                    <div class="table-responsive mt-2">
+                        @if (!Model.VouchersViewModels.Any())
+                        {
+                            <p class="text-center text-danger">Nothing Found to show!</p>
+                        }
+                        else
+                        {
+                            <table class="table table-sm table-bordered">
+                                <thead>
+                                    <tr class="bg-gradient-gray">
+                                        <th class="text-center">#</th>
+                                        <th class="text-center">Vouche No</th>
+                                        <th class="text-center">Vouche Type</th>
+                                        <th class="text-center">Voucher Date</th>
+                                        <th class="text-center">Cost Center Name</th>
+                                        <th class="text-center">Total Debit Amount</th>
+                                        <th class="text-center">Total Credit Amount</th>
+                                        <th class="text-center">Approved</th>
+                                        <th class="text-center">Action</th>
+                                    </tr>
+                                </thead>
 
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>PV01161124001</td>
-                                <td>[PV]-Payment Voucher</td>
-                                <td>16 November, 2024</td>
-                                <td>Test Cost Center Name</td>
-                                <td>125000</td>
-                                <td class="text-center">
-                                    @Html.ActionLink("", "ApprovalVoucherDetail", new { id = 1 }, new { @class = "text-info fas fa-eye", onclick = "return confirm('Are you sure you want to edit this?')" })
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                                <tbody>
+                                    @foreach (var item in Model.VouchersViewModels)
+                                    {
+                                        <tr>
+                                            <td>@Sl</td>
+                                            <td>@item.VoucherNo</td>
+                                            <td>@item.VoucherTypesViewModel.Name</td>
+                                            <td>@item.VoucherDate.ToString("dd MMMM, yyyy")</td>
+                                            <td>@item.CostCenterViewModel.Name</td>
+                                            <td class="text-center">@item.TotalDebitAmount</td>
+                                            <td class="text-center">@item.TotalCreditAmount</td>
+                                            <td class="text-center">
+                                                @if (!item.VoucherStatus.Equals(VoucherStatus.Approved))
+                                                {
+                                                    <b class="text-danger"> <i class="fas fa-times-circle fa-2x" style="font-size:20px"></i></b>
+                                                }
+                                                else
+                                                {
+                                                    <b class="text-success"> <i class="fas fa-check-square" style="font-size:20px"></i></b>
+                                                }
+                                            </td>
+                                            <td class="text-center">
+                                                @Html.ActionLink("", "DetailVoucher", new { id = item.Id }, new { @class = "text-info fas fa-eye" })
+                                            </td>
+                                        </tr>
+                                        Sl++;
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                    </div>
+                }
             </div>
         </div>
     </div>
