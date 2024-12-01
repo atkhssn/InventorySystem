@@ -1,4 +1,5 @@
-﻿@model MenuItemViewModel
+﻿@using app.Services.Vouchern
+@model VoucherTypesViewModel
 @{
     ViewData["Title"] = "New Voucher Type";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
@@ -12,7 +13,7 @@
                 <li class="breadcrumb-item active"> New Voucher Type</li>
             </ol>
             <div>
-                <a asp-action="VoucherTypes" class="btn btn-outline-primary"><i class="fa fa-list"></i> Voucher Types</a>
+                <a asp-action="VoucherTypes" class="btn btn-outline-primary"><i class="fa fa-list" aria-hidden="true"></i> Voucher Types</a>
             </div>
         </div>
     </div>
@@ -23,22 +24,22 @@
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title text-info">
-                    <i class="fas fa-plus"></i>
+                    <i class="fa fa-plus" aria-hidden="true"></i>
                     New Voucher Type
                 </h3>
             </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-4">
-                        <form asp-action="AddRecort" method="post">
+                        <form asp-action="AddVoucherType" method="post">
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                             <div class="form-group">
-                                <label asp-for="ShortName" class="control-label"></label>
+                                <label asp-for="ShortName" class="control-label"></label><sup><b class="text-danger">*</b></sup>
                                 <input asp-for="ShortName" class="form-control" required />
                                 <span asp-validation-for="ShortName" class="text-danger"></span>
                             </div>
                             <div class="form-group">
-                                <label asp-for="Name" class="control-label"></label>
+                                <label asp-for="Name" class="control-label"></label><sup><b class="text-danger">*</b></sup>
                                 <input asp-for="Name" class="form-control" required />
                                 <span asp-validation-for="Name" class="text-danger"></span>
                             </div>
@@ -47,6 +48,42 @@
                             </div>
                         </form>
                     </div>
+                </div>
+
+                <div class="position-absolute response-alert" id="response">
+                    @if (Model is not null)
+                    {
+                        if (Model.ResponseViewModel is not null)
+                        {
+                            if (Model.ResponseViewModel.ResponseCode == 400)
+                            {
+                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                    <strong>Bad Request!</strong> @Model.ResponseViewModel.ResponseMessage
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            }
+                            else if (Model.ResponseViewModel.ResponseCode == 404)
+                            {
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>Not Found!</strong> @Model.ResponseViewModel.ResponseMessage
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>Internal Error!</strong> @Model.ResponseViewModel.ResponseMessage
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            }
+                        }
+                    }
                 </div>
             </div>
         </div>
@@ -58,6 +95,10 @@
         $(document).ready(function () {
             $('#Voucher').addClass('menu-open');
             $('#VoucherVoucherTypes').addClass('active');
+
+            setTimeout(function() {
+                $('#response').hide();
+            }, 4000);
         });
     </script>
     @{

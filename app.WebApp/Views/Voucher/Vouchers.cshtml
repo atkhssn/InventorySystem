@@ -1,7 +1,9 @@
-﻿@{
+﻿@using app.Services.Vouchern
+@model VouchersViewModel
+@{
     ViewData["Title"] = "Vouchers";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
-    // int SN = 1;
+    int Sl = 1;
 }
 
 <div class="content-header">
@@ -37,34 +39,48 @@
                                 <th class="text-center">Vouche Type</th>
                                 <th class="text-center">Voucher Date</th>
                                 <th class="text-center">Cost Center Name</th>
-                                <th class="text-center">Amount</th>
-                                <th class="text-center">Approved</th>
+                                <th class="text-center">Total Debit Amount</th>
+                                <th class="text-center">Total Credit Amount</th>
+                                <th class="text-center">Status</th>
                                 <th class="text-center">Action</th>
                             </tr>
                         </thead>
 
                         <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>PV01161124001</td>
-                                <td>[PV]-Payment Voucher</td>
-                                <td>16 November, 2024</td>
-                                <td>Test Cost Center Name</td>
-                                <td class="text-center">125000</td>
-                                <td class="text-center">
-                                    @if (!true)
-                                    {
-                                        <b class="text-danger"> <i class="fas fa-times-circle fa-2x" style="font-size:20px"></i></b>
-                                    }
-                                    else
-                                    {
-                                        <b class="text-success"> <i class="fas fa-check-square" style="font-size:20px"></i></b>
-                                    }
-                                </td>
-                                <td class="text-center">
-                                    @Html.ActionLink("", "DetailVoucher", new { id = 1 }, new { @class = "text-info fas fa-eye", onclick = "return confirm('Are you sure you want to edit this?')" })
-                                </td>
-                            </tr>
+                            @foreach (var item in Model.VouchersViewModels)
+                            {
+                                <tr>
+                                    <td>@Sl</td>
+                                    <td>@item.VoucherNo</td>
+                                    <td>@item.VoucherTypesViewModel.Name</td>
+                                    <td>@item.VoucherDate.ToString("dd MMMM, yyyy")</td>
+                                    <td>@item.CostCenterViewModel.Name</td>
+                                    <td class="text-right">@item.TotalDebitAmount</td>
+                                    <td class="text-right">@item.TotalCreditAmount</td>
+                                    <td class="text-center">
+                                        @if (item.VoucherStatus.Equals(VoucherStatus.CREATED))
+                                        {
+                                            <span class="badge badge-pill badge-primary">@item.VoucherStatus</span>
+                                        }
+                                        else if (item.VoucherStatus.Equals(VoucherStatus.SUBMITTED))
+                                        {
+                                            <span class="badge badge-pill badge-info">@item.VoucherStatus</span>
+                                        }
+                                        else if (item.VoucherStatus.Equals(VoucherStatus.APPROVED))
+                                        {
+                                            <span class="badge badge-pill badge-success">@item.VoucherStatus</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-pill badge-light">@item.VoucherStatus</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        @Html.ActionLink("", "DetailVoucher", new { id = item.Id }, new { @class = "text-info fas fa-eye" })
+                                    </td>
+                                </tr>
+                                Sl++;
+                            }
                         </tbody>
                     </table>
                 </div>

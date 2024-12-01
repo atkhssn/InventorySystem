@@ -6,7 +6,7 @@
 }
 <style>
     [class*=sidebar-light-] .nav-sidebar > .nav-item.menu-open > .nav-link, [class*=sidebar-light-] .nav-sidebar > .nav-item:hover > .nav-link {
-        background-color: #C6DA72 !important;
+        background-color: #6ce8e2 !important;
         color: #1E1E1E !important;
         font-weight: 900;
     }
@@ -16,7 +16,7 @@
         }
 
     .nav-treeview > .nav-item > .nav-link.active, [class*=sidebar-light-] .nav-treeview > .nav-item > .nav-link.active:hover {
-        background-color: #f5ffcd !important;
+        background-color: #c5e9e7 !important;
         color: #1E1E1E !important;
         border: 1px solid #fff !important;
         font-weight: 900;
@@ -25,13 +25,19 @@
     .navbar-white {
         /* background-color: #fff; */
         color: #fbf3ea !important;
-        background-color: #0E9547;
+        background-color: #00a090;
     }
 
     .layout-navbar-fixed .wrapper .sidebar-light-info .brand-link:not([class*=navbar]) {
         color: #fbf3ea;
-        background-color: #0E9547;
-        height: 51px;
+        background-color: #00a090;
+        height: 51.5px;
+    }
+
+    .brand-link h3 {
+        margin: 0;
+        padding: 4px 0;
+        line-height: .5;
     }
 
     .main-header .nav-link i {
@@ -43,16 +49,16 @@
     }
 
     .main-sidebar .nav-link i {
-        color: #0E9547;
+        color: #00a090;
     }
 
     .nav-sidebar > .nav-item {
         margin-bottom: 0;
-        border-bottom: 1px solid #C6DA72;
+        border-bottom: 1px solid #c5e9e7;
     }
 
     .sidebar-dark-info .nav-sidebar > .nav-item > .nav-link.active, .sidebar-light-info .nav-sidebar > .nav-item > .nav-link.active {
-        background-color: #C6DA72;
+        background-color: #00827c;
         color: #fff;
         border-radius: 0rem !important;
     }
@@ -66,33 +72,33 @@
     }
 
     .image-box-logo {
-        width: 100px;
-        height: 100px;
-        margin: 5px 0;
+        width: 85px;
+        height: 85px;
+        margin: 20px 0;
         padding: 0
     }
 
     .main-app-logo {
         width: 100%;
-    }
-
-    .user-name {
-        margin: 45px 0;
+        border-radius: 100%;
     }
 
 </style>
 
 <aside class="main-sidebar sidebar-light-info elevation-4">
-    <a href="/Admin/Index" class="brand-link text-center"><b>@currentuse.Email</b></a>
+    <a href="/Admin/Index" class="brand-link text-center"><h3 style="font-size: 20px; line-height: .8">Inventory System</h3></a>
     <div class="sidebar">
         <nav class="">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 <li class="nav-item">
-                    <div style="margin-bottom: 7px; display:flex;">
+                    <div style="display:flex;">
                         <div class="image-box-logo">
-                            <img src="~/kgfile/mainlogo.png" class="main-app-logo" />
+                            <img src="~/Logo/InventorySystem.jpg" class="main-app-logo" />
                         </div>
-                        <p class="user-name">@currentuse.FullName</p>
+                        <div class="sidebar-logo-text-box">
+                            <p class="sidebar-logo-text"><b>@currentuse.FullName</b></p>
+                            <small>@currentuse.Email</small>
+                        </div>
                     </div>
                 </li>
                 <li class="nav-item">
@@ -111,7 +117,7 @@
                         {
                             <li class="nav-item" id="@item.Activeid">
                                 <a href="#" class="nav-link">
-                                    @Html.Raw(item.Icon)
+                                    @Html.Raw(item.Icon) &nbsp;
                                     <p>
                                         @item.Name
                                         <i class="right fas fa-angle-left"></i>
@@ -122,7 +128,7 @@
                                     {
                                         <li class="nav-item">
                                             <a asp-action="@menu.Action" asp-controller="@menu.Controller" id="@menu.Controller@menu.Action" class="nav-link">
-                                                @Html.Raw(menu.Icon)
+                                                @Html.Raw(menu.Icon) &nbsp;
                                                 <p>@menu.Name</p>
                                             </a>
                                         </li>
