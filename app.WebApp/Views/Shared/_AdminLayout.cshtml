@@ -31,18 +31,15 @@
                 <li class="nav-item">
                     <a asp-action="Logout" asp-controller="Account" class="btn btn-outline-danger btn-flat float-right" style="border-color: #fff; color: #fff">Sign out</a>
                 </li>
-
             </ul>
         </nav>
-
         <partial name="_partialAdminSidebar" />
         <div class="content-wrapper">
             @RenderBody()
         </div>
-
         <footer class="main-footer main-layout-footer">
             <div class="container">
-                &copy; @DateTime.Now.Year ISS-Light
+                &copy; @DateTime.Now.Year Inventory System
             </div>
         </footer>
     </div>

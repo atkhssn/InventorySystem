@@ -1,16 +1,14 @@
 ﻿@model LoginViewModel
 @{
     ViewData["Title"] = "Login";
-
 }
 
 <style>
-
     @@media (max-width:768px) {
         .d-ui-card {
             margin: 20px 0;
             padding: 25px 10px;
-            border: 1px solid rgba(0,0,0,.1) !important;
+            border: 1px solid rgba(0,0,0,.15) !important;
             border-radius: 30px;
         }
     }
@@ -19,7 +17,7 @@
         .d-ui-card {
             margin: 50px 0;
             padding: 30px 100px 50px;
-            border: 1px solid rgba(0,0,0,.1) !important;
+            border: 1px solid rgba(0,0,0,.15) !important;
             border-radius: 30px;
         }
     }
@@ -100,6 +98,10 @@
         height: 150px;
         border-radius: 100%
     }
+
+    .forgotPassword p a {
+        color: #00a090 !important;
+    }
 </style>
 
 <div class="my-3">
@@ -122,14 +124,13 @@
                             <input type="password" class="form-control" placeholder="******" required asp-for="Password" />
                             <span asp-validation-for="Password" class="text-danger"></span>
                         </div>
-                        <span asp-validation-for="IncorrectInput" class="text-danger"></span>
-                        <div class="row  justify-content-center d-action">
-                            <div class="col-12 text-left"> <a class="text-primary" asp-area="" asp-controller="Account" asp-action="Forgottenpassword">Forgotten your password?</a> </div>
-                            <div class="col-12 text-center mt-3">  <input type="submit" class="btn btn-success w-100 btn-bg-color" value="Login" />  </div>
-
+                        <div class="form-group d-action mb-4">
+                            <input type="submit" class="btn btn-success w-100 btn-bg-color" value="Login" />
+                        </div>
+                        <div class="my-1 forgotPassword">
+                            <p class="text-center text-black-50">Forgotten your password? <a asp-controller="Account" asp-action="Forgottenpassword">Click here</a> to reset it.</p>
                         </div>
                     </form>
-
                 </div>
             </div>
         </div>

@@ -116,16 +116,16 @@
                                 </div>
 
                                 <div class="form-group col-5">
-                                    <small class="text-gray"><b class="text-dark">Attachment:</b> Image and PDF file is accepted only.</small>
+                                    <label asp-for="VouchersLinesViewModel.Attachment" class="control-label"></label>
                                     <div class="custom-file">
                                         <input type="file" asp-for="VouchersLinesViewModel.Attachment" accept=".jpg, .jpeg, .png, .webp, .pdf" class="custom-file-input" id="attachment">
                                         <label class="custom-file-label" for="attachment" id="attachmentSelected">Choose file (Max file size 5 MB)</label>
                                     </div>
-                                    <small class="text-danger" id="attachmentMessage"></small>
+                                    <small class="text-gray" id="attachmentMessage">Only image and PDF files are accepted.</small>
                                 </div>
 
                                 <div class="form-group col-7 text-right">
-                                    <input type="Submit" value="@(Model.Id > 0 ? "Add Voucher Detail" : "Create Voucher")" class="btn btn-primary text-right" style="margin: 0; margin-top: 22px" />
+                                    <input type="Submit" value="@(Model.Id > 0 ? "Add Voucher Detail" : "Create Voucher")" class="btn btn-primary text-right" style="margin: 0; margin-top: 30px" />
                                 </div>
                             }
                         </form>
@@ -233,15 +233,22 @@
                         $("#attachmentSelected").text("Choose file (Max file size 5 MB)");
                         $("#attachmentSelected").removeClass("text-success");
                         $("#attachmentMessage").text("Invalid file type. Please select a JPG, PNG, webp, or PDF file.");
+                        $("#attachmentMessage").removeClass("text-gray");
+                        $("#attachmentMessage").addClass("text-danger");
                     }else if (fileSize > allowedFileSize) {
                         $(this).val('');
                         $("#attachmentSelected").text("Choose file (Max file size 5 MB)");
                         $("#attachmentSelected").removeClass("text-success");
                         $("#attachmentMessage").text("File size is too large. Maximum allowed size is 5 MB.");
+                        $("#attachmentMessage").removeClass("text-gray");
+                        $("#attachmentMessage").addClass("text-danger");
                     }else{
                         $("#attachmentMessage").text("");
                         $("#attachmentSelected").text("Selected file:" + fileName);
                         $("#attachmentSelected").addClass("text-success");
+                        $("#attachmentMessage").text("Only image and PDF files are accepted.");
+                        $("#attachmentMessage").removeClass("text-danger");
+                        $("#attachmentMessage").addClass("text-gray");
                     }
                 }
             });
