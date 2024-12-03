@@ -35,13 +35,13 @@ namespace app.WebApp.AdminControllers
         [HttpPost]
         public async Task<IActionResult> AddVoucherType(VoucherTypesViewModel voucherTypesViewModel)
         {
-            var request = await _voucherServices.AddVoucherTypeAsync(voucherTypesViewModel);
-            if (request.ResponseCode == 200)
+            var response = await _voucherServices.AddVoucherTypeAsync(voucherTypesViewModel);
+            if (response.ResponseCode == 200)
             {
-                TempData["Message"] = request.ResponseMessage;
+                TempData["Message"] = response.ResponseMessage;
                 return await Task.Run(() => RedirectToAction("VoucherTypes"));
             }
-            voucherTypesViewModel.ResponseViewModel = request;
+            voucherTypesViewModel.ResponseViewModel = response;
             return await Task.Run(() => View(voucherTypesViewModel));
         }
 
@@ -55,22 +55,22 @@ namespace app.WebApp.AdminControllers
         [HttpPost]
         public async Task<IActionResult> UpdateVoucherType(VoucherTypesViewModel voucherTypesViewModel)
         {
-            var request = await _voucherServices.UpdateVoucherTypeAync(voucherTypesViewModel);
-            if (request.ResponseCode == 200)
+            var response = await _voucherServices.UpdateVoucherTypeAync(voucherTypesViewModel);
+            if (response.ResponseCode == 200)
             {
-                TempData["Message"] = request.ResponseMessage;
+                TempData["Message"] = response.ResponseMessage;
                 return await Task.Run(() => RedirectToAction("VoucherTypes"));
             }
-            voucherTypesViewModel.ResponseViewModel = request;
+            voucherTypesViewModel.ResponseViewModel = response;
             return await Task.Run(() => View(voucherTypesViewModel));
         }
 
         [HttpGet]
         public async Task<IActionResult> DeleteCostCenter(long id)
         {
-            var request = await _voucherServices.DeleteVoucherTypeAync(id);
-            if (request.ResponseCode == 200)
-                TempData["Message"] = request.ResponseMessage;
+            var response = await _voucherServices.DeleteVoucherTypeAync(id);
+            if (response.ResponseCode == 200)
+                TempData["Message"] = response.ResponseMessage;
             return await Task.Run(() => RedirectToAction("VoucherTypes"));
         }
 
