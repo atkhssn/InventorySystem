@@ -12,10 +12,14 @@ namespace app.WebApp.AdminControllers
     {
         private readonly IVoucherServices _voucherServices;
         private readonly IAccountingService _accoutingServices;
-        public VoucherController(IVoucherServices voucherServices, IAccountingService accountingService)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly string[] _allowedFileExtensions = { ".jpg", ".jpeg", ".png", ".webp", ".pdf" };
+
+        public VoucherController(IVoucherServices voucherServices, IAccountingService accountingService, IWebHostEnvironment webHostEnvironment)
         {
             _voucherServices = voucherServices;
             _accoutingServices = accountingService;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         #region Voucher type
@@ -131,6 +135,51 @@ namespace app.WebApp.AdminControllers
         [HttpPost]
         public async Task<IActionResult> AddVoucher(VouchersViewModel vouchersViewModel)
         {
+            IFormFile file = vouchersViewModel.VouchersLinesViewModel.Attachment;
+            if (file is not null || file.Length > 0)
+            {
+                string fileExtention = Path.GetExtension(file.FileName).ToLowerInvariant();
+
+                if (!_allowedFileExtensions.Contains(fileExtention))
+                {
+                    vouchersViewModel.ResponseViewModel.ResponseCode = 400;
+                    vouchersViewModel.ResponseViewModel.ResponseMessage = $"Invalid file extention {fileExtention}.";
+                    return await Task.Run(() => View(vouchersViewModel));
+                }
+
+                if (file.Length >= 5 * 1024 * 1024)
+                {
+                    vouchersViewModel.ResponseViewModel.ResponseCode = 400;
+                    vouchersViewModel.ResponseViewModel.ResponseMessage = $"Maximum allowed file size 5MB.";
+                    return await Task.Run(() => View(vouchersViewModel));
+                }
+
+                try
+                {
+                    string rootPath = _webHostEnvironment.WebRootPath;
+                    string folderPath = "Uploads/VoucherAttachments";
+                    string uploadPath = Path.Combine(rootPath, "Uploads", "VoucherAttachments");
+                    if (!Directory.Exists(uploadPath))
+                    {
+                        Directory.CreateDirectory(uploadPath);
+                    }
+                    var documentName = $"V{vouchersViewModel.VouchersLinesViewModel.GlHeadId}{DateTime.Now.ToString("yyMMddHHmmss")}{fileExtention}";
+                    var filePath = Path.Combine(uploadPath, documentName);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        file.CopyTo(stream);
+                    }
+
+                    vouchersViewModel.ImageUrl = $"{folderPath}/{documentName}";
+                }
+                catch (Exception ex)
+                {
+                    vouchersViewModel.ResponseViewModel.ResponseCode = 500;
+                    vouchersViewModel.ResponseViewModel.ResponseMessage = ex.Message.ToString();
+                    return await Task.Run(() => View(vouchersViewModel));
+                }
+            }
+
             if (vouchersViewModel.Id.Equals(0))
             {
                 VouchersViewModel response = await _voucherServices.AddVoucherAsync(vouchersViewModel);
