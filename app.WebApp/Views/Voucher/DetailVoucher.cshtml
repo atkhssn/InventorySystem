@@ -41,7 +41,30 @@
                                         <th class="text-left" width="110px">Voucher No:</th>
                                         <td class="text-left">@Model.VoucherNo</td>
                                         <th class="text-left" width="110px">Voucher Status:</th>
-                                        <td class="text-left"><span class="text-success">@Model.VoucherStatus</span></td>
+                                        <td class="text-left">
+                                            <span class="text-success">
+                                                @if (Model.VoucherStatus.Equals(VoucherStatus.CREATED))
+                                                {
+                                                    <span class="text-primary text-bold">@Model.VoucherStatus</span>
+                                                }
+                                                else if (Model.VoucherStatus.Equals(VoucherStatus.SUBMITTED))
+                                                {
+                                                    <span class="text-info text-bold">@Model.VoucherStatus</span>
+                                                }
+                                                else if (Model.VoucherStatus.Equals(VoucherStatus.APPROVED))
+                                                {
+                                                    <span class="text-success text-bold">@Model.VoucherStatus</span>
+                                                }
+                                                else if (Model.VoucherStatus.Equals(VoucherStatus.REJECTED))
+                                                {
+                                                    <span class="text-danger text-bold">@Model.VoucherStatus</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-light text-bold">@Model.VoucherStatus</span>
+                                                }
+                                            </span>
+                                        </td>
                                     </tr>
                                     <tr class="border-bottom">
                                         <th class="text-left" width="110px">Cost Center:</th>

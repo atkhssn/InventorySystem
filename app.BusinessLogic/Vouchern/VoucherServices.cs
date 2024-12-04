@@ -209,7 +209,8 @@ namespace app.Services.Vouchern
 
         public async Task<VouchersViewModel> VoucherAsync(long id)
         {
-            VouchersViewModel request = await _dbContext.Vouchers
+            VouchersViewModel request = new VouchersViewModel();
+            request = await _dbContext.Vouchers
             .Include(v => v.VoucherTypes)
             .Include(v => v.CostCenters)
             .Where(v => v.Id.Equals(id) && v.IsActive)
@@ -254,6 +255,11 @@ namespace app.Services.Vouchern
                 UpdatedOn = v.UpdatedOn,
                 IsActive = v.IsActive
             }).FirstOrDefaultAsync();
+
+            if (request is null)
+            {
+                return null;
+            }
 
             request.VouchersLinesViewModels = await _dbContext.VouchersLines
                 .Where(x => x.VouchersId.Equals(request.Id) && x.IsActive).Select(x => new VouchersLinesViewModel

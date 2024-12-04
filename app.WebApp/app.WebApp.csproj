@@ -80,6 +80,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\kgfile\customarlogo\" />
+    <Folder Include="wwwroot\Uploads\VoucherAttachments\" />
   </ItemGroup>
 
 </Project>

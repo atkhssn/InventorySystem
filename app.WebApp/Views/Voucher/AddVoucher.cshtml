@@ -1,9 +1,13 @@
-﻿@using app.Services.Vouchern
+﻿@using Newtonsoft.Json
+@using app.Services
+@using app.Services.Vouchern
 @model VouchersViewModel
 @{
     ViewData["Title"] = "New Voucher";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     int Sl = 1;
+    var getTempRes = ViewBag.Response as string;
+    ResponseViewModel response = getTempRes is not null ? JsonConvert.DeserializeObject<ResponseViewModel>(getTempRes) : null;
 }
 
 <div class="content-header">
@@ -46,7 +50,28 @@
                                                 <th class="text-left" width="110px">Voucher No:</th>
                                                 <td class="text-left">@Model.VoucherNo</td>
                                                 <th class="text-left" width="110px">Voucher Status:</th>
-                                                <td class="text-left"><span class="text-success">@Model.VoucherStatus</span></td>
+                                                <td class="text-left">
+                                                    @if (Model.VoucherStatus.Equals(VoucherStatus.CREATED))
+                                                    {
+                                                        <span class="text-primary text-bold">@Model.VoucherStatus</span>
+                                                    }
+                                                    else if (Model.VoucherStatus.Equals(VoucherStatus.SUBMITTED))
+                                                    {
+                                                        <span class="text-info text-bold">@Model.VoucherStatus</span>
+                                                    }
+                                                    else if (Model.VoucherStatus.Equals(VoucherStatus.APPROVED))
+                                                    {
+                                                        <span class="text-success text-bold">@Model.VoucherStatus</span>
+                                                    }
+                                                    else if (Model.VoucherStatus.Equals(VoucherStatus.REJECTED))
+                                                    {
+                                                        <span class="text-danger text-bold">@Model.VoucherStatus</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-light text-bold">@Model.VoucherStatus</span>
+                                                    }
+                                                </td>
                                             </tr>
                                             <tr class="border-bottom">
                                                 <th class="text-left" width="110px">Cost Center:</th>
@@ -181,6 +206,47 @@
                         </div>
                     }
                 </div>
+                <div class="position-absolute response-alert" id="response">
+                    @if (response is not null)
+                    {
+                        if (response.ResponseCode.Equals(200))
+                        {
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <strong>Success!</strong> @response.ResponseMessage
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        }
+                        else if (response.ResponseCode.Equals(400))
+                        {
+                            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                <strong>Bad Request!</strong> @response.ResponseMessage
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        }
+                        else if (response.ResponseCode.Equals(404))
+                        {
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <strong>Not Found!</strong> @response.ResponseMessage
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <strong>Internal Error!</strong> @response.ResponseMessage
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        }
+                    }
+                </div>
             </div>
         </div>
     </div>
@@ -252,6 +318,10 @@
                     }
                 }
             });
+
+            setTimeout(function() {
+                $('#response').hide();
+            }, 3000);
 
         });
     </script>
