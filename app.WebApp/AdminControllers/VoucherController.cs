@@ -136,7 +136,7 @@ namespace app.WebApp.AdminControllers
         public async Task<IActionResult> AddVoucher(VouchersViewModel vouchersViewModel)
         {
             IFormFile file = vouchersViewModel.VouchersLinesViewModel.Attachment;
-            if (file is not null || file.Length > 0)
+            if (file is not null)
             {
                 string fileExtention = Path.GetExtension(file.FileName).ToLowerInvariant();
 
