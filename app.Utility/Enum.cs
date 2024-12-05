@@ -68,4 +68,22 @@
         APPROVED = 5,
         REJECTED = 6,
     }
+
+    public enum CoATypes
+    {
+        ASSET = 1,
+        LIABILITY = 2,
+        EQUITY = 3,
+        REVENUE = 4,
+        EXPENSE = 5,
+    }
+
+    public enum CoAHead
+    {
+        HEADONE = 1,
+        HEADTWO = 2,
+        HEADTHREE = 3,
+        HEADFOUR = 4,
+        HEADFIVE = 5,
+    }
 }

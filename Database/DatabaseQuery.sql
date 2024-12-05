@@ -63,3 +63,40 @@ CREATE TABLE New.VouchersLines(
 
 	FOREIGN KEY(VouchersId) REFERENCES New.Vouchers(Id)
 )
+
+CREATE TABLE New.CoATypes(
+	Id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	Name NVARCHAR(50) NOT NULL,
+	IsActive BIT NOT NULL
+)
+
+CREATE TABLE New.ChartOfAccounts(
+	AccountCode VARCHAR(10) NOT NULL PRIMARY KEY,
+	AccountName NVARCHAR(100) NOT NULL,
+	ParentAccountCode VARCHAR(10) NOT NULL,
+	Level INT NOT NULL,
+	CoATypeId INT NOT NULL,
+	IsRoot BIT NOT NULL,
+	IsActive BIT NOT NULL,
+	CreatedBy NVARCHAR(150) NOT NULL,
+	CreatedOn DATETIME NOT NULL,
+	UpdatedBy NVARCHAR(150) NULL,
+	UpdatedOn DATETIME NULL
+
+	FOREIGN KEY(CoATypeId) REFERENCES New.CoATypes(Id)
+)
+
+CREATE TABLE New.Transactions(
+	Id VARCHAR(20) NOT NULL PRIMARY KEY,
+	AccountCode VARCHAR(10) NOT NULL,
+	TransactionDate DATETIME NOT NULL,
+	Description NVARCHAR(250) NULL,
+	DebitAmount DECIMAL(18,3) NOT NULL,
+	CreditAmount DECIMAL(18,3) NOT NULL,
+	Balance DECIMAL(18,3) NOT NULL,
+	IsSuccess BIT NOT NULL,
+	RequestedBy NVARCHAR(150) NOT NULL,
+	RequestedOn DATETIME NOT NULL
+
+	FOREIGN KEY(AccountCode) REFERENCES New.ChartOfAccounts(AccountCode)
+)
