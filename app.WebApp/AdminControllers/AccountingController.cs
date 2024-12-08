@@ -27,7 +27,17 @@ namespace app.WebApp.AdminControllers
             return Json(new { });
         }
 
-        [HttpPost]
+        [HttpGet]
+        public async Task<IActionResult> TrailBalance()
+        {
+            return await Task.Run(() => View());
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> BalanceSheet()
+        {
+            return await Task.Run(() => View());
+        }
 
         #endregion
 
