@@ -1,16 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using app.WebApp.Models;
-using app.Services.UserServices;
-using app.Infrastructure.Auth;
-using Microsoft.AspNetCore.Http;
-using System.Linq;
-using System.Text.Json;
-using Microsoft.AspNetCore.Identity;
-using NuGet.Protocol.Plugins;
+﻿using app.Infrastructure.Auth;
 using app.Services.UserpermissionsService;
+using app.Services.UserServices;
+using app.WebApp.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace app.WebApp.Controllers
 {
@@ -25,26 +19,26 @@ namespace app.WebApp.Controllers
             )
         {
             this.signInManager = signInManager;
- 
+
             this.UserServices = UserServices;
             this.userpermission = userpermission;
         }
         [HttpGet]
         public async Task<IActionResult> Login()
         {
-            LoginViewModel model=new LoginViewModel();
-            return View(model);
+            LoginViewModel model = new LoginViewModel();
+            return await Task.Run(() => View(model));
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
-            var  user =await UserServices.GetByUser(model.Email);
+            var user = await UserServices.GetByUser(model.Email);
             if (user == null)
             {
                 ModelState.AddModelError(string.Empty, "User not found");
-              return  View(model);
+                return await Task.Run(() => View(model));
 
             }
             var result = await signInManager.PasswordSignInAsync(user, model.Password, false, false);
@@ -52,32 +46,33 @@ namespace app.WebApp.Controllers
             {
                 var getitem = await userpermission.GetAllMenuItemRecort(user.Id);
                 HttpContext.Session.SetString("Username", user.UserName.ToString());
-                var arry= JsonSerializer.Serialize(getitem);
+                var arry = JsonSerializer.Serialize(getitem);
                 HttpContext.Session.SetString("ArrayData", arry);
-                return Redirect("/Admin/Index");
+                return await Task.Run(() => Redirect("/Admin/Index"));
             }
             else
             {
                 ModelState.AddModelError(string.Empty, "Password is not verified");
-                return View(model);
+                return await Task.Run(() => View(model));
             }
 
         }
 
-        public IActionResult AccessDenied()
+        public async Task<IActionResult> AccessDenied()
         {
-          
-            return View();
+
+            return await Task.Run(() => View());
         }
+
         public async Task<IActionResult> Logout()
         {
             if (signInManager.IsSignedIn(User))
             {
                 await signInManager.SignOutAsync();
                 HttpContext.Session.Clear();
-                return Redirect("Login");
+                return await Task.Run(() => Redirect("Login"));
             }
-            return Redirect("Login");
+            return await Task.Run(() => Redirect("Login"));
         }
     }
 }

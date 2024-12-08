@@ -55,7 +55,7 @@
                     {
                         if (Model.ResponseViewModel is not null)
                         {
-                            if (Model.ResponseViewModel.ResponseCode == 400)
+                            if (Model.ResponseViewModel.ResponseCode.Equals(400))
                             {
                                 <div class="alert alert-warning alert-dismissible fade show" role="alert">
                                     <strong>Bad Request!</strong> @Model.ResponseViewModel.ResponseMessage
@@ -64,7 +64,7 @@
                                     </button>
                                 </div>
                             }
-                            else if (Model.ResponseViewModel.ResponseCode == 404)
+                            else if (Model.ResponseViewModel.ResponseCode.Equals(404))
                             {
                                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                                     <strong>Not Found!</strong> @Model.ResponseViewModel.ResponseMessage

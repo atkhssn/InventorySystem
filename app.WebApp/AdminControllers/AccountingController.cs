@@ -27,7 +27,17 @@ namespace app.WebApp.AdminControllers
             return Json(new { });
         }
 
-        [HttpPost]
+        [HttpGet]
+        public async Task<IActionResult> TrailBalance()
+        {
+            return await Task.Run(() => View());
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> BalanceSheet()
+        {
+            return await Task.Run(() => View());
+        }
 
         #endregion
 
@@ -45,7 +55,7 @@ namespace app.WebApp.AdminControllers
         public async Task<IActionResult> CostCenterDetail(long id)
         {
             var response = await _accountingService.CostCenterAync(id);
-            return View(response);
+            return await Task.Run(() => View(response));
         }
 
         [HttpGet]
@@ -57,13 +67,13 @@ namespace app.WebApp.AdminControllers
         [HttpPost]
         public async Task<IActionResult> AddCostCenter(CostCentersViewModel costCenterViewModel)
         {
-            var request = await _accountingService.AddCostCenterAsync(costCenterViewModel);
-            if (request.ResponseCode == 200)
+            var response = await _accountingService.AddCostCenterAsync(costCenterViewModel);
+            if (response.ResponseCode == 200)
             {
-                TempData["Message"] = request.ResponseMessage;
+                TempData["Message"] = response.ResponseMessage;
                 return await Task.Run(() => RedirectToAction("CostCenters"));
             }
-            costCenterViewModel.ResponseViewModel = request;
+            costCenterViewModel.ResponseViewModel = response;
             return await Task.Run(() => View(costCenterViewModel));
         }
 
@@ -77,22 +87,22 @@ namespace app.WebApp.AdminControllers
         [HttpPost]
         public async Task<IActionResult> UpdateCostCenter(CostCentersViewModel costCenterViewModel)
         {
-            var request = await _accountingService.UpdateCostCenterAync(costCenterViewModel);
-            if (request.ResponseCode == 200)
+            var response = await _accountingService.UpdateCostCenterAync(costCenterViewModel);
+            if (response.ResponseCode == 200)
             {
-                TempData["Message"] = request.ResponseMessage;
+                TempData["Message"] = response.ResponseMessage;
                 return await Task.Run(() => RedirectToAction("CostCenters"));
             }
-            costCenterViewModel.ResponseViewModel = request;
+            costCenterViewModel.ResponseViewModel = response;
             return await Task.Run(() => View(costCenterViewModel));
         }
 
         [HttpGet]
         public async Task<IActionResult> DeleteCostCenter(long id)
         {
-            var request = await _accountingService.DeleteCostCenterAync(id);
-            if (request.ResponseCode == 200)
-                TempData["Message"] = request.ResponseMessage;
+            var response = await _accountingService.DeleteCostCenterAync(id);
+            if (response.ResponseCode == 200)
+                TempData["Message"] = response.ResponseMessage;
             return await Task.Run(() => RedirectToAction("CostCenters"));
         }
 
