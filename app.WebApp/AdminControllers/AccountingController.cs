@@ -1,6 +1,8 @@
 ﻿using app.Services.Accounting;
+using app.WebApp.Views.Accounting;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace app.WebApp.AdminControllers
 {
@@ -18,13 +20,35 @@ namespace app.WebApp.AdminControllers
         [HttpGet]
         public async Task<IActionResult> ChartOfAccounts()
         {
+            var response = await _accountingService.ChartOfAccoutingsAsync();
+            var hierarchicalData = BuildHierarchy(response.ChartOfAccountsViewModels, "0");
+            ViewBag.JsonData = System.Text.Json.JsonSerializer.Serialize(hierarchicalData);
+            ViewBag.Response = TempData["Response"]?.ToString();
             return await Task.Run(() => View());
         }
 
-        [HttpGet]
-        public IActionResult SearchChartOfAccounts(string costConeter)
+        [HttpPost]
+        public async Task<IActionResult> CreateAccountHead(ChartOfAccountsViewModel chartOfAccountsViewModel)
         {
-            return Json(new { });
+            var response = await _accountingService.AddAccountHeadAsync(chartOfAccountsViewModel);
+            TempData["Response"] = JsonConvert.SerializeObject(response);
+            return await Task.Run(() => RedirectToAction("ChartOfAccounts"));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditAccountHead(ChartOfAccountsViewModel chartOfAccountsViewModel)
+        {
+            var response = await _accountingService.UpdateAccountHeadAsync(chartOfAccountsViewModel);
+            TempData["Response"] = JsonConvert.SerializeObject(response);
+            return await Task.Run(() => RedirectToAction("ChartOfAccounts"));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteAccountHead(ChartOfAccountsViewModel chartOfAccountsViewModel)
+        {
+            var response = await _accountingService.DeleteAccountHeadAsync(chartOfAccountsViewModel.AccountCode);
+            TempData["Response"] = JsonConvert.SerializeObject(response);
+            return await Task.Run(() => RedirectToAction("ChartOfAccounts"));
         }
 
         [HttpGet]
@@ -107,6 +131,18 @@ namespace app.WebApp.AdminControllers
         }
 
         #endregion
+
+        private List<ChartOfAccountHierarchyNode> BuildHierarchy(List<ChartOfAccountsViewModel> nodes, string parentCode)
+        {
+            return nodes
+                .Where(x => x.ParentAccountCode == parentCode)
+                .Select(x => new ChartOfAccountHierarchyNode
+                {
+                    id = x.AccountCode,
+                    text = $"[{x.AccountCode}] - {x.AccountName}",
+                    children = BuildHierarchy(nodes, x.AccountCode)
+                }).ToList();
+        }
 
     }
 }

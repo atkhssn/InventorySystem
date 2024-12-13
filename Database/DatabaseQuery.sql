@@ -88,6 +88,7 @@ CREATE TABLE New.ChartOfAccounts(
 
 CREATE TABLE New.Transactions(
 	Id VARCHAR(20) NOT NULL PRIMARY KEY,
+	VouchersId BIGINT NOT NULL,
 	AccountCode VARCHAR(10) NOT NULL,
 	TransactionDate DATETIME NOT NULL,
 	Description NVARCHAR(250) NULL,
@@ -98,5 +99,6 @@ CREATE TABLE New.Transactions(
 	RequestedBy NVARCHAR(150) NOT NULL,
 	RequestedOn DATETIME NOT NULL
 
+	FOREIGN KEY(VouchersId) REFERENCES New.Vouchers(Id),
 	FOREIGN KEY(AccountCode) REFERENCES New.ChartOfAccounts(AccountCode)
 )

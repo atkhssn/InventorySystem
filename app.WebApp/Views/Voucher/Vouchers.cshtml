@@ -5,6 +5,7 @@
 @{
     ViewData["Title"] = "Vouchers";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
     int Sl = 1;
     var getTempRes = ViewBag.Response as string;
     ResponseViewModel response = getTempRes is not null ? JsonConvert.DeserializeObject<ResponseViewModel>(getTempRes) : null;

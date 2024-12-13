@@ -7,5 +7,10 @@
         Task<ResponseViewModel> AddCostCenterAsync(CostCentersViewModel model);
         Task<ResponseViewModel> UpdateCostCenterAync(CostCentersViewModel model);
         Task<ResponseViewModel> DeleteCostCenterAync(long id);
+
+        Task<ChartOfAccountsViewModel> ChartOfAccoutingsAsync();
+        Task<ResponseViewModel> AddAccountHeadAsync(ChartOfAccountsViewModel model);
+        Task<ResponseViewModel> UpdateAccountHeadAsync(ChartOfAccountsViewModel model);
+        Task<ResponseViewModel> DeleteAccountHeadAsync(string accountCode);
     }
 }

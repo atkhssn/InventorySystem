@@ -2,6 +2,7 @@
 using app.Infrastructure;
 using app.Infrastructure.Auth;
 using Microsoft.EntityFrameworkCore;
+using System.Transactions;
 
 namespace app.Services.Accounting
 {
@@ -14,6 +15,108 @@ namespace app.Services.Accounting
             _dbContext = dbContext;
             _workContext = workContext;
         }
+
+        #region Chart of Accounting
+
+        public async Task<ChartOfAccountsViewModel> ChartOfAccoutingsAsync()
+        {
+            ChartOfAccountsViewModel request = new ChartOfAccountsViewModel();
+            request.ChartOfAccountsViewModels = await _dbContext.ChartOfAccounts.Where(x => x.IsActive).Select(x => new ChartOfAccountsViewModel
+            {
+                AccountCode = x.AccountCode,
+                AccountName = x.AccountName,
+                ParentAccountCode = x.ParentAccountCode,
+                Level = x.Level,
+                CoATypeId = x.CoATypeId,
+                IsRoot = x.IsRoot,
+                CreatedBy = x.CreatedBy,
+                CreatedOn = x.CreatedOn,
+                UpdatedBy = x.UpdatedBy,
+                UpdatedOn = x.UpdatedOn,
+                IsActive = true
+            }).ToListAsync();
+            return request;
+        }
+
+        public async Task<ResponseViewModel> AddAccountHeadAsync(ChartOfAccountsViewModel model)
+        {
+            ResponseViewModel request = new ResponseViewModel();
+            var user = await _workContext.GetCurrentUserAsync();
+            var fetchCoA = await _dbContext.ChartOfAccounts.Where(x => x.IsActive).ToListAsync();
+            var fetchParentCoA = fetchCoA.Where(x => x.AccountCode.Equals(model.ParentAccountCode)).FirstOrDefault();
+
+            if (fetchParentCoA is null)
+            {
+                request.ResponseCode = 404;
+                request.ResponseMessage = $"Parent code [{model.ParentAccountCode}] not found.";
+                return await Task.Run(() => request);
+            }
+
+            if (fetchCoA.Where(x => x.ParentAccountCode.Equals(fetchParentCoA.AccountCode) && x.AccountCode.Equals(model.AccountCode)).FirstOrDefault() is not null)
+            {
+                request.ResponseCode = 400;
+                request.ResponseMessage = $"[{model.AccountCode}] has already been added.";
+                return await Task.Run(() => request);
+            }
+
+            if (fetchCoA.Where(x => x.ParentAccountCode.Equals(fetchParentCoA.AccountCode) && x.AccountName.Equals(model.AccountName)).FirstOrDefault() is not null)
+            {
+                request.ResponseCode = 400;
+                request.ResponseMessage = $"[{model.AccountName}] has already been added.";
+                return await Task.Run(() => request);
+            }
+
+            try
+            {
+                using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+                {
+                    ChartOfAccounts chartOfAccounts = new ChartOfAccounts
+                    {
+                        AccountCode = model.AccountCode,
+                        AccountName = model.AccountName,
+                        ParentAccountCode = model.ParentAccountCode,
+                        Level = fetchParentCoA.Level++,
+                        CoATypeId = fetchParentCoA.CoATypeId,
+                        CreatedBy = user.FullName,
+                        CreatedOn = DateTime.Now,
+                        IsActive = true
+                    };
+
+                    _dbContext.ChartOfAccounts.Add(chartOfAccounts);
+
+                    if (await _dbContext.SaveChangesAsync() > 0)
+                    {
+                        request.ResponseCode = 200;
+                        request.ResponseMessage = "New voucher has been added.";
+                        transaction.Complete();
+                    }
+                    else
+                    {
+                        request.ResponseCode = 500;
+                        request.ResponseMessage = "An internal server error occurred.";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                request.ResponseCode = 500;
+                request.ResponseMessage = ex.Message.ToString();
+
+            }
+            return await Task.Run(() => request);
+        }
+
+        public Task<ResponseViewModel> UpdateAccountHeadAsync(ChartOfAccountsViewModel model)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ResponseViewModel> DeleteAccountHeadAsync(string accountCode)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
 
         #region Cost Center
 
