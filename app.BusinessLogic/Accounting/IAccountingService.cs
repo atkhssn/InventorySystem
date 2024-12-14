@@ -12,5 +12,7 @@
         Task<ResponseViewModel> AddAccountHeadAsync(ChartOfAccountsViewModel model);
         Task<ResponseViewModel> UpdateAccountHeadAsync(ChartOfAccountsViewModel model);
         Task<ResponseViewModel> DeleteAccountHeadAsync(string accountCode);
+
+        Task<List<ChartOfAccountHierarchy>> GetGLAcoountHeadAsync();
     }
 }

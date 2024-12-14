@@ -118,7 +118,8 @@
                             {
                                 <div class="form-group col-6">
                                     <label asp-for="VouchersLinesViewModel.GlHeadId" class="control-label"></label><sup><b class="text-danger">*</b></sup>
-                                    <input asp-for="VouchersLinesViewModel.GlHeadId" class="form-control" required />
+                                    <input asp-for="VouchersLinesViewModel.GlHeadId" class="form-control" id="selected-id" required readonly hidden />
+                                    <input type="text" class="form-control" id="search-box" />
                                     <span asp-validation-for="VouchersLinesViewModel.GlHeadId" class="text-danger"></span>
                                 </div>
 
@@ -257,6 +258,29 @@
         $(document).ready(function () {
             $('#Voucher').addClass('menu-open');
             $('#VoucherAddVoucher').addClass('active');
+
+            $("#search-box").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "/Accounting/GetChartOfAccountGlLayer",
+                        data: { term: request.term },
+                        success: function (data) {
+                            response(data); // Pass array of { id, label }
+                        }
+                    });
+                },
+                minLength: 2, // Start suggesting after typing 2 characters
+                select: function (event, ui) {
+                    // Set the selected label in the input box
+                    $("#search-box").val(ui.item.label);
+
+                    // Store the selected ID in the hidden field
+                    $("#selected-id").val(ui.item.id);
+
+                    // Prevent the default behavior of setting the label again
+                    return false;
+                }
+            });
 
             $('#debitInputField').on("focus", function () {
                 $('#creditInputField').prop('disabled', true);

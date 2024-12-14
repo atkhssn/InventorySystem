@@ -45,6 +45,13 @@ namespace app.Services.Accounting
             var fetchCoAList = await _dbContext.ChartOfAccounts.Where(x => x.IsActive).ToListAsync();
             var findParentHead = fetchCoAList.Where(x => x.AccountCode.Equals(model.ParentAccountCode)).FirstOrDefault();
 
+            if (findParentHead.Level.Equals(5))
+            {
+                request.ResponseCode = 400;
+                request.ResponseMessage = $"You are already in GL HEAD.";
+                return await Task.Run(() => request);
+            }
+
             if (findParentHead is null)
             {
                 request.ResponseCode = 404;
@@ -168,6 +175,13 @@ namespace app.Services.Accounting
             {
                 request.ResponseCode = 404;
                 request.ResponseMessage = $"Account code [{accountCode}] not found.";
+                return await Task.Run(() => request);
+            }
+
+            if (findHead.ParentAccountCode.Equals("0"))
+            {
+                request.ResponseCode = 400;
+                request.ResponseMessage = $"You cannot delete 1st HEAD.";
                 return await Task.Run(() => request);
             }
 
@@ -387,6 +401,19 @@ namespace app.Services.Accounting
         }
 
         #endregion
+
+        //Autocomplete
+
+        public async Task<List<ChartOfAccountHierarchy>> GetGLAcoountHeadAsync()
+        {
+            List<ChartOfAccountHierarchy> request = await _dbContext.ChartOfAccounts.Where(x => x.Level.Equals(5) && x.IsActive).Select(x => new ChartOfAccountHierarchy
+            {
+                id = x.AccountCode,
+                text = $"[{x.AccountCode}]-{x.AccountName}"
+            }).ToListAsync();
+
+            return await Task.Run(() => request);
+        }
 
     }
 }

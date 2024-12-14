@@ -131,6 +131,21 @@ namespace app.WebApp.AdminControllers
 
         #endregion
 
+        //Send json for voucher account code
+        [HttpGet]
+        public async Task<IActionResult> GetChartOfAccountGlLayer(string term)
+        {
+            var response = await _accountingService.GetGLAcoountHeadAsync();
+
+            var suggestions = response
+                .Where(item => item.text.Contains(term, StringComparison.OrdinalIgnoreCase))
+                .Select(item => new { id = item.id, label = item.text })
+                .Take(10)
+                .ToList();
+            return await Task.Run(() => Json(suggestions));
+        }
+
+        //Hierarchy for js tree
         private List<ChartOfAccountHierarchy> BuildHierarchy(List<ChartOfAccountsViewModel> nodes, string parentCode)
         {
             return nodes
