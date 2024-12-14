@@ -71,9 +71,9 @@ CREATE TABLE New.CoATypes(
 )
 
 CREATE TABLE New.ChartOfAccounts(
-	AccountCode VARCHAR(10) NOT NULL PRIMARY KEY,
+	AccountCode VARCHAR(13) NOT NULL PRIMARY KEY,
 	AccountName NVARCHAR(100) NOT NULL,
-	ParentAccountCode VARCHAR(10) NOT NULL,
+	ParentAccountCode VARCHAR(11) NOT NULL,
 	Level INT NOT NULL,
 	CoATypeId INT NOT NULL,
 	IsRoot BIT NOT NULL,
