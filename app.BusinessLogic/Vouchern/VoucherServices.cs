@@ -606,19 +606,61 @@ namespace app.Services.Vouchern
                 return await Task.Run(() => request);
             }
 
-            findVoucher.Status = Convert.ToInt32(VoucherStatus.APPROVED);
-            findVoucher.UpdatedBy = user.FullName;
-            findVoucher.UpdatedOn = DateTime.Now;
-
-            if (await _dbContext.SaveChangesAsync() > 0)
+            try
             {
-                request.ResponseCode = 200;
-                request.ResponseMessage = $"Voucher has been approved.";
-                return await Task.Run(() => request);
-            }
+                findVoucher.Status = Convert.ToInt32(VoucherStatus.APPROVED);
+                findVoucher.UpdatedBy = user.FullName;
+                findVoucher.UpdatedOn = DateTime.Now;
 
-            request.ResponseCode = 500;
-            request.ResponseMessage = $"An internal server error occurred.";
+                if (await _dbContext.SaveChangesAsync() > 0)
+                {
+                    var getVoucherLines = await _dbContext.VouchersLines.Where(x => x.VouchersId.Equals(findVoucher.Id) && x.IsActive).ToListAsync();
+                    List<Transactions> transactions = new List<Transactions>();
+                    decimal bal = 0.000M;
+                    foreach (var item in getVoucherLines)
+                    {
+                        Transactions transaction = new Transactions
+                        {
+                            Id = $"TRX-{item.Id}",
+                            VouchersId = item.VouchersId,
+                            AccountCode = item.GlHeadId,
+                            TransactionDate = DateTime.Now,
+                            DebitAmount = item.DebitAmount,
+                            CreditAmount = item.CreditAmount,
+                            Balance = bal + (item.DebitAmount - item.CreditAmount),
+                            IsSuccess = true,
+                            RequestedBy = user.FullName,
+                            RequestedOn = DateTime.Now,
+                        };
+
+                        transactions.Add(transaction);
+                    }
+
+                    await _dbContext.Transactions.AddRangeAsync(transactions);
+
+                    if (await _dbContext.SaveChangesAsync() > 0)
+                    {
+                        request.ResponseCode = 200;
+                        request.ResponseMessage = $"Voucher has been approved.";
+                    }
+                    else
+                    {
+                        request.ResponseCode = 500;
+                        request.ResponseMessage = $"An internal server error occurred.";
+                    }
+                }
+                else
+                {
+                    request.ResponseCode = 500;
+                    request.ResponseMessage = $"An internal server error occurred.";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                request.ResponseCode = 500;
+                request.ResponseMessage = ex.Message.ToString();
+            }
             return await Task.Run(() => request);
         }
 

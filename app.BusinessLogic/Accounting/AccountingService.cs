@@ -383,8 +383,6 @@ namespace app.Services.Accounting
                 request.ResponseMessage = ex.Message.ToString();
 
             }
-
-            
             return await Task.Run(() => request);
         }
 
