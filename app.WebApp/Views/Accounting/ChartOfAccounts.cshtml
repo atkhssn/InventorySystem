@@ -17,6 +17,11 @@
                 <li class="breadcrumb-item"><a href="/Admin/Index">Home</a></li>
                 <li class="breadcrumb-item active"> Chart of Account</li>
             </ol>
+            <div>
+                <a id="chartOfAccountGuideline" class="btn btn-outline-primary">
+                    <i class="fa fa-book" aria-hidden="true"></i> Documentation
+                </a>
+            </div>
         </div>
     </div>
 </div>
@@ -31,6 +36,7 @@
                 </h3>
             </div>
             <div class="card-body">
+
                 <div class="row">
                     <div class="col-12">
                         <!-- Search Input -->
@@ -46,7 +52,7 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="nodeModalLabel">Manage Chart of Accounting</h5>
+                                <h5 class="modal-title" id="nodeModalLabel">Manage Chart of Account</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -69,7 +75,7 @@
                         <div class="modal-content">
                             <form id="createNodeForm" asp-action="CreateAccountHead" method="post">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="createNodeModalLabel">Create Accounting Head</h5>
+                                    <h5 class="modal-title" id="createNodeModalLabel">Create Account Head</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -104,7 +110,7 @@
                         <div class="modal-content">
                             <form id="editNodeForm" asp-action="EditAccountHead" method="post">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="editNodeModalLabel">Edit Accounting Head</h5>
+                                    <h5 class="modal-title" id="editNodeModalLabel">Update Account Head</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -115,8 +121,8 @@
                                         <input asp-for="AccountCode" class="form-control" id="editAccountCode" required readonly />
                                     </div>
                                     <div class="mb-3">
-                                        <label asp-for="AccountCode" class="control-label"></label><sup><b class="text-danger">*</b></sup>
-                                        <input asp-for="AccountCode" class="form-control" id="editAccountName" required />
+                                        <label asp-for="AccountName" class="control-label"></label><sup><b class="text-danger">*</b></sup>
+                                        <input asp-for="AccountName" class="form-control" id="editAccountName" required />
                                     </div>
                                 </div>
                                 <div class="modal-footer">
@@ -134,13 +140,13 @@
                         <div class="modal-content">
                             <form id="deleteNodeForm" asp-action="DeleteAccountHead" method="post">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="deleteNodeModalLabel">Delete Node</h5>
+                                    <h5 class="modal-title" id="deleteNodeModalLabel">Delete Account Head</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <p>Are you sure you want to delete <span id="deleteNodeText" class="text-uppercase font-weight-bold"></span>?</p>
+                                    <p>Are you sure you want to delete account head: <span id="deleteNodeText" class="text-uppercase font-weight-bold"></span>?</p>
                                     <input asp-for="AccountCode" class="form-control" id="deleteNodeId" required readonly hidden />
                                 </div>
                                 <div class="modal-footer">
@@ -148,6 +154,65 @@
                                     <button type="submit" class="btn btn-danger" id="confirmDeleteNode">Delete</button>
                                 </div>
                             </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CoA Guideline Modal -->
+                <div class="modal fade" id="chartOfAccountGuidelineModal" tabindex="-1" aria-labelledby="chartOfAccountGuidelineModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="chartOfAccountGuidelineModalLabel">Chart of Account Documentation</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div>
+                                    <p class="text-body">This <span class="text-bold">Chart of Account</span> follows hierarchy. Each digit or group represents a layer in the hierarchy. The number format is: <span class="text-bold">X-XX-XXX-XX-X</span></p>
+                                    <table class="table table-bordered table-sm" style="border-radius: 3px !important">
+                                        <tr class="bg-gradient-gray text-center">
+                                            <td>Layer</td>
+                                            <td>Digits</td>
+                                            <td>Description</td>
+                                            <td>Example</td>
+                                        </tr>
+                                        <tr>
+                                            <td>1st Layer</td>
+                                            <td class="text-center">1</td>
+                                            <td><span class="text-bold">Major Category: </span>Broad categories</td>
+                                            <td>1-Assets</td>
+                                        </tr>
+                                        <tr>
+                                            <td>2nd Layer</td>
+                                            <td class="text-center">2</td>
+                                            <td><span class="text-bold">Subcategory: </span>General subcategories</td>
+                                            <td>11-Current Assets</td>
+                                        </tr>
+                                        <tr>
+                                            <td>3rd Layer</td>
+                                            <td class="text-center">3</td>
+                                            <td><span class="text-bold">Account Group: </span>Related accounts</td>
+                                            <td>111-Cash</td>
+                                        </tr>
+                                        <tr>
+                                            <td>4th Layer</td>
+                                            <td class="text-center">2</td>
+                                            <td><span class="text-bold">Account Type: </span>Specific account types</td>
+                                            <td>10-Bank Accounts</td>
+                                        </tr>
+                                        <tr>
+                                            <td>5th Layer</td>
+                                            <td class="text-center">1</td>
+                                            <td><span class="text-bold">Specific Account: </span>Detailed tracking</td>
+                                            <td>1-Bank Name</td>
+                                        </tr>
+                                    </table>
+
+                                    <p class="text-black-75 text-bold text-center">GL HEAD: [1011011101001] - Bangladesh Bank (A/C: 1000013132)</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -208,6 +273,12 @@
                 $('#response').hide();
             }, 3000);
 
+            $('#chartOfAccountGuideline').on('click', function(){
+
+                $('#chartOfAccountGuidelineModal').modal('show');
+
+            });
+
             //Hierarchy initialize - jsTree
             $('#charOfAccountHierarchy').jstree({
                 'core': {
@@ -243,7 +314,7 @@
             $('#charOfAccountHierarchy').on('select_node.jstree', function (e, data) {
                 const selectedNode = data.node;
 
-                $('#selectedNodeText').text(`Selected Node: ${selectedNode.text}`);
+                $('#selectedNodeText').text(`Selected Head: ${selectedNode.text}`);
                 $('#btnCreate').data('node-id', selectedNode.id);
                 $('#btnEdit').data('node-id', selectedNode.id).data('node-text', selectedNode.text);
                 $('#btnDelete').data('node-id', selectedNode.id).data('node-text', selectedNode.text);

@@ -42,24 +42,24 @@ namespace app.Services.Accounting
         {
             ResponseViewModel request = new ResponseViewModel();
             var user = await _workContext.GetCurrentUserAsync();
-            var fetchCoA = await _dbContext.ChartOfAccounts.Where(x => x.IsActive).ToListAsync();
-            var fetchParentCoA = fetchCoA.Where(x => x.AccountCode.Equals(model.ParentAccountCode)).FirstOrDefault();
+            var fetchCoAList = await _dbContext.ChartOfAccounts.Where(x => x.IsActive).ToListAsync();
+            var findParentHead = fetchCoAList.Where(x => x.AccountCode.Equals(model.ParentAccountCode)).FirstOrDefault();
 
-            if (fetchParentCoA is null)
+            if (findParentHead is null)
             {
                 request.ResponseCode = 404;
                 request.ResponseMessage = $"Parent code [{model.ParentAccountCode}] not found.";
                 return await Task.Run(() => request);
             }
 
-            if (fetchCoA.Where(x => x.ParentAccountCode.Equals(fetchParentCoA.AccountCode) && x.AccountCode.Equals(model.AccountCode)).FirstOrDefault() is not null)
+            if (fetchCoAList.Where(x => x.ParentAccountCode.Equals(findParentHead.AccountCode) && x.AccountCode.Equals(model.AccountCode)).FirstOrDefault() is not null)
             {
                 request.ResponseCode = 400;
                 request.ResponseMessage = $"[{model.AccountCode}] has already been added.";
                 return await Task.Run(() => request);
             }
 
-            if (fetchCoA.Where(x => x.ParentAccountCode.Equals(fetchParentCoA.AccountCode) && x.AccountName.Equals(model.AccountName)).FirstOrDefault() is not null)
+            if (fetchCoAList.Where(x => x.ParentAccountCode.Equals(findParentHead.AccountCode) && x.AccountName.Equals(model.AccountName)).FirstOrDefault() is not null)
             {
                 request.ResponseCode = 400;
                 request.ResponseMessage = $"[{model.AccountName}] has already been added.";
@@ -75,8 +75,8 @@ namespace app.Services.Accounting
                         AccountCode = model.AccountCode,
                         AccountName = model.AccountName,
                         ParentAccountCode = model.ParentAccountCode,
-                        Level = fetchParentCoA.Level++,
-                        CoATypeId = fetchParentCoA.CoATypeId,
+                        Level = findParentHead.Level + 1,
+                        CoATypeId = findParentHead.CoATypeId,
                         CreatedBy = user.FullName,
                         CreatedOn = DateTime.Now,
                         IsActive = true
@@ -87,7 +87,7 @@ namespace app.Services.Accounting
                     if (await _dbContext.SaveChangesAsync() > 0)
                     {
                         request.ResponseCode = 200;
-                        request.ResponseMessage = "New voucher has been added.";
+                        request.ResponseMessage = "New account head has been added.";
                         transaction.Complete();
                     }
                     else
@@ -106,14 +106,99 @@ namespace app.Services.Accounting
             return await Task.Run(() => request);
         }
 
-        public Task<ResponseViewModel> UpdateAccountHeadAsync(ChartOfAccountsViewModel model)
+        public async Task<ResponseViewModel> UpdateAccountHeadAsync(ChartOfAccountsViewModel model)
         {
-            throw new NotImplementedException();
+            ResponseViewModel request = new ResponseViewModel();
+            var user = await _workContext.GetCurrentUserAsync();
+            var fetchCoAList = await _dbContext.ChartOfAccounts.Where(x => x.IsActive).ToListAsync();
+            var findHead = fetchCoAList.Where(x => x.AccountCode.Equals(model.AccountCode)).FirstOrDefault();
+
+            if (findHead is null)
+            {
+                request.ResponseCode = 404;
+                request.ResponseMessage = $"Account code [{model.AccountCode}] not found.";
+                return await Task.Run(() => request);
+            }
+
+            if (fetchCoAList.Where(x => x.ParentAccountCode.Equals(findHead.ParentAccountCode) && x.AccountName.Equals(model.AccountName)).FirstOrDefault() is not null)
+            {
+                request.ResponseCode = 400;
+                request.ResponseMessage = $"[{model.AccountName}] has already been added.";
+                return await Task.Run(() => request);
+            }
+
+            try
+            {
+                using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+                {
+                    findHead.AccountName = model.AccountName;
+                    findHead.UpdatedBy = user.FullName;
+                    findHead.UpdatedOn = DateTime.Now;
+
+                    if (await _dbContext.SaveChangesAsync() > 0)
+                    {
+                        request.ResponseCode = 200;
+                        request.ResponseMessage = "Account head has been modified.";
+                        transaction.Complete();
+                    }
+                    else
+                    {
+                        request.ResponseCode = 500;
+                        request.ResponseMessage = "An internal server error occurred.";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                request.ResponseCode = 500;
+                request.ResponseMessage = ex.Message.ToString();
+
+            }
+            return await Task.Run(() => request);
         }
 
-        public Task<ResponseViewModel> DeleteAccountHeadAsync(string accountCode)
+        public async Task<ResponseViewModel> DeleteAccountHeadAsync(string accountCode)
         {
-            throw new NotImplementedException();
+            ResponseViewModel request = new ResponseViewModel();
+            var user = await _workContext.GetCurrentUserAsync();
+            var fetchCoAList = await _dbContext.ChartOfAccounts.Where(x => x.IsActive).ToListAsync();
+            var findHead = fetchCoAList.Where(x => x.AccountCode.Equals(accountCode)).FirstOrDefault();
+
+            if (findHead is null)
+            {
+                request.ResponseCode = 404;
+                request.ResponseMessage = $"Account code [{accountCode}] not found.";
+                return await Task.Run(() => request);
+            }
+
+            try
+            {
+                using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+                {
+                    findHead.IsActive = false;
+                    findHead.UpdatedBy = user.FullName;
+                    findHead.UpdatedOn = DateTime.Now;
+
+                    if (await _dbContext.SaveChangesAsync() > 0)
+                    {
+                        request.ResponseCode = 200;
+                        request.ResponseMessage = "Account head has been removed.";
+                        transaction.Complete();
+                    }
+                    else
+                    {
+                        request.ResponseCode = 500;
+                        request.ResponseMessage = "An internal server error occurred.";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                request.ResponseCode = 500;
+                request.ResponseMessage = ex.Message.ToString();
+
+            }
+            return await Task.Run(() => request);
         }
 
         #endregion
@@ -177,28 +262,39 @@ namespace app.Services.Accounting
                 return await Task.Run(() => request);
             }
 
-            CostCenters costCenter = new CostCenters
+            try
             {
-                Id = model.Id,
-                ShortName = model.ShortName.ToUpper(),
-                Name = model.Name,
-                TrakingId = user.UserName,
-                CreatedBy = user.FullName,
-                CreatedOn = DateTime.Now,
-                IsActive = true
-            };
+                CostCenters costCenter = new CostCenters
+                {
+                    Id = model.Id,
+                    ShortName = model.ShortName.ToUpper(),
+                    Name = model.Name,
+                    TrakingId = user.UserName,
+                    CreatedBy = user.FullName,
+                    CreatedOn = DateTime.Now,
+                    IsActive = true
+                };
 
-            _dbContext.CostCenters.Add(costCenter);
+                _dbContext.CostCenters.Add(costCenter);
 
-            if (await _dbContext.SaveChangesAsync() > 0)
-            {
-                request.ResponseCode = 200;
-                request.ResponseMessage = $"New cost center has been added.";
-                return await Task.Run(() => request);
+                if (await _dbContext.SaveChangesAsync() > 0)
+                {
+                    request.ResponseCode = 200;
+                    request.ResponseMessage = $"New cost center has been added.";
+                    return await Task.Run(() => request);
+                }
+                else
+                {
+                    request.ResponseCode = 500;
+                    request.ResponseMessage = $"An internal server error occurred.";
+                }
             }
+            catch (Exception ex)
+            {
+                request.ResponseCode = 500;
+                request.ResponseMessage = ex.Message.ToString();
 
-            request.ResponseCode = 500;
-            request.ResponseMessage = $"An internal server error occurred.";
+            }
             return await Task.Run(() => request);
         }
 
@@ -223,19 +319,30 @@ namespace app.Services.Accounting
                 return await Task.Run(() => request);
             }
 
-            getCostCenter.Name = model.Name;
-            getCostCenter.UpdatedBy = user.FullName;
-            getCostCenter.UpdatedOn = DateTime.Now;
-
-            if (await _dbContext.SaveChangesAsync() > 0)
+            try
             {
-                request.ResponseCode = 200;
-                request.ResponseMessage = $"Cost center has been modified.";
-                return await Task.Run(() => request);
-            }
+                getCostCenter.Name = model.Name;
+                getCostCenter.UpdatedBy = user.FullName;
+                getCostCenter.UpdatedOn = DateTime.Now;
 
-            request.ResponseCode = 500;
-            request.ResponseMessage = $"An internal server error occurred.";
+                if (await _dbContext.SaveChangesAsync() > 0)
+                {
+                    request.ResponseCode = 200;
+                    request.ResponseMessage = $"Cost center has been modified.";
+                    return await Task.Run(() => request);
+                }
+                else
+                {
+                    request.ResponseCode = 500;
+                    request.ResponseMessage = $"An internal server error occurred.";
+                }
+            }
+            catch (Exception ex)
+            {
+                request.ResponseCode = 500;
+                request.ResponseMessage = ex.Message.ToString();
+
+            }
             return await Task.Run(() => request);
         }
 
@@ -252,19 +359,32 @@ namespace app.Services.Accounting
                 return await Task.Run(() => request);
             }
 
-            findCostCenter.IsActive = false;
-            findCostCenter.UpdatedBy = user.FullName;
-            findCostCenter.UpdatedOn = DateTime.Now;
-
-            if (await _dbContext.SaveChangesAsync() > 0)
+            try
             {
-                request.ResponseCode = 200;
-                request.ResponseMessage = $"Cost center has been removed.";
-                return await Task.Run(() => request);
+                findCostCenter.IsActive = false;
+                findCostCenter.UpdatedBy = user.FullName;
+                findCostCenter.UpdatedOn = DateTime.Now;
+
+                if (await _dbContext.SaveChangesAsync() > 0)
+                {
+                    request.ResponseCode = 200;
+                    request.ResponseMessage = $"Cost center has been removed.";
+                    return await Task.Run(() => request);
+                }
+                else
+                {
+                    request.ResponseCode = 500;
+                    request.ResponseMessage = $"An internal server error occurred.";
+                }
+            }
+            catch (Exception ex)
+            {
+                request.ResponseCode = 500;
+                request.ResponseMessage = ex.Message.ToString();
+
             }
 
-            request.ResponseCode = 500;
-            request.ResponseMessage = $"An internal server error occurred.";
+            
             return await Task.Run(() => request);
         }
 

@@ -1,5 +1,4 @@
 ﻿using app.Services.Accounting;
-using app.WebApp.Views.Accounting;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -132,11 +131,11 @@ namespace app.WebApp.AdminControllers
 
         #endregion
 
-        private List<ChartOfAccountHierarchyNode> BuildHierarchy(List<ChartOfAccountsViewModel> nodes, string parentCode)
+        private List<ChartOfAccountHierarchy> BuildHierarchy(List<ChartOfAccountsViewModel> nodes, string parentCode)
         {
             return nodes
                 .Where(x => x.ParentAccountCode == parentCode)
-                .Select(x => new ChartOfAccountHierarchyNode
+                .Select(x => new ChartOfAccountHierarchy
                 {
                     id = x.AccountCode,
                     text = $"[{x.AccountCode}] - {x.AccountName}",
