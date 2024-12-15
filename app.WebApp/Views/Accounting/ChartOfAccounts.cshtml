@@ -18,6 +18,12 @@
                 <li class="breadcrumb-item active"> Chart of Account</li>
             </ol>
             <div>
+                <a class="btn btn-outline-primary" href="~/Template/Chart_of_Account_Template.csv" download>
+                    <i class="fa fa-download" aria-hidden="true"></i> Template Download
+                </a>
+                <a id="chartOfAccountBulkUpload" class="btn btn-outline-primary">
+                    <i class="fa fa-upload" aria-hidden="true"></i> Template Upload
+                </a>
                 <a id="chartOfAccountGuideline" class="btn btn-outline-primary">
                     <i class="fa fa-book" aria-hidden="true"></i> Documentation
                 </a>
@@ -158,6 +164,36 @@
                     </div>
                 </div>
 
+                <!-- Bulk Upload Modal -->
+                <div class="modal fade" id="chartOfAccountBulkUploadModal" tabindex="-1" aria-labelledby="chartOfAccountBulkUploadModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form id="deleteNodeForm" asp-action="CoABulkUpload" method="post" enctype="multipart/form-data">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="chartOfAccountBulkUploadModalLabel">Cart of Account Bulk Upload</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body pt-4 pb-2">
+                                    <div class="form-group">
+                                        <label asp-for="Attachment" class="control-label"></label><sup class="text-danger"><b>*</b></sup>
+                                        <div class="custom-file">
+                                            <input type="file" asp-for="Attachment" accept=".csv" class="custom-file-input" id="attachment" required>
+                                            <label class="custom-file-label" for="attachment" id="attachmentSelected">Choose file (Max file size 10 MB)</label>
+                                        </div>
+                                        <small class="text-gray" id="attachmentMessage">Only csv file is accepted.</small>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal" aria-label="Close">Cancel</button>
+                                    <button type="submit" class="btn btn-danger" id="confirmDeleteNode">Upload</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- CoA Guideline Modal -->
                 <div class="modal fade" id="chartOfAccountGuidelineModal" tabindex="-1" aria-labelledby="chartOfAccountGuidelineModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
@@ -210,7 +246,7 @@
                                         </tr>
                                     </table>
 
-                                    <p class="text-black-75 text-bold text-center">GL HEAD: [1011011101001] - Bangladesh Bank (A/C: 1000013132)</p>
+                                    <p class="text-black-75 text-center"><span class="text-bold">GL HEAD Example: </span>[1011011101001] - Bank Name (A/C: XXXXXXXX)</p>
                                 </div>
                             </div>
                         </div>
@@ -273,10 +309,51 @@
                 $('#response').hide();
             }, 4000);
 
+            $('#chartOfAccountBulkUpload').on('click', function(){
+
+                $('#chartOfAccountBulkUploadModal').modal('show');
+
+            });
+
             $('#chartOfAccountGuideline').on('click', function(){
 
                 $('#chartOfAccountGuidelineModal').modal('show');
 
+            });
+
+            // Validate attachment file
+            $('#attachment').on('change', function () {
+                const file = this.files[0];
+                if (file){
+                    const allowedFileSize = 10 * 1024 * 1024;
+                    const fileSize = file.size;
+                    const fileName = file.name;
+                    const validExtensions = ['csv'];
+                    const fileExtension = fileName.split('.').pop().toLowerCase();
+
+                    if (!validExtensions.includes(fileExtension)) {
+                        $(this).val('');
+                        $("#attachmentSelected").text("Choose file (Max file size 10 MB)");
+                        $("#attachmentSelected").removeClass("text-success");
+                        $("#attachmentMessage").text("Invalid file type. Please select a CSV file.");
+                        $("#attachmentMessage").removeClass("text-gray");
+                        $("#attachmentMessage").addClass("text-danger");
+                    }else if (fileSize > allowedFileSize) {
+                        $(this).val('');
+                        $("#attachmentSelected").text("Choose file (Max file size 10 MB)");
+                        $("#attachmentSelected").removeClass("text-success");
+                        $("#attachmentMessage").text("File size is too large. Maximum allowed size is 10 MB.");
+                        $("#attachmentMessage").removeClass("text-gray");
+                        $("#attachmentMessage").addClass("text-danger");
+                    }else{
+                        $("#attachmentMessage").text("");
+                        $("#attachmentSelected").text("Selected file:" + fileName);
+                        $("#attachmentSelected").addClass("text-success");
+                        $("#attachmentMessage").text("Only csv file is accepted.");
+                        $("#attachmentMessage").removeClass("text-danger");
+                        $("#attachmentMessage").addClass("text-gray");
+                    }
+                }
             });
 
             //Hierarchy initialize - jsTree

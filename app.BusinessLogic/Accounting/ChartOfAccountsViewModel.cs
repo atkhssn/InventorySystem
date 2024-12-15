@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace app.Services.Accounting
 {
@@ -38,6 +39,11 @@ namespace app.Services.Accounting
 
         [Display(Name = "Update On")]
         public DateTime? UpdatedOn { get; set; }
+
+        [Display(Name = "Attachment")]
+        public IFormFile Attachment { get; set; }
+
+        public string AttachmentPath { get; set; }
 
         public List<ChartOfAccountsViewModel> ChartOfAccountsViewModels { get; set; }
         public ResponseViewModel ResponseViewModel { get; set; }

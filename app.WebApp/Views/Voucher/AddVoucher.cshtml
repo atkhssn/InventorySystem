@@ -117,10 +117,10 @@
                             @if (!Convert.ToInt32(VoucherStatus.APPROVED).Equals(Convert.ToInt32(Model.VoucherStatus)) && !Convert.ToInt32(VoucherStatus.SUBMITTED).Equals(Convert.ToInt32(Model.VoucherStatus)))
                             {
                                 <div class="form-group col-6">
-                                    <label asp-for="VouchersLinesViewModel.GlHeadId" class="control-label"></label><sup><b class="text-danger">*</b></sup>
-                                    <input asp-for="VouchersLinesViewModel.GlHeadId" class="form-control" id="selected-id" required readonly hidden />
+                                    <label asp-for="VouchersLinesViewModel.AccountCode" class="control-label"></label><sup><b class="text-danger">*</b></sup>
+                                    <input asp-for="VouchersLinesViewModel.AccountCode" class="form-control" id="selected-id" required readonly hidden />
                                     <input type="text" class="form-control" id="search-box" />
-                                    <span asp-validation-for="VouchersLinesViewModel.GlHeadId" class="text-danger"></span>
+                                    <span asp-validation-for="VouchersLinesViewModel.AccountCode" class="text-danger"></span>
                                 </div>
 
                                 <div class="form-group col-3">
@@ -178,7 +178,7 @@
                                             {
                                                 <tr>
                                                     <td>@Sl</td>
-                                                    <td>@item.GlHeadId</td>
+                                                    <td>@item.AccountCode</td>
                                                     <td>@item.Particular</td>
                                                     <td class="text-right">@item.DebitAmount</td>
                                                     <td class="text-right">@item.CreditAmount</td>
@@ -345,7 +345,7 @@
 
             setTimeout(function() {
                 $('#response').hide();
-            }, 3000);
+            }, 3500);
 
         });
     </script>

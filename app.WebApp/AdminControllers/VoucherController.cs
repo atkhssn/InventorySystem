@@ -163,7 +163,7 @@ namespace app.WebApp.AdminControllers
                     {
                         Directory.CreateDirectory(uploadPath);
                     }
-                    var documentName = $"V{vouchersViewModel.VouchersLinesViewModel.GlHeadId}{DateTime.Now.ToString("yyMMddHHmmss")}{fileExtention}";
+                    var documentName = $"V{vouchersViewModel.VouchersLinesViewModel.AccountCode}{DateTime.Now.ToString("yyMMddHHmmss")}{fileExtention}";
                     var filePath = Path.Combine(uploadPath, documentName);
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {

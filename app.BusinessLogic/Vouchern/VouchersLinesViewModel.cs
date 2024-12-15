@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using app.Services.Accounting;
+using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
 namespace app.Services.Vouchern
@@ -13,8 +14,10 @@ namespace app.Services.Vouchern
 
         public VouchersViewModel VouchersViewModel { get; set; }
 
-        [Display(Name = "Accounting Head (GL Code)")]
-        public string GlHeadId { get; set; }
+        [Display(Name = "Account Head")]
+        public string AccountCode { get; set; }
+
+        public ChartOfAccountsViewModel ChartOfAccountsViewModel { get; set; }
 
         [Display(Name = "Debit Amount")]
         public decimal DebitAmount { get; set; }

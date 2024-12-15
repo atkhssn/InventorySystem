@@ -266,7 +266,7 @@ namespace app.Services.Vouchern
                 {
                     Id = x.Id,
                     VouchersId = x.VouchersId,
-                    GlHeadId = x.GlHeadId,
+                    AccountCode = x.AccountCode,
                     DebitAmount = x.DebitAmount,
                     CreditAmount = x.CreditAmount,
                     Particular = x.Particular,
@@ -397,7 +397,7 @@ namespace app.Services.Vouchern
                     VouchersLines vouchersLines = new VouchersLines
                     {
                         VouchersId = vouchers.Id,
-                        GlHeadId = model.VouchersLinesViewModel.GlHeadId,
+                        AccountCode = model.VouchersLinesViewModel.AccountCode,
                         DebitAmount = model.VouchersLinesViewModel.DebitAmount,
                         CreditAmount = model.VouchersLinesViewModel.CreditAmount,
                         Particular = model.VouchersLinesViewModel.Particular,
@@ -489,7 +489,7 @@ namespace app.Services.Vouchern
                     VouchersLines vouchersLines = new VouchersLines
                     {
                         VouchersId = model.Id,
-                        GlHeadId = model.VouchersLinesViewModel.GlHeadId,
+                        AccountCode = model.VouchersLinesViewModel.AccountCode,
                         DebitAmount = model.VouchersLinesViewModel.DebitAmount,
                         CreditAmount = model.VouchersLinesViewModel.CreditAmount,
                         Particular = model.VouchersLinesViewModel.Particular,
@@ -623,7 +623,7 @@ namespace app.Services.Vouchern
                         {
                             Id = $"TRX-{item.Id}",
                             VouchersId = item.VouchersId,
-                            AccountCode = item.GlHeadId,
+                            AccountCode = item.AccountCode,
                             TransactionDate = DateTime.Now,
                             DebitAmount = item.DebitAmount,
                             CreditAmount = item.CreditAmount,

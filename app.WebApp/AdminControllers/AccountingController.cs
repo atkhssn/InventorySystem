@@ -138,11 +138,11 @@ namespace app.WebApp.AdminControllers
             var response = await _accountingService.GetGLAcoountHeadAsync();
 
             var suggestions = response
-                .Where(item => item.text.Contains(term, StringComparison.OrdinalIgnoreCase))
+                .Where(item => item.text.Contains(term, StringComparison.OrdinalIgnoreCase) || item.id.Contains(term, StringComparison.OrdinalIgnoreCase))
                 .Select(item => new { id = item.id, label = item.text })
                 .Take(10)
                 .ToList();
-            return await Task.Run(() => Json(suggestions));
+            return Json(suggestions);
         }
 
         //Hierarchy for js tree

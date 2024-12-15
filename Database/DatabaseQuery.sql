@@ -49,7 +49,7 @@ CREATE TABLE New.Vouchers(
 CREATE TABLE New.VouchersLines(
 	Id BIGINT IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	VouchersId BIGINT NOT NULL,
-	GlHeadId NVARCHAR(100) NOT NULL,
+	AccountCode NVARCHAR(100) NOT NULL,
 	DebitAmount DECIMAL(18,3) NOT NULL,
 	CreditAmount DECIMAL(18,3) NOT NULL,
 	Particular NVARCHAR(250) NULL,
@@ -61,7 +61,8 @@ CREATE TABLE New.VouchersLines(
 	UpdatedOn DATETIME NULL,
 	IsActive BIT NOT NULL
 
-	FOREIGN KEY(VouchersId) REFERENCES New.Vouchers(Id)
+	FOREIGN KEY(VouchersId) REFERENCES New.Vouchers(Id),
+	FOREIGN KEY(AccountCode) REFERENCES New.ChartOfAccounts(AccountCode)
 )
 
 CREATE TABLE New.CoATypes(
