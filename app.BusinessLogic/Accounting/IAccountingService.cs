@@ -1,4 +1,6 @@
-﻿namespace app.Services.Accounting
+﻿using app.Utility.DtoModel;
+
+namespace app.Services.Accounting
 {
     public interface IAccountingService
     {
@@ -13,6 +15,7 @@
         Task<ResponseViewModel> UpdateAccountHeadAsync(ChartOfAccountsViewModel model);
         Task<ResponseViewModel> DeleteAccountHeadAsync(string accountCode);
 
-        Task<List<ChartOfAccountHierarchy>> GetGLAcoountHeadAsync();
+        Task<List<ChartOfAccountHierarchy>> GetGLAccountHeadAsync();
+        Task<ResponseViewModel> BulkUploadAccountHead(List<ChartOfAccoutDtoModel> modelList);
     }
 }

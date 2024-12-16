@@ -1,6 +1,7 @@
 ﻿using app.EntityModel.CoreModel;
 using app.Infrastructure;
 using app.Infrastructure.Auth;
+using app.Utility.DtoModel;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 
@@ -54,57 +55,11 @@ namespace app.Services.Accounting
                 return request;
             }
 
-            if (findParentHead.Level.Equals(1))
+            if (findParentHead is null)
             {
-                if (model.AccountCode.Length.Equals(2))
-                {
-                    accountCode = $"{findParentHead.AccountCode}0{model.AccountCode}";
-                }
-                else
-                {
-                    request.ResponseCode = 400;
-                    request.ResponseMessage = "Minimum or Maximum account code digit: 2";
-                    return request;
-                }
-            }
-            else if (findParentHead.Level.Equals(2))
-            {
-                if (model.AccountCode.Length.Equals(3))
-                {
-                    accountCode = $"{findParentHead.AccountCode}0{model.AccountCode}";
-                }
-                else
-                {
-                    request.ResponseCode = 400;
-                    request.ResponseMessage = "Minimum or Maximum account code digit: 3";
-                    return request;
-                }
-            }
-            else if (findParentHead.Level.Equals(3))
-            {
-                if (model.AccountCode.Length.Equals(2))
-                {
-                    accountCode = $"{findParentHead.AccountCode}0{model.AccountCode}";
-                }
-                else
-                {
-                    request.ResponseCode = 400;
-                    request.ResponseMessage = "Minimum or Maximum account code digit: 2";
-                    return request;
-                }
-            }
-            else if (findParentHead.Level.Equals(4))
-            {
-                if (model.AccountCode.Length.Equals(1))
-                {
-                    accountCode = $"{findParentHead.AccountCode}0{model.AccountCode}";
-                }
-                else
-                {
-                    request.ResponseCode = 400;
-                    request.ResponseMessage = "Minimum or Maximum account code digit: 1";
-                    return request;
-                }
+                request.ResponseCode = 404;
+                request.ResponseMessage = $"Parent code [{model.ParentAccountCode}] is not found.";
+                return request;
             }
 
             if (findParentHead.Level.Equals(5))
@@ -114,21 +69,70 @@ namespace app.Services.Accounting
                 return request;
             }
 
-            if (findParentHead is null)
+            if (findParentHead.Level.Equals(4))
             {
-                request.ResponseCode = 404;
-                request.ResponseMessage = $"Parent code [{model.ParentAccountCode}] is not found.";
-                return request;
+                if (model.AccountCode.Length.Equals(2))
+                {
+                    accountCode = $"{findParentHead.AccountCode}0{model.AccountCode}";
+                }
+                else
+                {
+                    request.ResponseCode = 400;
+                    request.ResponseMessage = "HEAD: 5, Minimum or Maximum account code digit: 2";
+                    return request;
+                }
             }
 
-            if (fetchCoAList.Any(x => x.ParentAccountCode.Equals(findParentHead.AccountCode) && x.AccountCode.Equals(accountCode)))
+            if (findParentHead.Level.Equals(3))
+            {
+                if (model.AccountCode.Length.Equals(2))
+                {
+                    accountCode = $"{findParentHead.AccountCode}0{model.AccountCode}";
+                }
+                else
+                {
+                    request.ResponseCode = 400;
+                    request.ResponseMessage = "HEAD: 4, Minimum or Maximum account code digit: 2";
+                    return request;
+                }
+            }
+
+            if (findParentHead.Level.Equals(2))
+            {
+                if (model.AccountCode.Length.Equals(3))
+                {
+                    accountCode = $"{findParentHead.AccountCode}0{model.AccountCode}";
+                }
+                else
+                {
+                    request.ResponseCode = 400;
+                    request.ResponseMessage = "HEAD: 3, Minimum or Maximum account code digit: 3";
+                    return request;
+                }
+            }
+
+            if (findParentHead.Level.Equals(1))
+            {
+                if (model.AccountCode.Length.Equals(2))
+                {
+                    accountCode = $"{findParentHead.AccountCode}0{model.AccountCode}";
+                }
+                else
+                {
+                    request.ResponseCode = 400;
+                    request.ResponseMessage = "HEAD: 2, Minimum or Maximum account code digit: 2";
+                    return request;
+                }
+            }
+
+            if (fetchCoAList.Any(x => x.AccountCode.Equals(accountCode) && x.ParentAccountCode.Equals(findParentHead.AccountCode) && x.Level.Equals(findParentHead.Level + 1)))
             {
                 request.ResponseCode = 400;
                 request.ResponseMessage = $"[{model.AccountCode}] has already been added.";
                 return request;
             }
 
-            if (fetchCoAList.Any(x => x.ParentAccountCode.Equals(findParentHead.AccountCode) && x.AccountName.ToUpper().Equals(model.AccountName.ToUpper())))
+            if (fetchCoAList.Any(x => x.AccountName.ToUpper().Equals(model.AccountName.ToUpper()) && x.ParentAccountCode.Equals(findParentHead.AccountCode) && x.Level.Equals(findParentHead.Level + 1)))
             {
                 request.ResponseCode = 400;
                 request.ResponseMessage = $"[{model.AccountName}] has already been added.";
@@ -309,7 +313,7 @@ namespace app.Services.Accounting
         }
 
         //Autocomplete
-        public async Task<List<ChartOfAccountHierarchy>> GetGLAcoountHeadAsync()
+        public async Task<List<ChartOfAccountHierarchy>> GetGLAccountHeadAsync()
         {
             var request = await _dbContext.ChartOfAccounts
                 .Where(x => x.Level.Equals(5) && x.IsActive)
@@ -318,6 +322,44 @@ namespace app.Services.Accounting
                     id = x.AccountCode,
                     text = $"[{x.AccountCode}]-{x.AccountName}"
                 }).ToListAsync();
+
+            return request;
+        }
+
+        //Bulk upload
+        public async Task<ResponseViewModel> BulkUploadAccountHead(List<ChartOfAccoutDtoModel> modelList)
+        {
+            var request = new ResponseViewModel();
+
+            if (modelList.Any())
+            {
+                int line = 1;
+                foreach (var item in modelList)
+                {
+                    ChartOfAccountsViewModel chartOfAccountsViewModel = new ChartOfAccountsViewModel
+                    {
+                        AccountCode = item.Account_Code,
+                        AccountName = item.Account_Name,
+                        ParentAccountCode = item.Parent_Account_Code,
+                    };
+
+                    request = await AddAccountHeadAsync(chartOfAccountsViewModel);
+                    if (!request.ResponseCode.Equals(200))
+                    {
+                        request.ResponseMessage = $"Error Line: {line}, {request.ResponseMessage}";
+                        return request;
+                    }
+                    line++;
+                }
+
+                request.ResponseCode = 200;
+                request.ResponseMessage = "All of Account Heads are uploaded.";
+            }
+            else
+            {
+                request.ResponseCode = 400;
+                request.ResponseMessage = "Empty CSV file.";
+            }
 
             return request;
         }
