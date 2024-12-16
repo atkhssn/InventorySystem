@@ -99,14 +99,14 @@ namespace app.Services.Accounting
 
             if (findParentHead.Level.Equals(2))
             {
-                if (model.AccountCode.Length.Equals(3))
+                if (model.AccountCode.Length.Equals(2))
                 {
                     accountCode = $"{findParentHead.AccountCode}0{model.AccountCode}";
                 }
                 else
                 {
                     request.ResponseCode = 400;
-                    request.ResponseMessage = "HEAD: 3, Minimum or Maximum account code digit: 3";
+                    request.ResponseMessage = "HEAD: 2, Minimum or Maximum account code digit: 2";
                     return request;
                 }
             }
