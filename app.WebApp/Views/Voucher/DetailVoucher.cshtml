@@ -38,7 +38,7 @@
                                 <tbody>
                                     <tr class="border-bottom">
                                         <th class="text-left" width="110px">Voucher Date:</th>
-                                        <td class="text-left">@Model.VoucherDate.ToString("dd,MMMM,yyyy")</td>
+                                        <td class="text-left">@Model.VoucherDate.ToString("dd MMMM, yyyy")</td>
                                         <th class="text-left" width="110px">Voucher No:</th>
                                         <td class="text-left">@Model.VoucherNo</td>
                                         <th class="text-left" width="110px">Voucher Status:</th>
@@ -102,7 +102,7 @@
                                     {
                                         <tr>
                                             <td>@Sl</td>
-                                            <td>@item.AccountCode</td>
+                                            <td>[@item.AccountCode] - @item.ChartOfAccountsViewModel.AccountName</td>
                                             <td>@item.Particular</td>
                                             <td class="text-right">@item.DebitAmount</td>
                                             <td class="text-right">@item.CreditAmount</td>

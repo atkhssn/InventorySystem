@@ -234,76 +234,83 @@ namespace app.Services.Vouchern
 
         public async Task<VouchersViewModel> VoucherAsync(long id)
         {
-            VouchersViewModel request = new VouchersViewModel();
-            request = await _dbContext.Vouchers
-            .Include(v => v.VoucherTypes)
-            .Include(v => v.CostCenters)
-            .Where(v => v.Id.Equals(id) && v.IsActive)
-            .Select(v => new VouchersViewModel
-            {
-                Id = v.Id,
-                VoucherNo = v.VoucherNo,
-                VoucherDate = v.VoucherDate,
-                VoucherTypesId = v.VoucherTypesId,
-                VoucherTypesViewModel = new VoucherTypesViewModel
+            var voucher = await _dbContext.Vouchers
+                .Include(v => v.VoucherTypes)
+                .Include(v => v.CostCenters)
+                .Where(v => v.Id.Equals(id) && v.IsActive)
+                .Select(v => new VouchersViewModel
                 {
-                    Id = v.VoucherTypes.Id,
-                    Name = v.VoucherTypes.Name,
-                    ShortName = v.VoucherTypes.ShortName,
-                    TrakingId = v.VoucherTypes.TrakingId,
-                    CreatedBy = v.VoucherTypes.CreatedBy,
-                    CreatedOn = v.VoucherTypes.CreatedOn,
-                    UpdatedBy = v.VoucherTypes.UpdatedBy,
-                    UpdatedOn = v.VoucherTypes.UpdatedOn,
-                    IsActive = v.VoucherTypes.IsActive
-                },
-                CostCentersId = v.CostCentersId,
-                CostCenterViewModel = new CostCentersViewModel
-                {
-                    Id = v.CostCenters.Id,
-                    Name = v.CostCenters.Name,
-                    ShortName = v.CostCenters.ShortName,
-                    TrakingId = v.CostCenters.TrakingId,
-                    CreatedBy = v.CostCenters.CreatedBy,
-                    CreatedOn = v.CostCenters.CreatedOn,
-                    UpdatedBy = v.CostCenters.UpdatedBy,
-                    UpdatedOn = v.CostCenters.UpdatedOn,
-                    IsActive = v.CostCenters.IsActive
-                },
-                TotalDebitAmount = v.TotalDebitAmount,
-                TotalCreditAmount = v.TotalCreditAmount,
-                Narration = v.Narration,
-                VoucherStatus = (VoucherStatus)v.Status,
-                CreatedBy = v.CreatedBy,
-                CreatedOn = v.CreatedOn,
-                UpdatedBy = v.UpdatedBy,
-                UpdatedOn = v.UpdatedOn,
-                IsActive = v.IsActive
-            }).FirstOrDefaultAsync();
+                    Id = v.Id,
+                    VoucherNo = v.VoucherNo,
+                    VoucherDate = v.VoucherDate,
+                    VoucherTypesId = v.VoucherTypesId,
+                    VoucherTypesViewModel = v.VoucherTypes.Equals(null) ? null : new VoucherTypesViewModel
+                    {
+                        Id = v.VoucherTypes.Id,
+                        Name = v.VoucherTypes.Name,
+                        ShortName = v.VoucherTypes.ShortName,
+                        TrakingId = v.VoucherTypes.TrakingId,
+                        CreatedBy = v.VoucherTypes.CreatedBy,
+                        CreatedOn = v.VoucherTypes.CreatedOn,
+                        UpdatedBy = v.VoucherTypes.UpdatedBy,
+                        UpdatedOn = v.VoucherTypes.UpdatedOn,
+                        IsActive = v.VoucherTypes.IsActive
+                    },
+                    CostCentersId = v.CostCentersId,
+                    CostCenterViewModel = v.CostCenters.Equals(null) ? null : new CostCentersViewModel
+                    {
+                        Id = v.CostCenters.Id,
+                        Name = v.CostCenters.Name,
+                        ShortName = v.CostCenters.ShortName,
+                        TrakingId = v.CostCenters.TrakingId,
+                        CreatedBy = v.CostCenters.CreatedBy,
+                        CreatedOn = v.CostCenters.CreatedOn,
+                        UpdatedBy = v.CostCenters.UpdatedBy,
+                        UpdatedOn = v.CostCenters.UpdatedOn,
+                        IsActive = v.CostCenters.IsActive
+                    },
+                    TotalDebitAmount = v.TotalDebitAmount,
+                    TotalCreditAmount = v.TotalCreditAmount,
+                    Narration = v.Narration,
+                    VoucherStatus = (VoucherStatus)v.Status,
+                    CreatedBy = v.CreatedBy,
+                    CreatedOn = v.CreatedOn,
+                    UpdatedBy = v.UpdatedBy,
+                    UpdatedOn = v.UpdatedOn,
+                    IsActive = v.IsActive
+                }).FirstOrDefaultAsync();
 
-            if (request is null)
+            if (voucher is null)
             {
                 return null;
             }
 
-            request.VouchersLinesViewModels = await _dbContext.VouchersLines
-                .Where(x => x.VouchersId.Equals(request.Id) && x.IsActive).Select(x => new VouchersLinesViewModel
+            voucher.VouchersLinesViewModels = await _dbContext.VouchersLines
+                .Include(vl => vl.ChartOfAccounts)
+                .Where(vl => vl.VouchersId.Equals(voucher.Id) && vl.IsActive)
+                .Select(vl => new VouchersLinesViewModel
                 {
-                    Id = x.Id,
-                    VouchersId = x.VouchersId,
-                    AccountCode = x.AccountCode,
-                    DebitAmount = x.DebitAmount,
-                    CreditAmount = x.CreditAmount,
-                    Particular = x.Particular,
-                    TrakingId = x.TrakingId,
-                    CreatedBy = x.CreatedBy,
-                    CreatedOn = x.CreatedOn,
-                    UpdatedBy = x.UpdatedBy,
-                    UpdatedOn = x.UpdatedOn,
-                    IsActive = x.IsActive
+                    Id = vl.Id,
+                    VouchersId = vl.VouchersId,
+                    AccountCode = vl.AccountCode,
+                    ChartOfAccountsViewModel = vl.ChartOfAccounts.Equals(null) ? null : new ChartOfAccountsViewModel
+                    {
+                        AccountCode = vl.ChartOfAccounts.AccountCode,
+                        AccountName = vl.ChartOfAccounts.AccountName,
+                        ParentAccountCode = vl.ChartOfAccounts.ParentAccountCode
+                    },
+                    DebitAmount = vl.DebitAmount,
+                    CreditAmount = vl.CreditAmount,
+                    Particular = vl.Particular,
+                    TrakingId = vl.TrakingId,
+                    CreatedBy = vl.CreatedBy,
+                    CreatedOn = vl.CreatedOn,
+                    UpdatedBy = vl.UpdatedBy,
+                    UpdatedOn = vl.UpdatedOn,
+                    IsActive = vl.IsActive
                 }).ToListAsync();
 
-            return request;
+            return voucher;
         }
 
         public async Task<VouchersViewModel> VoucherByVoucherNoAsync(string voucherNo)
