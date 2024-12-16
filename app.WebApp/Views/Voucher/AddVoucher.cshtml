@@ -5,6 +5,7 @@
 @{
     ViewData["Title"] = "New Voucher";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
     int Sl = 1;
     var getTempRes = ViewBag.Response as string;
     ResponseViewModel response = getTempRes is not null ? JsonConvert.DeserializeObject<ResponseViewModel>(getTempRes) : null;
@@ -265,19 +266,14 @@
                         url: "/Accounting/GetChartOfAccountGlLayer",
                         data: { term: request.term },
                         success: function (data) {
-                            response(data); // Pass array of { id, label }
+                            response(data);
                         }
                     });
                 },
-                minLength: 2, // Start suggesting after typing 2 characters
+                minLength: 2,
                 select: function (event, ui) {
-                    // Set the selected label in the input box
                     $("#search-box").val(ui.item.label);
-
-                    // Store the selected ID in the hidden field
                     $("#selected-id").val(ui.item.id);
-
-                    // Prevent the default behavior of setting the label again
                     return false;
                 }
             });
@@ -345,7 +341,7 @@
 
             setTimeout(function() {
                 $('#response').hide();
-            }, 3500);
+            }, 5000);
 
         });
     </script>

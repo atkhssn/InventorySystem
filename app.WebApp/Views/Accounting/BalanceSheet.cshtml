@@ -1,7 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Balance Sheet";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
-    int Sl = 1;
 }
 
 <div class="content-header">
@@ -47,7 +46,7 @@
 
             setTimeout(function() {
                 $('#response').hide();
-            }, 4000);
+            }, 5000);
 
             $('#printTrailBalance').on('click', function () {
                 var tableData = $('tbody').html();

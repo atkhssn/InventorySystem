@@ -22,7 +22,7 @@ namespace app.Services.Vouchern
 
         public async Task<VoucherTypesViewModel> VoucherTypesAsync()
         {
-            VoucherTypesViewModel request = new VoucherTypesViewModel();
+            var request = new VoucherTypesViewModel();
             request.VoucherTypesViewModels = await _dbContext.VoucherTypes.Where(x => x.IsActive)
                 .Select(x => new VoucherTypesViewModel
                 {
@@ -41,7 +41,7 @@ namespace app.Services.Vouchern
 
         public async Task<VoucherTypesViewModel> VoucherTypeAsync(long id)
         {
-            VoucherTypesViewModel request = new VoucherTypesViewModel();
+            var request = new VoucherTypesViewModel();
             request = await _dbContext.VoucherTypes.Where(x => x.Id.Equals(id) && x.IsActive)
                 .Select(x => new VoucherTypesViewModel
                 {
@@ -60,7 +60,7 @@ namespace app.Services.Vouchern
 
         public async Task<ResponseViewModel> AddVoucherTypeAsync(VoucherTypesViewModel model)
         {
-            ResponseViewModel request = new ResponseViewModel();
+            var request = new ResponseViewModel();
             var user = await _workContext.GetCurrentUserAsync();
             var findVouchertype = _dbContext.VoucherTypes.Where(x => x.Name.ToUpper().Equals(model.Name.ToUpper())).FirstOrDefault();
             var findVouchertypeShort = _dbContext.VoucherTypes.Where(x => x.ShortName.ToUpper().Equals(model.ShortName.ToUpper())).FirstOrDefault();
@@ -69,44 +69,49 @@ namespace app.Services.Vouchern
             {
                 request.ResponseCode = 400;
                 request.ResponseMessage = $"[{model.Name}] has already been added.";
-                return await Task.Run(() => request);
+                return request;
             }
 
             if (findVouchertypeShort is not null)
             {
                 request.ResponseCode = 400;
                 request.ResponseMessage = $"[{model.ShortName}] has already been added.";
-                return await Task.Run(() => request);
+                return request;
             }
 
-            VoucherTypes voucherType = new VoucherTypes
+            try
             {
-                Id = model.Id,
-                ShortName = model.ShortName.ToUpper(),
-                Name = model.Name,
-                TrakingId = user.UserName,
-                CreatedBy = user.FullName,
-                CreatedOn = DateTime.Now,
-                IsActive = true
-            };
+                using var transaction = await _dbContext.Database.BeginTransactionAsync();
 
-            _dbContext.VoucherTypes.Add(voucherType);
+                VoucherTypes voucherType = new VoucherTypes
+                {
+                    Id = model.Id,
+                    ShortName = model.ShortName.ToUpper(),
+                    Name = model.Name,
+                    TrakingId = user.UserName,
+                    CreatedBy = user.FullName,
+                    CreatedOn = DateTime.Now,
+                    IsActive = true
+                };
 
-            if (await _dbContext.SaveChangesAsync() > 0)
-            {
+                _dbContext.VoucherTypes.Add(voucherType);
+                await _dbContext.SaveChangesAsync();
+                await transaction.CommitAsync();
+
                 request.ResponseCode = 200;
                 request.ResponseMessage = $"New voucher type has been added.";
-                return await Task.Run(() => request);
             }
-
-            request.ResponseCode = 500;
-            request.ResponseMessage = $"An internal server error occurred.";
-            return await Task.Run(() => request);
+            catch (Exception ex)
+            {
+                request.ResponseCode = 500;
+                request.ResponseMessage = ex.Message.ToString();
+            }
+            return request;
         }
 
         public async Task<ResponseViewModel> UpdateVoucherTypeAync(VoucherTypesViewModel model)
         {
-            ResponseViewModel request = new ResponseViewModel();
+            var request = new ResponseViewModel();
             var user = await _workContext.GetCurrentUserAsync();
             var getVoucherType = _dbContext.VoucherTypes.Where(x => x.Id.Equals(model.Id) && x.ShortName.ToUpper().Equals(model.ShortName.ToUpper())).FirstOrDefault();
             var findVoucherType = _dbContext.VoucherTypes.Where(x => x.Name.ToUpper().Equals(model.Name.ToUpper())).FirstOrDefault();
@@ -115,59 +120,79 @@ namespace app.Services.Vouchern
             {
                 request.ResponseCode = 404;
                 request.ResponseMessage = $"No records found to update.";
-                return await Task.Run(() => request);
+                return request;
             }
 
             if (findVoucherType is not null)
             {
                 request.ResponseCode = 400;
                 request.ResponseMessage = $"[{model.Name}] has already been added.";
-                return await Task.Run(() => request);
+                return request;
             }
 
-            getVoucherType.Name = model.Name;
-            getVoucherType.UpdatedBy = user.FullName;
-            getVoucherType.UpdatedOn = DateTime.Now;
-
-            if (await _dbContext.SaveChangesAsync() > 0)
+            try
             {
-                request.ResponseCode = 200;
-                request.ResponseMessage = $"Voucher type has been modified.";
-                return await Task.Run(() => request);
-            }
+                using var transaction = await _dbContext.Database.BeginTransactionAsync();
 
-            request.ResponseCode = 500;
-            request.ResponseMessage = $"An internal server error occurred.";
-            return await Task.Run(() => request);
+                getVoucherType.Name = model.Name;
+                getVoucherType.UpdatedBy = user.FullName;
+                getVoucherType.UpdatedOn = DateTime.Now;
+
+                await _dbContext.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                request.ResponseCode = 200;
+                request.ResponseMessage = "Voucher type has been modified.";
+            }
+            catch (Exception ex)
+            {
+                request.ResponseCode = 500;
+                request.ResponseMessage = ex.Message.ToString();
+            }
+            return request;
         }
 
         public async Task<ResponseViewModel> DeleteVoucherTypeAync(long id)
         {
-            ResponseViewModel response = new ResponseViewModel();
+            var request = new ResponseViewModel();
             var user = await _workContext.GetCurrentUserAsync();
             var findVoucherType = await _dbContext.VoucherTypes.Where(x => x.Id.Equals(id)).FirstOrDefaultAsync();
+            var isInVoucher = await _dbContext.Vouchers.AnyAsync(x => x.VoucherTypesId.Equals(id) && x.IsActive);
 
             if (findVoucherType is null)
             {
-                response.ResponseCode = 404;
-                response.ResponseMessage = $"No records found to delete.";
-                return await Task.Run(() => response);
+                request.ResponseCode = 404;
+                request.ResponseMessage = "No records found to delete.";
+                return request;
             }
 
-            findVoucherType.IsActive = false;
-            findVoucherType.UpdatedBy = user.FullName;
-            findVoucherType.UpdatedOn = DateTime.Now;
-
-            if (await _dbContext.SaveChangesAsync() > 0)
+            if (isInVoucher)
             {
-                response.ResponseCode = 200;
-                response.ResponseMessage = $"Voucher type has been removed.";
-                return await Task.Run(() => response);
+                request.ResponseCode = 400;
+                request.ResponseMessage = "Cannot delete, Already used in voucher.";
+                return request;
             }
 
-            response.ResponseCode = 500;
-            response.ResponseMessage = $"An internal server error occurred.";
-            return await Task.Run(() => response);
+            try
+            {
+                using var transaction = await _dbContext.Database.BeginTransactionAsync();
+
+                findVoucherType.IsActive = false;
+                findVoucherType.UpdatedBy = user.FullName;
+                findVoucherType.UpdatedOn = DateTime.Now;
+
+                await _dbContext.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                request.ResponseCode = 200;
+                request.ResponseMessage = "Voucher type has been removed.";
+            }
+            catch (Exception ex)
+            {
+                request.ResponseCode = 500;
+                request.ResponseMessage = ex.Message.ToString();
+            }
+            return request;
         }
 
         #endregion

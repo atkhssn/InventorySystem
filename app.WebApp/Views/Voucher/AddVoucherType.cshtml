@@ -55,7 +55,16 @@
                     {
                         if (Model.ResponseViewModel is not null)
                         {
-                            if (Model.ResponseViewModel.ResponseCode.Equals(400))
+                            if (Model.ResponseViewModel.ResponseCode.Equals(200))
+                            {
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <strong>Success!</strong> @Model.ResponseViewModel.ResponseMessage
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            }
+                            else if (Model.ResponseViewModel.ResponseCode.Equals(400))
                             {
                                 <div class="alert alert-warning alert-dismissible fade show" role="alert">
                                     <strong>Bad Request!</strong> @Model.ResponseViewModel.ResponseMessage
@@ -98,7 +107,7 @@
 
             setTimeout(function() {
                 $('#response').hide();
-            }, 4000);
+            }, 5000);
         });
     </script>
     @{

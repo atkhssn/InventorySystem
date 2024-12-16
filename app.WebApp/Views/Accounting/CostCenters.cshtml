@@ -5,8 +5,8 @@
 @{
     ViewData["Title"] = "Cost Centers";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
-    int Sl = 1;
 
+    int Sl = 1;
     var getTempRes = ViewBag.Response as string;
     ResponseViewModel response = getTempRes is not null ? JsonConvert.DeserializeObject<ResponseViewModel>(getTempRes) : null;
 }
@@ -137,7 +137,7 @@
 
             setTimeout(function() {
                 $('#response').hide();
-            }, 4000);
+            }, 5000);
         });
     </script>
     @{

@@ -1,6 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Trail Balance";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
     int Sl = 1;
 }
 
@@ -339,7 +340,7 @@
                                 <td class="text-right">0.000</td>
                                 <td class="text-right">1400.000</td>
                             </tr>
-                            
+
                         </tbody>
                         <tfoot>
                             <tr>
@@ -364,7 +365,7 @@
 
             setTimeout(function() {
                 $('#response').hide();
-            }, 4000);
+            }, 5000);
 
             $('#printTrailBalance').on('click', function () {
                 var tableData = $('tbody').html();

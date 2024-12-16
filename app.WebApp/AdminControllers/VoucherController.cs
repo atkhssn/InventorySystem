@@ -28,7 +28,7 @@ namespace app.WebApp.AdminControllers
         public async Task<IActionResult> VoucherTypes()
         {
             var response = await _voucherServices.VoucherTypesAsync();
-            ViewBag.Message = TempData["Message"]?.ToString();
+            ViewBag.Response = TempData["Response"]?.ToString();
             return await Task.Run(() => View(response));
         }
 
@@ -42,9 +42,9 @@ namespace app.WebApp.AdminControllers
         public async Task<IActionResult> AddVoucherType(VoucherTypesViewModel voucherTypesViewModel)
         {
             var response = await _voucherServices.AddVoucherTypeAsync(voucherTypesViewModel);
-            if (response.ResponseCode == 200)
+            if (response.ResponseCode.Equals(200))
             {
-                TempData["Message"] = response.ResponseMessage;
+                TempData["Response"] = JsonConvert.SerializeObject(response);
                 return await Task.Run(() => RedirectToAction("VoucherTypes"));
             }
             voucherTypesViewModel.ResponseViewModel = response;
@@ -62,9 +62,9 @@ namespace app.WebApp.AdminControllers
         public async Task<IActionResult> UpdateVoucherType(VoucherTypesViewModel voucherTypesViewModel)
         {
             var response = await _voucherServices.UpdateVoucherTypeAync(voucherTypesViewModel);
-            if (response.ResponseCode == 200)
+            if (response.ResponseCode.Equals(200))
             {
-                TempData["Message"] = response.ResponseMessage;
+                TempData["Response"] = JsonConvert.SerializeObject(response);
                 return await Task.Run(() => RedirectToAction("VoucherTypes"));
             }
             voucherTypesViewModel.ResponseViewModel = response;
@@ -75,8 +75,7 @@ namespace app.WebApp.AdminControllers
         public async Task<IActionResult> DeleteCostCenter(long id)
         {
             var response = await _voucherServices.DeleteVoucherTypeAync(id);
-            if (response.ResponseCode == 200)
-                TempData["Message"] = response.ResponseMessage;
+            TempData["Response"] = JsonConvert.SerializeObject(response);
             return await Task.Run(() => RedirectToAction("VoucherTypes"));
         }
 
@@ -194,14 +193,6 @@ namespace app.WebApp.AdminControllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> SubmitVoucher(VouchersViewModel vouchersViewModel)
-        {
-            var response = await _voucherServices.MakeSubmitVoucherAync(vouchersViewModel.Id);
-            TempData["Response"] = JsonConvert.SerializeObject(response);
-            return await Task.Run(() => RedirectToAction("Vouchers"));
-        }
-
         [HttpGet]
         public async Task<IActionResult> SearchVouchers(int? voucherType, int? costCenter, string fromDate, string toDate)
         {
@@ -225,7 +216,6 @@ namespace app.WebApp.AdminControllers
             return await Task.Run(() => View(response));
         }
 
-
         [HttpPost]
         public async Task<IActionResult> SearchVouchers(SearchVoucherViewModel searchVoucherViewModel)
         {
@@ -238,9 +228,13 @@ namespace app.WebApp.AdminControllers
             }));
         }
 
-        #endregion
-
-        #region Voucher Approve
+        [HttpPost]
+        public async Task<IActionResult> SubmitVoucher(VouchersViewModel vouchersViewModel)
+        {
+            var response = await _voucherServices.MakeSubmitVoucherAync(vouchersViewModel.Id);
+            TempData["Response"] = JsonConvert.SerializeObject(response);
+            return await Task.Run(() => RedirectToAction("Vouchers"));
+        }
 
         [HttpGet]
         public async Task<IActionResult> PendingVouchers()
@@ -256,6 +250,7 @@ namespace app.WebApp.AdminControllers
             TempData["Response"] = JsonConvert.SerializeObject(response);
             return await Task.Run(() => RedirectToAction("Vouchers"));
         }
+
         #endregion
 
     }
