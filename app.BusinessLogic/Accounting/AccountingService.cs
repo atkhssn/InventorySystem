@@ -346,7 +346,7 @@ namespace app.Services.Accounting
                     request = await AddAccountHeadAsync(chartOfAccountsViewModel);
                     if (!request.ResponseCode.Equals(200))
                     {
-                        request.ResponseMessage = $"Error Line: {line}, {request.ResponseMessage}";
+                        request.ResponseMessage = $"Error Line: {line+1}, {request.ResponseMessage}";
                         return request;
                     }
                     line++;
