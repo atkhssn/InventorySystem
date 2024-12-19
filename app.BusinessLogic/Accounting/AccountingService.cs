@@ -55,6 +55,13 @@ namespace app.Services.Accounting
                 return request;
             }
 
+            if (Convert.ToInt32(model.AccountCode).Equals(0))
+            {
+                request.ResponseCode = 400;
+                request.ResponseMessage = $"Invalid account code: {model.AccountCode}";
+                return request;
+            }
+
             if (findParentHead is null)
             {
                 request.ResponseCode = 404;
@@ -71,58 +78,69 @@ namespace app.Services.Accounting
 
             if (findParentHead.Level.Equals(4))
             {
-                if (model.AccountCode.Length.Equals(2))
-                {
-                    accountCode = $"{findParentHead.AccountCode}0{model.AccountCode}";
-                }
-                else
+                if (model.AccountCode.Length >= 4)
                 {
                     request.ResponseCode = 400;
-                    request.ResponseMessage = "HEAD: 5, Minimum or Maximum account code digit: 2";
+                    request.ResponseMessage = "HEAD: 5, Maximum account code digit: 3";
                     return request;
                 }
+
+                if (model.AccountCode.Length.Equals(1))
+                    accountCode = $"{findParentHead.AccountCode}00{model.AccountCode}";
+
+                if (model.AccountCode.Length.Equals(2))
+                    accountCode = $"{findParentHead.AccountCode}0{model.AccountCode}";
+
+                if (model.AccountCode.Length.Equals(3))
+                    accountCode = $"{findParentHead.AccountCode}{model.AccountCode}";
             }
 
             if (findParentHead.Level.Equals(3))
             {
-                if (model.AccountCode.Length.Equals(2))
-                {
-                    accountCode = $"{findParentHead.AccountCode}0{model.AccountCode}";
-                }
-                else
+                if (model.AccountCode.Length >= 3)
                 {
                     request.ResponseCode = 400;
-                    request.ResponseMessage = "HEAD: 4, Minimum or Maximum account code digit: 2";
+                    request.ResponseMessage = "HEAD: 4, Maximum account code digit: 2";
                     return request;
                 }
+
+                if (model.AccountCode.Length.Equals(1))
+                    accountCode = $"{findParentHead.AccountCode}00{model.AccountCode}";
+
+                if (model.AccountCode.Length.Equals(2))
+                    accountCode = $"{findParentHead.AccountCode}0{model.AccountCode}";
             }
 
             if (findParentHead.Level.Equals(2))
             {
-                if (model.AccountCode.Length.Equals(2))
-                {
-                    accountCode = $"{findParentHead.AccountCode}0{model.AccountCode}";
-                }
-                else
+                if (model.AccountCode.Length >= 3)
                 {
                     request.ResponseCode = 400;
-                    request.ResponseMessage = "HEAD: 2, Minimum or Maximum account code digit: 2";
+                    request.ResponseMessage = "HEAD: 3, Maximum account code digit: 2";
                     return request;
                 }
+
+                if (model.AccountCode.Length.Equals(1))
+                    accountCode = $"{findParentHead.AccountCode}00{model.AccountCode}";
+
+                if (model.AccountCode.Length.Equals(2))
+                    accountCode = $"{findParentHead.AccountCode}0{model.AccountCode}";
             }
 
             if (findParentHead.Level.Equals(1))
             {
-                if (model.AccountCode.Length.Equals(2))
-                {
-                    accountCode = $"{findParentHead.AccountCode}0{model.AccountCode}";
-                }
-                else
+                if (model.AccountCode.Length >= 3)
                 {
                     request.ResponseCode = 400;
-                    request.ResponseMessage = "HEAD: 2, Minimum or Maximum account code digit: 2";
+                    request.ResponseMessage = "HEAD: 2, Maximum account code digit: 2";
                     return request;
                 }
+
+                if (model.AccountCode.Length.Equals(1))
+                    accountCode = $"{findParentHead.AccountCode}00{model.AccountCode}";
+
+                if (model.AccountCode.Length.Equals(2))
+                    accountCode = $"{findParentHead.AccountCode}0{model.AccountCode}";
             }
 
             if (fetchCoAList.Any(x => x.AccountCode.Equals(accountCode) && x.ParentAccountCode.Equals(findParentHead.AccountCode) && x.Level.Equals(findParentHead.Level + 1)))
@@ -346,7 +364,7 @@ namespace app.Services.Accounting
                     request = await AddAccountHeadAsync(chartOfAccountsViewModel);
                     if (!request.ResponseCode.Equals(200))
                     {
-                        request.ResponseMessage = $"Error Line: {line+1}, {request.ResponseMessage}";
+                        request.ResponseMessage = $"Error Line: {line + 1}, {request.ResponseMessage}";
                         return request;
                     }
                     line++;

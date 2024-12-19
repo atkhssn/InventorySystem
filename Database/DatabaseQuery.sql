@@ -88,17 +88,14 @@ CREATE TABLE New.ChartOfAccounts(
 )
 
 CREATE TABLE New.Transactions(
-	Id VARCHAR(20) NOT NULL PRIMARY KEY,
+	Id VARCHAR(30) NOT NULL PRIMARY KEY,
 	VouchersId BIGINT NOT NULL,
-	AccountCode VARCHAR(10) NOT NULL,
-	TransactionDate DATETIME NOT NULL,
+	AccountCode VARCHAR(13) NOT NULL,
 	Description NVARCHAR(250) NULL,
 	DebitAmount DECIMAL(18,3) NOT NULL,
 	CreditAmount DECIMAL(18,3) NOT NULL,
-	Balance DECIMAL(18,3) NOT NULL,
-	IsSuccess BIT NOT NULL,
-	RequestedBy NVARCHAR(150) NOT NULL,
-	RequestedOn DATETIME NOT NULL
+	TransactionBy NVARCHAR(150) NOT NULL,
+	TransactionDate DATETIME NOT NULL
 
 	FOREIGN KEY(VouchersId) REFERENCES New.Vouchers(Id),
 	FOREIGN KEY(AccountCode) REFERENCES New.ChartOfAccounts(AccountCode)

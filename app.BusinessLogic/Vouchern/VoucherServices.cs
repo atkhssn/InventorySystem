@@ -394,7 +394,9 @@ namespace app.Services.Vouchern
                 return await Task.Run(() => model);
             }
 
-            model.VoucherNo = await VoucherNoGenerate(model.VoucherTypesId, model.VoucherDate);
+            var voucherTypeCount = await _dbContext.VoucherTypes.CountAsync(x => x.Id.Equals(findVoucherType.Id));
+            model.VoucherNo = $"{findVoucherType.ShortName}{findVoucherType.Id}0{model.VoucherDate.Year % 100:D2}{model.VoucherDate.Month:D2}{model.VoucherDate.Day:D2}0{++voucherTypeCount:D2}";
+
             if (string.IsNullOrEmpty(model.VoucherNo))
             {
                 model.ResponseViewModel.ResponseCode = 500;
@@ -604,96 +606,84 @@ namespace app.Services.Vouchern
             return await Task.Run(() => request);
         }
 
-        public async Task<ResponseViewModel> MakeApproveVoucherAsync(string voucherString)
+        public async Task<ResponseViewModel> MakeApproveVoucherAsync(string voucherNo)
         {
-            ResponseViewModel request = new ResponseViewModel();
+            var request = new ResponseViewModel();
             var user = await _workContext.GetCurrentUserAsync();
-            var findVoucher = await _dbContext.Vouchers.Where(x => x.VoucherNo.Equals(voucherString)).FirstOrDefaultAsync();
+            var findVoucher = await _dbContext.Vouchers.FirstOrDefaultAsync(x => x.VoucherNo.Equals(voucherNo));
 
-            if (findVoucher is null)
+            if (findVoucher == null)
             {
                 request.ResponseCode = 404;
-                request.ResponseMessage = $"No records found to submit.";
-                return await Task.Run(() => request);
+                request.ResponseMessage = "No records found to submit.";
+                return request;
             }
 
-            if (!findVoucher.Status.Equals(Convert.ToInt32(VoucherStatus.SUBMITTED)))
+            if (!findVoucher.Status.Equals((int)VoucherStatus.SUBMITTED))
             {
                 request.ResponseCode = 400;
-                request.ResponseMessage = $"Voucher is not submitted.";
-                return await Task.Run(() => request);
+                request.ResponseMessage = "Voucher is not submitted.";
+                return request;
             }
 
-            if (findVoucher.Status.Equals(Convert.ToInt32(VoucherStatus.APPROVED)))
+            if (findVoucher.Status.Equals((int)VoucherStatus.APPROVED))
             {
                 request.ResponseCode = 400;
-                request.ResponseMessage = $"Voucher is already approved.";
-                return await Task.Run(() => request);
+                request.ResponseMessage = "Voucher is already approved.";
+                return request;
             }
 
             if (!findVoucher.TotalDebitAmount.Equals(findVoucher.TotalCreditAmount))
             {
                 request.ResponseCode = 400;
-                request.ResponseMessage = $"Debit amount and creadit amount is mismatched.";
-                return await Task.Run(() => request);
+                request.ResponseMessage = "Debit amount and credit amount mismatch.";
+                return request;
             }
 
             try
             {
-                findVoucher.Status = Convert.ToInt32(VoucherStatus.APPROVED);
+                using var transaction = await _dbContext.Database.BeginTransactionAsync();
+
+                findVoucher.Status = (int)VoucherStatus.APPROVED;
                 findVoucher.UpdatedBy = user.FullName;
                 findVoucher.UpdatedOn = DateTime.Now;
 
-                if (await _dbContext.SaveChangesAsync() > 0)
-                {
-                    var getVoucherLines = await _dbContext.VouchersLines.Where(x => x.VouchersId.Equals(findVoucher.Id) && x.IsActive).ToListAsync();
-                    List<Transactions> transactions = new List<Transactions>();
-                    decimal bal = 0.000M;
-                    foreach (var item in getVoucherLines)
-                    {
-                        Transactions transaction = new Transactions
+                var fetchTransactions = await _dbContext.VouchersLines
+                        .Where(x => x.VouchersId.Equals(findVoucher.Id))
+                        .GroupBy(x => x.AccountCode)
+                        .Select(x => new Transactions
                         {
-                            Id = $"TRX-{item.Id}",
-                            VouchersId = item.VouchersId,
-                            AccountCode = item.AccountCode,
-                            TransactionDate = DateTime.Now,
-                            DebitAmount = item.DebitAmount,
-                            CreditAmount = item.CreditAmount,
-                            Balance = bal + (item.DebitAmount - item.CreditAmount),
-                            IsSuccess = true,
-                            RequestedBy = user.FullName,
-                            RequestedOn = DateTime.Now,
-                        };
+                            AccountCode = x.Key,
+                            DebitAmount = x.Sum(t => t.DebitAmount),
+                            CreditAmount = x.Sum(t => t.CreditAmount),
+                            Description = x.FirstOrDefault().Particular
+                        }).ToListAsync();
 
-                        transactions.Add(transaction);
-                    }
+                var transactionCount = await _dbContext.Transactions
+                        .CountAsync(x => x.TransactionDate.Equals(DateTime.Now));
 
-                    await _dbContext.Transactions.AddRangeAsync(transactions);
-
-                    if (await _dbContext.SaveChangesAsync() > 0)
-                    {
-                        request.ResponseCode = 200;
-                        request.ResponseMessage = $"Voucher has been approved.";
-                    }
-                    else
-                    {
-                        request.ResponseCode = 500;
-                        request.ResponseMessage = $"An internal server error occurred.";
-                    }
-                }
-                else
+                foreach (var item in fetchTransactions)
                 {
-                    request.ResponseCode = 500;
-                    request.ResponseMessage = $"An internal server error occurred.";
+                    transactionCount++;
+                    item.Id = $"TXN{findVoucher.Id}{DateTime.Now.Year % 100}{DateTime.Now.Month:D2}{DateTime.Now.Day:D2}{transactionCount:D2}";
+                    item.VouchersId = findVoucher.Id;
+                    item.TransactionBy = user.FullName;
+                    item.TransactionDate = DateTime.Now;
                 }
 
+                _dbContext.Transactions.AddRange(fetchTransactions);
+                await _dbContext.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                request.ResponseCode = 200;
+                request.ResponseMessage = "Voucher has been approved.";
             }
             catch (Exception ex)
             {
                 request.ResponseCode = 500;
-                request.ResponseMessage = ex.Message.ToString();
+                request.ResponseMessage = $"Error: {ex.Message}";
             }
-            return await Task.Run(() => request);
+            return request;
         }
 
         public async Task<SearchVoucherViewModel> SearchVoucherAsync(SearchVoucherViewModel model)
@@ -753,14 +743,5 @@ namespace app.Services.Vouchern
 
         #endregion
 
-        public async Task<string> VoucherNoGenerate(long voucherTypeId, DateTime voucherDate)
-        {
-            string voucherNo = string.Empty;
-            var getVouchers = await _dbContext.Vouchers
-                .Where(x => x.VoucherTypesId.Equals(voucherTypeId) && x.VoucherDate.Equals(voucherDate.Date)).ToListAsync();
-            var getVoucherType = await _dbContext.VoucherTypes.Where(x => x.Id.Equals(voucherTypeId)).FirstOrDefaultAsync();
-            voucherNo = $"{getVoucherType.ShortName}{getVoucherType.Id}0{voucherDate.Year % 100}{voucherDate.Month}{voucherDate.Day}0{getVouchers.Count + 1}";
-            return await Task.Run(() => voucherNo);
-        }
     }
 }

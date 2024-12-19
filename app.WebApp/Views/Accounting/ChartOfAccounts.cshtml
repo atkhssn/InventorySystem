@@ -240,7 +240,7 @@
                                         </tr>
                                         <tr>
                                             <td>5th Layer</td>
-                                            <td class="text-center">2</td>
+                                            <td class="text-center">3</td>
                                             <td><span class="text-bold">Specific Account: </span>Detailed tracking</td>
                                             <td>11-Bank Name</td>
                                         </tr>
@@ -396,7 +396,9 @@
                 $('#btnEdit').data('node-id', selectedNode.id).data('node-text', selectedNode.text);
                 $('#btnDelete').data('node-id', selectedNode.id).data('node-text', selectedNode.text);
 
-                $('#nodeModal').modal('show');
+                if(selectedNode.id.length <= 11){
+                    $('#nodeModal').modal('show');
+                }
             });
 
             //Open create modal
