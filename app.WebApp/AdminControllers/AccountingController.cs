@@ -55,18 +55,6 @@ namespace app.WebApp.AdminControllers
             return await Task.Run(() => RedirectToAction("ChartOfAccounts"));
         }
 
-        [HttpGet]
-        public async Task<IActionResult> TrailBalance()
-        {
-            return await Task.Run(() => View());
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> BalanceSheet()
-        {
-            return await Task.Run(() => View());
-        }
-
         #endregion
 
         #region Cost Center
