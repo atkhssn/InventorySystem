@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using app.Services.Accounting;
+using System.ComponentModel.DataAnnotations;
 
 namespace app.Services.AccountingReport
 {
@@ -30,6 +31,16 @@ namespace app.Services.AccountingReport
 
         [Display(Name = "Transaction Date")]
         public DateTime TransactionDate { get; set; }
+
+        [Display(Name = "Cost Center")]
+        public long? CostCentersId { get; set; }
+        public CostCentersViewModel CostCentersViewModel { get; set; }   
+
+        [Display(Name = "From Date")]
+        public DateTime? FromDate { get; set; }
+
+        [Display(Name = "To Date")]
+        public DateTime? ToDate { get; set; }
 
         public List<AccountingReportViewModel> accountingReportViewModels { get; set; }
     }

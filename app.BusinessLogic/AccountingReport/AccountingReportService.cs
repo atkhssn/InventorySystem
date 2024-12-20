@@ -12,13 +12,32 @@ namespace app.Services.AccountingReport
             _dbContext = inventoryDbContext;
         }
 
-        public async Task<AccountingReportViewModel> GetTrialBalanceReportAsync()
+        public async Task<AccountingReportViewModel> GetTrialBalanceReportAsync(AccountingReportViewModel model)
         {
             var request = new AccountingReportViewModel();
+            var query = _dbContext.Transactions
+                .Include(vo => vo.Vouchers)
+                .Include(cc => cc.Vouchers.CostCenters)
+                .Include(ca => ca.ChartOfAccounts)
+                .AsQueryable();
 
-            request.accountingReportViewModels = await _dbContext.Transactions
-                .Include(v => v.Vouchers)
-                .Include(ac => ac.ChartOfAccounts)
+            if (model.CostCentersId.HasValue && model.CostCentersId > 0)
+            {
+                query = query.Where(vo => vo.Vouchers.CostCenters.Id.Equals(model.CostCentersId));
+            }
+
+            if (model.FromDate.HasValue)
+            {
+                query = query.Where(fd => fd.TransactionDate.Date >= model.FromDate.Value.Date);
+            }
+
+            if (model.ToDate.HasValue)
+            {
+                query = query.Where(td => td.TransactionDate.Date <= model.ToDate.Value.Date);
+            }
+
+
+            request.accountingReportViewModels = await query
                 .Select(x => new AccountingReportViewModel
                 {
                     TransactionId = x.Id,

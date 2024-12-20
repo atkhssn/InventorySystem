@@ -2,6 +2,6 @@
 {
     public interface IAccountingReportService
     {
-        Task<AccountingReportViewModel> GetTrialBalanceReportAsync();
+        Task<AccountingReportViewModel> GetTrialBalanceReportAsync(AccountingReportViewModel model);
     }
 }
