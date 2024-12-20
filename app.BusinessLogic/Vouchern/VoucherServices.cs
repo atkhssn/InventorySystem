@@ -663,7 +663,7 @@ namespace app.Services.Vouchern
                 foreach (var item in fetchTransactions)
                 {
                     transactionCount++;
-                    item.Id = $"TXN{findVoucher.Id}{DateTime.Now.Year % 100}{DateTime.Now.Month:D2}{DateTime.Now.Day:D2}{transactionCount:D2}";
+                    item.Id = $"TXN{DateTime.Now.Year % 100}{DateTime.Now.Month:D2}{DateTime.Now.Day:D2}{findVoucher.Id}{transactionCount:D2}";
                     item.VouchersId = findVoucher.Id;
                     item.TransactionBy = user.FullName;
                     item.TransactionDate = DateTime.Now;
