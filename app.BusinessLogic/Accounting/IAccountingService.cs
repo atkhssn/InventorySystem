@@ -19,5 +19,6 @@ namespace app.Services.Accounting
         Task<ResponseViewModel> BulkUploadAccountHead(List<ChartOfAccoutDtoModel> modelList);
 
         Task<ChartOfAccountsViewModel> ReceivableAccountHeadsAsync();
+        Task<ChartOfAccountsViewModel> PayableAccountHeadsAsync();
     }
 }

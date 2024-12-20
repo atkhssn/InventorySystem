@@ -15,7 +15,7 @@
                 <li class="breadcrumb-item active"> Receivable Report</li>
             </ol>
             <div>
-                <a class="btn btn-outline-primary" id="printTrailBalance"><i class="fa fa-print"></i> Print Here</a>
+                <a class="btn btn-outline-primary" id="printReport"><i class="fa fa-print"></i> Print Here</a>
             </div>
         </div>
     </div>
@@ -167,7 +167,7 @@
                 $('#response').hide();
             }, 5000);
 
-            $('#printTrailBalance').on('click', function () {
+            $('#printReport').on('click', function () {
                 var tableData = $('tbody').html();
                 var tableHead = $('thead tr').html();
                 var tableFooter = $('tfoot').html();

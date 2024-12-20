@@ -107,10 +107,10 @@ namespace app.WebApp.AdminControllers
 
             if (response.SearchAccountCode is not null || response.FromDate.HasValue || response.ToDate.HasValue)
             {
-                response = await _accountingReportService.GetReceivableReportAsync(response);
+                response = await _accountingReportService.GetPayableReportAsync(response);
             }
 
-            response.ChartOfAccountsViewModel = await _accountingService.ReceivableAccountHeadsAsync();
+            response.ChartOfAccountsViewModel = await _accountingService.PayableAccountHeadsAsync();
             return await Task.Run(() => View(response));
         }
 

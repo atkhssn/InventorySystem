@@ -43,11 +43,11 @@ namespace app.Services.AccountingReport
         [Display(Name = "To Date")]
         public DateTime? ToDate { get; set; }
 
-        [Display(Name = "Receivable Customer")]
+        [Display(Name = "Account Name")]
         [AllowNull]
         public string SearchAccountCode { get; set; }
-        public ChartOfAccountsViewModel ChartOfAccountsViewModel { get; set; }
 
+        public ChartOfAccountsViewModel ChartOfAccountsViewModel { get; set; }
         public List<AccountingReportViewModel> accountingReportViewModels { get; set; }
     }
 }

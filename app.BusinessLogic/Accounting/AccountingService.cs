@@ -403,6 +403,27 @@ namespace app.Services.Accounting
             return request;
         }
 
+        //Payable Account Heads
+        public async Task<ChartOfAccountsViewModel> PayableAccountHeadsAsync()
+        {
+            var request = new ChartOfAccountsViewModel();
+            const string AccountPayableHead = "2011011"; //3rd layer head code
+            var fetch4thHeads = await _dbContext.ChartOfAccounts
+                .Where(x => x.ParentAccountCode.Equals(AccountPayableHead) && x.IsActive)
+                .Select(x => x.AccountCode)
+                .ToListAsync();
+
+            request.ChartOfAccountsViewModels = await _dbContext.ChartOfAccounts
+                .Where(ca => fetch4thHeads.Contains(ca.ParentAccountCode))
+                .Select(x => new ChartOfAccountsViewModel
+                {
+                    AccountCode = x.AccountCode,
+                    AccountName = x.AccountName,
+                }).ToListAsync();
+
+            return request;
+        }
+
         #endregion
 
         #region Cost Center
