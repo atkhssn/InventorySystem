@@ -29,11 +29,13 @@ namespace app.Services.AccountingReport
             if (model.FromDate.HasValue)
             {
                 query = query.Where(fd => fd.TransactionDate.Date >= model.FromDate.Value.Date);
+                request.FromDate = model.FromDate;
             }
 
             if (model.ToDate.HasValue)
             {
                 query = query.Where(td => td.TransactionDate.Date <= model.ToDate.Value.Date);
+                request.ToDate = model.ToDate;
             }
 
 
@@ -75,10 +77,10 @@ namespace app.Services.AccountingReport
                 .Where(tr => fetch5thHeads.Contains(tr.AccountCode))
                 .AsQueryable();
 
-            if (model.ReceivableAccountCode is not null && !model.ReceivableAccountCode.Equals("0"))
+            if (model.SearchAccountCode is not null && !model.SearchAccountCode.Equals("0"))
             {
-                query = query.Where(ca => ca.AccountCode.Equals(model.ReceivableAccountCode));
-                request.AccountCode = model.ReceivableAccountCode;
+                query = query.Where(ca => ca.AccountCode.Equals(model.SearchAccountCode));
+                request.AccountCode = model.SearchAccountCode;
             }
 
             if (model.FromDate.HasValue)

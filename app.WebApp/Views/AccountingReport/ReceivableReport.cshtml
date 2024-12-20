@@ -36,8 +36,8 @@
                     <div class="col-12 col-md-8">
                         <form asp-action="SearchReceivable" method="post" class="row">
                             <div class="form-group col">
-                                <label asp-for="ReceivableAccountCode" class="control-label"></label>
-                                @Html.DropDownListFor(m => m.ReceivableAccountCode, new SelectList(Model.ChartOfAccountsViewModel.ChartOfAccountsViewModels, "AccountCode", "AccountName"), "--Select Here--", new { @class = "form-control" })
+                                <label asp-for="SearchAccountCode" class="control-label"></label>
+                                @Html.DropDownListFor(m => m.SearchAccountCode, new SelectList(Model.ChartOfAccountsViewModel.ChartOfAccountsViewModels, "AccountCode", "AccountName"), "--Select Here--", new { @class = "form-control" })
                             </div>
                             <div class="form-group col">
                                 <label asp-for="FromDate" class="control-label"></label>

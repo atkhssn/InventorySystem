@@ -72,10 +72,10 @@ namespace app.WebApp.AdminControllers
             {
                 FromDate = fromDate is null ? null : Convert.ToDateTime(fromDate),
                 ToDate = toDate is null ? null : Convert.ToDateTime(toDate),
-                ReceivableAccountCode = accountCode
+                SearchAccountCode = accountCode
             };
 
-            if (response.ReceivableAccountCode is not null || response.FromDate.HasValue || response.ToDate.HasValue)
+            if (response.SearchAccountCode is not null || response.FromDate.HasValue || response.ToDate.HasValue)
             {
                 response = await _accountingReportService.GetReceivableReportAsync(response);
             }
@@ -89,16 +89,41 @@ namespace app.WebApp.AdminControllers
         {
             return await Task.Run(() => RedirectToAction("ReceivableReport", new
             {
-                accountCode = accountingReportViewModel.ReceivableAccountCode is null ? "0" : accountingReportViewModel.ReceivableAccountCode,
+                accountCode = accountingReportViewModel.SearchAccountCode is null ? "0" : accountingReportViewModel.SearchAccountCode,
                 fromDate = accountingReportViewModel.FromDate is null ? null : accountingReportViewModel.FromDate,
                 toDate = accountingReportViewModel.ToDate is null ? null : accountingReportViewModel.ToDate
             }));
         }
 
         [HttpGet]
-        public async Task<IActionResult> PayableReport()
+        public async Task<IActionResult> PayableReport(string accountCode, string fromDate, string toDate)
         {
-            return await Task.Run(() => View());
+            var response = new AccountingReportViewModel
+            {
+                FromDate = fromDate is null ? null : Convert.ToDateTime(fromDate),
+                ToDate = toDate is null ? null : Convert.ToDateTime(toDate),
+                SearchAccountCode = accountCode
+            };
+
+            if (response.SearchAccountCode is not null || response.FromDate.HasValue || response.ToDate.HasValue)
+            {
+                response = await _accountingReportService.GetReceivableReportAsync(response);
+            }
+
+            response.ChartOfAccountsViewModel = await _accountingService.ReceivableAccountHeadsAsync();
+            return await Task.Run(() => View(response));
         }
+
+        [HttpPost]
+        public async Task<IActionResult> SearchPayable(AccountingReportViewModel accountingReportViewModel)
+        {
+            return await Task.Run(() => RedirectToAction("ReceivableReport", new
+            {
+                accountCode = accountingReportViewModel.SearchAccountCode is null ? "0" : accountingReportViewModel.SearchAccountCode,
+                fromDate = accountingReportViewModel.FromDate is null ? null : accountingReportViewModel.FromDate,
+                toDate = accountingReportViewModel.ToDate is null ? null : accountingReportViewModel.ToDate
+            }));
+        }
+
     }
 }

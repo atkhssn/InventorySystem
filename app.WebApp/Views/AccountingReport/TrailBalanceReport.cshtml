@@ -54,6 +54,12 @@
                         </form>
                     </div>
                     <div class="col-md-2 d-none d-md-block"></div>
+                    @if (Model.FromDate.HasValue)
+                    {
+                        <div class="col-12 text-center">
+                            <p class="text-body"><span class="font-weight-bold">Date Between: </span> @Model.FromDate.Value.ToString("dd MMMM, yyyy") - @(Model.ToDate.HasValue ? Model.ToDate.Value.ToString("dd MMMM, yyyy") : "Till Now")</p>
+                        </div>
+                    }
                 </div>
                 @if (Model.accountingReportViewModels is not null)
                 {

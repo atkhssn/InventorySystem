@@ -1,5 +1,6 @@
 ﻿using app.Services.Accounting;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace app.Services.AccountingReport
 {
@@ -43,7 +44,8 @@ namespace app.Services.AccountingReport
         public DateTime? ToDate { get; set; }
 
         [Display(Name = "Receivable Customer")]
-        public string? ReceivableAccountCode { get; set; }
+        [AllowNull]
+        public string SearchAccountCode { get; set; }
         public ChartOfAccountsViewModel ChartOfAccountsViewModel { get; set; }
 
         public List<AccountingReportViewModel> accountingReportViewModels { get; set; }
