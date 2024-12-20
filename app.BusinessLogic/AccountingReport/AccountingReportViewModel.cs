@@ -34,13 +34,17 @@ namespace app.Services.AccountingReport
 
         [Display(Name = "Cost Center")]
         public long? CostCentersId { get; set; }
-        public CostCentersViewModel CostCentersViewModel { get; set; }   
+        public CostCentersViewModel CostCentersViewModel { get; set; }
 
         [Display(Name = "From Date")]
         public DateTime? FromDate { get; set; }
 
         [Display(Name = "To Date")]
         public DateTime? ToDate { get; set; }
+
+        [Display(Name = "Receivable Customer")]
+        public string? ReceivableAccountCode { get; set; }
+        public ChartOfAccountsViewModel ChartOfAccountsViewModel { get; set; }
 
         public List<AccountingReportViewModel> accountingReportViewModels { get; set; }
     }

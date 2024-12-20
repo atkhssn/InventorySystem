@@ -1,5 +1,4 @@
-﻿using app.EntityModel.CoreModel;
-using app.Services.Accounting;
+﻿using app.Services.Accounting;
 using app.Services.AccountingReport;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -67,9 +66,33 @@ namespace app.WebApp.AdminControllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ReceivableReport()
+        public async Task<IActionResult> ReceivableReport(string accountCode, string fromDate, string toDate)
         {
-            return await Task.Run(() => View());
+            var response = new AccountingReportViewModel
+            {
+                FromDate = fromDate is null ? null : Convert.ToDateTime(fromDate),
+                ToDate = toDate is null ? null : Convert.ToDateTime(toDate),
+                ReceivableAccountCode = accountCode
+            };
+
+            if (response.ReceivableAccountCode is not null || response.FromDate.HasValue || response.ToDate.HasValue)
+            {
+                response = await _accountingReportService.GetReceivableReportAsync(response);
+            }
+
+            response.ChartOfAccountsViewModel = await _accountingService.ReceivableAccountHeadsAsync();
+            return await Task.Run(() => View(response));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SearchReceivable(AccountingReportViewModel accountingReportViewModel)
+        {
+            return await Task.Run(() => RedirectToAction("ReceivableReport", new
+            {
+                accountCode = accountingReportViewModel.ReceivableAccountCode is null ? "0" : accountingReportViewModel.ReceivableAccountCode,
+                fromDate = accountingReportViewModel.FromDate is null ? null : accountingReportViewModel.FromDate,
+                toDate = accountingReportViewModel.ToDate is null ? null : accountingReportViewModel.ToDate
+            }));
         }
 
         [HttpGet]

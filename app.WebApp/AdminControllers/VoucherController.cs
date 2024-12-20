@@ -193,7 +193,7 @@ namespace app.WebApp.AdminControllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> SearchVouchers(int? voucherType, int? costCenter, string fromDate, string toDate)
+        public async Task<IActionResult> SearchVouchers(long? voucherType, long? costCenter, string fromDate, string toDate)
         {
             var response = new SearchVoucherViewModel
             {

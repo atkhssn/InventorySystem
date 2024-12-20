@@ -36,71 +36,78 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-sm table-bordered">
-                        <thead>
-                            <tr class="bg-gradient-gray">
-                                <th class="text-center">#</th>
-                                <th class="text-center">Vouche No</th>
-                                <th class="text-center">Vouche Type</th>
-                                <th class="text-center">Voucher Date</th>
-                                <th class="text-center">Cost Center Name</th>
-                                <th class="text-center">Total Debit Amount</th>
-                                <th class="text-center">Total Credit Amount</th>
-                                <th class="text-center">Status</th>
-                                <th class="text-center">Action</th>
-                            </tr>
-                        </thead>
+                    @if (!Model.VouchersViewModels.Any())
+                    {
+                        <p class="text-center text-danger">Nothing Found to Load!</p>
+                    }
+                    else
+                    {
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr class="bg-gradient-gray">
+                                    <th class="text-center">#</th>
+                                    <th class="text-center">Vouche No</th>
+                                    <th class="text-center">Vouche Type</th>
+                                    <th class="text-center">Voucher Date</th>
+                                    <th class="text-center">Cost Center Name</th>
+                                    <th class="text-center">Total Debit Amount</th>
+                                    <th class="text-center">Total Credit Amount</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
 
-                        <tbody>
-                            @foreach (var item in Model.VouchersViewModels)
-                            {
-                                <tr>
-                                    <td>@Sl</td>
-                                    <td>@item.VoucherNo</td>
-                                    <td>@item.VoucherTypesViewModel.Name</td>
-                                    <td>@item.VoucherDate.ToString("dd MMMM, yyyy")</td>
-                                    <td>@item.CostCenterViewModel.Name</td>
-                                    <td class="text-right">@item.TotalDebitAmount</td>
-                                    <td class="text-right">@item.TotalCreditAmount</td>
-                                    <td class="text-center">
+                            <tbody>
+                                @foreach (var item in Model.VouchersViewModels)
+                                {
+                                    <tr>
+                                        <td>@Sl</td>
+                                        <td>@item.VoucherNo</td>
+                                        <td>@item.VoucherTypesViewModel.Name</td>
+                                        <td>@item.VoucherDate.ToString("dd MMMM, yyyy")</td>
+                                        <td>@item.CostCenterViewModel.Name</td>
+                                        <td class="text-right">@item.TotalDebitAmount</td>
+                                        <td class="text-right">@item.TotalCreditAmount</td>
+                                        <td class="text-center">
+                                            @if (item.VoucherStatus.Equals(VoucherStatus.CREATED))
+                                            {
+                                                <span class="badge badge-pill badge-primary">@item.VoucherStatus</span>
+                                            }
+                                            else if (item.VoucherStatus.Equals(VoucherStatus.SUBMITTED))
+                                            {
+                                                <span class="badge badge-pill badge-info">@item.VoucherStatus</span>
+                                            }
+                                            else if (item.VoucherStatus.Equals(VoucherStatus.APPROVED))
+                                            {
+                                                <span class="badge badge-pill badge-success">@item.VoucherStatus</span>
+                                            }
+                                            else if (item.VoucherStatus.Equals(VoucherStatus.REJECTED))
+                                            {
+                                                <span class="badge badge-pill badge-danger">@item.VoucherStatus</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge badge-pill badge-light">@item.VoucherStatus</span>
+                                            }
+                                        </td>
                                         @if (item.VoucherStatus.Equals(VoucherStatus.CREATED))
                                         {
-                                            <span class="badge badge-pill badge-primary">@item.VoucherStatus</span>
-                                        }
-                                        else if (item.VoucherStatus.Equals(VoucherStatus.SUBMITTED))
-                                        {
-                                            <span class="badge badge-pill badge-info">@item.VoucherStatus</span>
-                                        }
-                                        else if (item.VoucherStatus.Equals(VoucherStatus.APPROVED))
-                                        {
-                                            <span class="badge badge-pill badge-success">@item.VoucherStatus</span>
-                                        }
-                                        else if (item.VoucherStatus.Equals(VoucherStatus.REJECTED))
-                                        {
-                                            <span class="badge badge-pill badge-danger">@item.VoucherStatus</span>
+                                            <td class="text-center">
+                                                @Html.ActionLink("", "AddVoucher", new { id = item.Id }, new { @class = "text-info fas fa-eye" })
+                                            </td>
                                         }
                                         else
                                         {
-                                            <span class="badge badge-pill badge-light">@item.VoucherStatus</span>
+                                            <td class="text-center">
+                                                @Html.ActionLink("", "DetailVoucher", new { id = item.Id }, new { @class = "text-info fas fa-eye" })
+                                            </td>
                                         }
-                                    </td>
-                                    @if (item.VoucherStatus.Equals(VoucherStatus.CREATED))
-                                    {
-                                        <td class="text-center">
-                                            @Html.ActionLink("", "AddVoucher", new { id = item.Id }, new { @class = "text-info fas fa-eye" })
-                                        </td>
-                                    }
-                                    else
-                                    {
-                                        <td class="text-center">
-                                            @Html.ActionLink("", "DetailVoucher", new { id = item.Id }, new { @class = "text-info fas fa-eye" })
-                                        </td>
-                                    }
-                                </tr>
-                                Sl++;
-                            }
-                        </tbody>
-                    </table>
+                                    </tr>
+                                    Sl++;
+                                }
+                            </tbody>
+                        </table>
+                    }
                 </div>
                 <div class="position-absolute response-alert" id="response">
                     @if (response is not null)

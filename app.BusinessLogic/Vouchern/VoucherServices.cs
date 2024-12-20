@@ -394,9 +394,7 @@ namespace app.Services.Vouchern
                 return await Task.Run(() => model);
             }
 
-            var voucherTypeCount = await _dbContext.VoucherTypes.CountAsync(x => x.Id.Equals(findVoucherType.Id));
-            model.VoucherNo = $"{findVoucherType.ShortName}{findVoucherType.Id}0{model.VoucherDate.Year % 100:D2}{model.VoucherDate.Month:D2}{model.VoucherDate.Day:D2}0{++voucherTypeCount:D2}";
-
+            model.VoucherNo = await VoucherNoGenerate(model.VoucherTypesId, model.VoucherDate);
             if (string.IsNullOrEmpty(model.VoucherNo))
             {
                 model.ResponseViewModel.ResponseCode = 500;
@@ -743,5 +741,15 @@ namespace app.Services.Vouchern
 
         #endregion
 
+        // Generate Voucher No
+        public async Task<string> VoucherNoGenerate(long voucherTypeId, DateTime voucherDate)
+        {
+            string voucherNo = string.Empty;
+            var getVouchers = await _dbContext.Vouchers
+                .Where(x => x.VoucherTypesId.Equals(voucherTypeId) && x.VoucherDate.Equals(voucherDate.Date)).ToListAsync();
+            var getVoucherType = await _dbContext.VoucherTypes.Where(x => x.Id.Equals(voucherTypeId)).FirstOrDefaultAsync();
+            voucherNo = $"{getVoucherType.ShortName}{getVoucherType.Id}0{voucherDate.Year % 100}{voucherDate.Month}{voucherDate.Day}0{getVouchers.Count + 1}";
+            return voucherNo;
+        }
     }
 }

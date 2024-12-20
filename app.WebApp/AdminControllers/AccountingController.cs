@@ -221,7 +221,6 @@ namespace app.WebApp.AdminControllers
                 TempData["Response"] = JsonConvert.SerializeObject(response);
                 return await Task.Run(() => RedirectToAction("ChartOfAccounts"));
             }
-
         }
 
     }

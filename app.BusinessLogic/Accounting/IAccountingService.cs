@@ -17,5 +17,7 @@ namespace app.Services.Accounting
 
         Task<List<ChartOfAccountHierarchy>> GetGLAccountHeadAsync();
         Task<ResponseViewModel> BulkUploadAccountHead(List<ChartOfAccoutDtoModel> modelList);
+
+        Task<ChartOfAccountsViewModel> ReceivableAccountHeadsAsync();
     }
 }
