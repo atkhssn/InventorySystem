@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Search Vouchers";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
     int Sl = 1;
 }
 
@@ -99,9 +100,18 @@
                                                     <b class="text-success"> <i class="fas fa-check-square" style="font-size:20px"></i></b>
                                                 }
                                             </td>
-                                            <td class="text-center">
-                                                @Html.ActionLink("", "DetailVoucher", new { id = item.Id }, new { @class = "text-info fas fa-eye" })
-                                            </td>
+                                            @if (item.VoucherStatus.Equals(VoucherStatus.CREATED))
+                                            {
+                                                <td class="text-center">
+                                                    @Html.ActionLink("", "AddVoucher", new { id = item.Id }, new { @class = "text-info fas fa-eye" })
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td class="text-center">
+                                                    @Html.ActionLink("", "DetailVoucher", new { id = item.Id }, new { @class = "text-info fas fa-eye" })
+                                                </td>
+                                            }
                                         </tr>
                                         Sl++;
                                     }

@@ -50,6 +50,9 @@ namespace app.Infrastructure
         public virtual DbSet<VoucherTypes> VoucherTypes { get; set; }
         public virtual DbSet<Vouchers> Vouchers { get; set; }
         public virtual DbSet<VouchersLines> VouchersLines { get; set; }
+        public virtual DbSet<CoATypes> CoATypes { get; set; }
+        public virtual DbSet<ChartOfAccounts> ChartOfAccounts { get; set; }
+        public virtual DbSet<Transactions> Transactions { get; set; }
 
         [NotMapped]
         public virtual DbSet<StockView> StockView { get; set; }

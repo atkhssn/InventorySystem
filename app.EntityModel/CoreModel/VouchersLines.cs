@@ -7,7 +7,9 @@ namespace app.EntityModel.CoreModel
     {
         public long VouchersId { get; set; }
         public Vouchers Vouchers { get; set; }
-        public string GlHeadId { get; set; }
+        [ForeignKey(nameof(ChartOfAccounts))]
+        public string AccountCode { get; set; }
+        public ChartOfAccounts ChartOfAccounts { get; set; }
         public decimal DebitAmount { get; set; }
         public decimal CreditAmount { get; set; }
         public string Particular { get; set; }

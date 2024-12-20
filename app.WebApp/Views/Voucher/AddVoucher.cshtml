@@ -5,6 +5,7 @@
 @{
     ViewData["Title"] = "New Voucher";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
     int Sl = 1;
     var getTempRes = ViewBag.Response as string;
     ResponseViewModel response = getTempRes is not null ? JsonConvert.DeserializeObject<ResponseViewModel>(getTempRes) : null;
@@ -117,9 +118,10 @@
                             @if (!Convert.ToInt32(VoucherStatus.APPROVED).Equals(Convert.ToInt32(Model.VoucherStatus)) && !Convert.ToInt32(VoucherStatus.SUBMITTED).Equals(Convert.ToInt32(Model.VoucherStatus)))
                             {
                                 <div class="form-group col-6">
-                                    <label asp-for="VouchersLinesViewModel.GlHeadId" class="control-label"></label><sup><b class="text-danger">*</b></sup>
-                                    <input asp-for="VouchersLinesViewModel.GlHeadId" class="form-control" required />
-                                    <span asp-validation-for="VouchersLinesViewModel.GlHeadId" class="text-danger"></span>
+                                    <label asp-for="VouchersLinesViewModel.AccountCode" class="control-label"></label><sup><b class="text-danger">*</b></sup>
+                                    <input asp-for="VouchersLinesViewModel.AccountCode" class="form-control" id="selected-id" required readonly hidden />
+                                    <input type="text" class="form-control" id="search-box" />
+                                    <span asp-validation-for="VouchersLinesViewModel.AccountCode" class="text-danger"></span>
                                 </div>
 
                                 <div class="form-group col-3">
@@ -177,7 +179,7 @@
                                             {
                                                 <tr>
                                                     <td>@Sl</td>
-                                                    <td>@item.GlHeadId</td>
+                                                    <td>[@item.AccountCode] - @item.ChartOfAccountsViewModel.AccountName</td>
                                                     <td>@item.Particular</td>
                                                     <td class="text-right">@item.DebitAmount</td>
                                                     <td class="text-right">@item.CreditAmount</td>
@@ -258,6 +260,24 @@
             $('#Voucher').addClass('menu-open');
             $('#VoucherAddVoucher').addClass('active');
 
+            $("#search-box").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "/Accounting/GetChartOfAccountGlLayer",
+                        data: { term: request.term },
+                        success: function (data) {
+                            response(data);
+                        }
+                    });
+                },
+                minLength: 2,
+                select: function (event, ui) {
+                    $("#search-box").val(ui.item.label);
+                    $("#selected-id").val(ui.item.id);
+                    return false;
+                }
+            });
+
             $('#debitInputField').on("focus", function () {
                 $('#creditInputField').prop('disabled', true);
                 $('#debitInputField').val('');
@@ -321,7 +341,7 @@
 
             setTimeout(function() {
                 $('#response').hide();
-            }, 3000);
+            }, 5000);
 
         });
     </script>

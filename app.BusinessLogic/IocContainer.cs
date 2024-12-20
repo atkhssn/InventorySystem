@@ -1,5 +1,6 @@
 ﻿
 using app.Services.Accounting;
+using app.Services.AccountingReport;
 using app.Services.BillGenerateds;
 using app.Services.Company_Service;
 using app.Services.DashboardServices;
@@ -54,8 +55,9 @@ namespace app.Services
             services.AddTransient<IPurchaseReturnService, PurchaseReturnService>();
             services.AddTransient<IDashboard_Services, Dashboard_Services>();
             services.AddTransient<IBillGeneratedService, BillGeneratedService>();
-            services.AddTransient<IAccountingService, AccountingService>();
             services.AddTransient<IVoucherServices, VoucherServices>();
+            services.AddTransient<IAccountingService, AccountingService>();
+            services.AddTransient<IAccountingReportService, AccountingReportService>();
             return services;
         }
     }

@@ -49,7 +49,7 @@ CREATE TABLE New.Vouchers(
 CREATE TABLE New.VouchersLines(
 	Id BIGINT IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	VouchersId BIGINT NOT NULL,
-	GlHeadId NVARCHAR(100) NOT NULL,
+	AccountCode NVARCHAR(100) NOT NULL,
 	DebitAmount DECIMAL(18,3) NOT NULL,
 	CreditAmount DECIMAL(18,3) NOT NULL,
 	Particular NVARCHAR(250) NULL,
@@ -61,7 +61,8 @@ CREATE TABLE New.VouchersLines(
 	UpdatedOn DATETIME NULL,
 	IsActive BIT NOT NULL
 
-	FOREIGN KEY(VouchersId) REFERENCES New.Vouchers(Id)
+	FOREIGN KEY(VouchersId) REFERENCES New.Vouchers(Id),
+	FOREIGN KEY(AccountCode) REFERENCES New.ChartOfAccounts(AccountCode)
 )
 
 CREATE TABLE New.CoATypes(
@@ -71,9 +72,9 @@ CREATE TABLE New.CoATypes(
 )
 
 CREATE TABLE New.ChartOfAccounts(
-	AccountCode VARCHAR(10) NOT NULL PRIMARY KEY,
+	AccountCode VARCHAR(13) NOT NULL PRIMARY KEY,
 	AccountName NVARCHAR(100) NOT NULL,
-	ParentAccountCode VARCHAR(10) NOT NULL,
+	ParentAccountCode VARCHAR(11) NOT NULL,
 	Level INT NOT NULL,
 	CoATypeId INT NOT NULL,
 	IsRoot BIT NOT NULL,
@@ -87,16 +88,15 @@ CREATE TABLE New.ChartOfAccounts(
 )
 
 CREATE TABLE New.Transactions(
-	Id VARCHAR(20) NOT NULL PRIMARY KEY,
-	AccountCode VARCHAR(10) NOT NULL,
-	TransactionDate DATETIME NOT NULL,
+	Id VARCHAR(30) NOT NULL PRIMARY KEY,
+	VouchersId BIGINT NOT NULL,
+	AccountCode VARCHAR(13) NOT NULL,
 	Description NVARCHAR(250) NULL,
 	DebitAmount DECIMAL(18,3) NOT NULL,
 	CreditAmount DECIMAL(18,3) NOT NULL,
-	Balance DECIMAL(18,3) NOT NULL,
-	IsSuccess BIT NOT NULL,
-	RequestedBy NVARCHAR(150) NOT NULL,
-	RequestedOn DATETIME NOT NULL
+	TransactionBy NVARCHAR(150) NOT NULL,
+	TransactionDate DATETIME NOT NULL
 
+	FOREIGN KEY(VouchersId) REFERENCES New.Vouchers(Id),
 	FOREIGN KEY(AccountCode) REFERENCES New.ChartOfAccounts(AccountCode)
 )

@@ -1,7 +1,13 @@
-﻿@{
+﻿@using Newtonsoft.Json
+@using app.Services
+@using app.Services.Accounting
+@model ChartOfAccountsViewModel
+@{
     ViewData["Title"] = "Chart of Account";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
-    // int SN = 1;
+
+    var getTempRes = ViewBag.Response as string;
+    ResponseViewModel response = getTempRes is not null ? JsonConvert.DeserializeObject<ResponseViewModel>(getTempRes) : null;
 }
 
 <div class="content-header">
@@ -11,6 +17,17 @@
                 <li class="breadcrumb-item"><a href="/Admin/Index">Home</a></li>
                 <li class="breadcrumb-item active"> Chart of Account</li>
             </ol>
+            <div>
+                <a class="btn btn-outline-primary" href="~/Template/Chart_of_Account_Template.csv" download>
+                    <i class="fa fa-download" aria-hidden="true"></i> Template Download
+                </a>
+                <a id="chartOfAccountBulkUpload" class="btn btn-outline-primary">
+                    <i class="fa fa-upload" aria-hidden="true"></i> Template Upload
+                </a>
+                <a id="chartOfAccountGuideline" class="btn btn-outline-primary">
+                    <i class="fa fa-book" aria-hidden="true"></i> Documentation
+                </a>
+            </div>
         </div>
     </div>
 </div>
@@ -25,37 +42,259 @@
                 </h3>
             </div>
             <div class="card-body">
+
                 <div class="row">
                     <div class="col-12">
-                        <input type="text" class="form-control" placeholder="Search Here" />
-                        <div id="treeCOA" class="demo">
-                            <ul>
-                                <li data-jstree='{ "opened" : true }'>
-                                    Chart of Account
-                                    <ul>
-                                        <li>
-                                            Assets [1000]
-                                            <ul>
-                                                <li>
-                                                    Cash [1000001]
-                                                    <ul>
-                                                        <li>Balance Sheet [1000001001]</li>
-                                                    </ul>
-                                                </li>
-                                                <li>Accounts Receiveable [1000001]</li>
-                                            </ul>
-                                        </li>
-                                        <li>Liabilities [2000]</li>
-                                        <li>Equity [3000]</li>
-                                        <li>Revenue [4000]</li>
-                                        <li>Expenses [5000]</li>
-                                    </ul>
-                                </li>
-                            </ul>
+                        <!-- Search Input -->
+                        <input type="text" class="form-control" id="searchInCharOfAccountHierarchy" placeholder="Search Here" />
+
+                        <!-- Chart of Account Hierarchy -->
+                        <div id="charOfAccountHierarchy"></div>
+                    </div>
+                </div>
+
+                <!-- Modal for Node Management -->
+                <div class="modal fade" id="nodeModal" tabindex="-1" aria-labelledby="nodeModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="nodeModalLabel">Manage Chart of Account</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p id="selectedNodeText" class="text-uppercase text-center font-weight-bold"></p>
+                                <div class="d-flex justify-content-around">
+                                    <button class="btn btn-success" id="btnCreate">Create</button>
+                                    <button class="btn btn-primary" id="btnEdit">Edit</button>
+                                    <button class="btn btn-danger" id="btnDelete">Delete</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Modal for Creating Node -->
+                <div class="modal fade" id="createNodeModal" tabindex="-1" aria-labelledby="createNodeModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form id="createNodeForm" asp-action="CreateAccountHead" method="post">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="createNodeModalLabel">Create Account Head</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label asp-for="ParentAccountCode" class="control-label"></label><sup><b class="text-danger">*</b></sup>
+                                        <input asp-for="ParentAccountCode" class="form-control" id="parentNodeId" required readonly />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label asp-for="AccountCode" class="control-label"></label><sup><b class="text-danger">*</b></sup>
+                                        <input asp-for="AccountCode" class="form-control" id="accountCode" required />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label asp-for="AccountName" class="control-label"></label><sup><b class="text-danger">*</b></sup>
+                                        <input asp-for="AccountName" class="form-control" id="accountName" required />
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal" aria-label="Close">Cancel</button>
+                                    <button type="submit" class="btn btn-danger" id="confirmCreateNode">Create</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Modal for Editing Node -->
+                <div class="modal fade" id="editNodeModal" tabindex="-1" aria-labelledby="editNodeModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form id="editNodeForm" asp-action="EditAccountHead" method="post">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editNodeModalLabel">Update Account Head</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label asp-for="AccountCode" class="control-label"></label><sup><b class="text-danger">*</b></sup>
+                                        <input asp-for="AccountCode" class="form-control" id="editAccountCode" required readonly />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label asp-for="AccountName" class="control-label"></label><sup><b class="text-danger">*</b></sup>
+                                        <input asp-for="AccountName" class="form-control" id="editAccountName" required />
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal" aria-label="Close">Cancel</button>
+                                    <button type="submit" class="btn btn-danger" id="confirmUpdateNode">Update</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Delete Confirmation Modal -->
+                <div class="modal fade" id="deleteNodeModal" tabindex="-1" aria-labelledby="deleteNodeModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form id="deleteNodeForm" asp-action="DeleteAccountHead" method="post">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteNodeModalLabel">Delete Account Head</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Are you sure you want to delete account head: <span id="deleteNodeText" class="text-uppercase font-weight-bold"></span>?</p>
+                                    <input asp-for="AccountCode" class="form-control" id="deleteNodeId" required readonly hidden />
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal" aria-label="Close">Cancel</button>
+                                    <button type="submit" class="btn btn-danger" id="confirmDeleteNode">Delete</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bulk Upload Modal -->
+                <div class="modal fade" id="chartOfAccountBulkUploadModal" tabindex="-1" aria-labelledby="chartOfAccountBulkUploadModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form id="deleteNodeForm" asp-action="CoABulkUpload" method="post" enctype="multipart/form-data">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="chartOfAccountBulkUploadModalLabel">Cart of Account Bulk Upload</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body pt-4 pb-2">
+                                    <div class="form-group">
+                                        <label asp-for="Attachment" class="control-label"></label><sup class="text-danger"><b>*</b></sup>
+                                        <div class="custom-file">
+                                            <input type="file" asp-for="Attachment" accept=".csv" class="custom-file-input" id="attachment" required>
+                                            <label class="custom-file-label" for="attachment" id="attachmentSelected">Choose file (Max file size 10 MB)</label>
+                                        </div>
+                                        <small class="text-gray" id="attachmentMessage">Only csv file is accepted.</small>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal" aria-label="Close">Cancel</button>
+                                    <button type="submit" class="btn btn-danger" id="confirmDeleteNode">Upload</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CoA Guideline Modal -->
+                <div class="modal fade" id="chartOfAccountGuidelineModal" tabindex="-1" aria-labelledby="chartOfAccountGuidelineModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="chartOfAccountGuidelineModalLabel">Chart of Account Documentation</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div>
+                                    <p class="text-body">This <span class="text-bold">Chart of Account</span> follows hierarchy. Each digit or group represents a layer in the hierarchy. The number format is: <span class="text-bold">X-XX-XXX-XX-X</span></p>
+                                    <table class="table table-bordered table-sm" style="border-radius: 3px !important">
+                                        <tr class="bg-gradient-gray text-center">
+                                            <td>Layer</td>
+                                            <td>Digits</td>
+                                            <td>Description</td>
+                                            <td>Example</td>
+                                        </tr>
+                                        <tr>
+                                            <td>1st Layer</td>
+                                            <td class="text-center">1</td>
+                                            <td><span class="text-bold">Major Category: </span>Broad categories</td>
+                                            <td>1-Assets</td>
+                                        </tr>
+                                        <tr>
+                                            <td>2nd Layer</td>
+                                            <td class="text-center">2</td>
+                                            <td><span class="text-bold">Subcategory: </span>General subcategories</td>
+                                            <td>11-Current Assets</td>
+                                        </tr>
+                                        <tr>
+                                            <td>3rd Layer</td>
+                                            <td class="text-center">2</td>
+                                            <td><span class="text-bold">Account Group: </span>Related accounts</td>
+                                            <td>111-Cash</td>
+                                        </tr>
+                                        <tr>
+                                            <td>4th Layer</td>
+                                            <td class="text-center">2</td>
+                                            <td><span class="text-bold">Account Type: </span>Specific account types</td>
+                                            <td>10-Bank Accounts</td>
+                                        </tr>
+                                        <tr>
+                                            <td>5th Layer</td>
+                                            <td class="text-center">3</td>
+                                            <td><span class="text-bold">Specific Account: </span>Detailed tracking</td>
+                                            <td>11-Bank Name</td>
+                                        </tr>
+                                    </table>
+
+                                    <p class="text-black-75 text-center"><span class="text-bold">GL HEAD Example: </span>[10110111010011] - Bank Name (A/C: XXXXXXXX)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
+        </div>
+        <div class="position-absolute response-alert" id="response">
+            @if (response is not null)
+            {
+                if (response.ResponseCode.Equals(200))
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <strong>Success!</strong> @response.ResponseMessage
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                }
+                else if (response.ResponseCode.Equals(400))
+                {
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <strong>Bad Request!</strong> @response.ResponseMessage
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                }
+                else if (response.ResponseCode.Equals(404))
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>Not Found!</strong> @response.ResponseMessage
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>Internal Error!</strong> @response.ResponseMessage
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                }
+            }
         </div>
     </div>
 </section>
@@ -66,7 +305,137 @@
             $('#Accounting').addClass('menu-open');
             $('#AccountingChartOfAccounts').addClass('active');
 
-            $('#treeCOA').jstree();
+            setTimeout(function() {
+                $('#response').hide();
+            }, 5000);
+
+            $('#chartOfAccountBulkUpload').on('click', function(){
+
+                $('#chartOfAccountBulkUploadModal').modal('show');
+
+            });
+
+            $('#chartOfAccountGuideline').on('click', function(){
+
+                $('#chartOfAccountGuidelineModal').modal('show');
+
+            });
+
+            // Validate attachment file
+            $('#attachment').on('change', function () {
+                const file = this.files[0];
+                if (file){
+                    const allowedFileSize = 10 * 1024 * 1024;
+                    const fileSize = file.size;
+                    const fileName = file.name;
+                    const validExtensions = ['csv'];
+                    const fileExtension = fileName.split('.').pop().toLowerCase();
+
+                    if (!validExtensions.includes(fileExtension)) {
+                        $(this).val('');
+                        $("#attachmentSelected").text("Choose file (Max file size 10 MB)");
+                        $("#attachmentSelected").removeClass("text-success");
+                        $("#attachmentMessage").text("Invalid file type. Please select a CSV file.");
+                        $("#attachmentMessage").removeClass("text-gray");
+                        $("#attachmentMessage").addClass("text-danger");
+                    }else if (fileSize > allowedFileSize) {
+                        $(this).val('');
+                        $("#attachmentSelected").text("Choose file (Max file size 10 MB)");
+                        $("#attachmentSelected").removeClass("text-success");
+                        $("#attachmentMessage").text("File size is too large. Maximum allowed size is 10 MB.");
+                        $("#attachmentMessage").removeClass("text-gray");
+                        $("#attachmentMessage").addClass("text-danger");
+                    }else{
+                        $("#attachmentMessage").text("");
+                        $("#attachmentSelected").text("Selected file:" + fileName);
+                        $("#attachmentSelected").addClass("text-success");
+                        $("#attachmentMessage").text("Only csv file is accepted.");
+                        $("#attachmentMessage").removeClass("text-danger");
+                        $("#attachmentMessage").addClass("text-gray");
+                    }
+                }
+            });
+
+            //Hierarchy initialize - jsTree
+            $('#charOfAccountHierarchy').jstree({
+                'core': {
+                    'data': @Html.Raw(ViewBag.JsonData),
+                    'themes': {
+                        'icons': true
+                    }
+                },
+                'plugins': ['search']
+            });
+
+            //Tree icon and color change
+            $('#charOfAccountHierarchy').on('ready.jstree', function () {
+                $('#charOfAccountHierarchy').jstree('set_icon', '.jstree-node', 'fa fa-folder');
+                $('.jstree-node').css('color', '#00a090');
+                var allNodes = $('#charOfAccountHierarchy').jstree('get_json', '#', { 'flat': true });
+
+                allNodes.forEach(function (node) {
+                    if (!node.children || node.children.length === 0) {
+                        $('#charOfAccountHierarchy').jstree('set_icon', '#' + node.id, 'fa fa-folder');
+                        $('.jstree-node').css('color', '#00a090');
+                    }
+                });
+            });
+
+            //Search on hierarchy
+            $('#searchInCharOfAccountHierarchy').on('keyup', function () {
+                var searchText = $(this).val();
+                $('#charOfAccountHierarchy').jstree('search', searchText);
+            });
+
+            //Open hierarchy manage modal
+            $('#charOfAccountHierarchy').on('select_node.jstree', function (e, data) {
+                const selectedNode = data.node;
+
+                $('#selectedNodeText').text(`Selected Head: ${selectedNode.text}`);
+                $('#btnCreate').data('node-id', selectedNode.id);
+                $('#btnEdit').data('node-id', selectedNode.id).data('node-text', selectedNode.text);
+                $('#btnDelete').data('node-id', selectedNode.id).data('node-text', selectedNode.text);
+
+                if(selectedNode.id.length <= 11){
+                    $('#nodeModal').modal('show');
+                }
+            });
+
+            //Open create modal
+            $('#btnCreate').click(function () {
+                const parentId = $(this).data('node-id');
+
+                $('#parentNodeId').val(parentId);
+
+                $('#nodeModal').modal('hide');
+                $('#createNodeModal').modal('show')
+            });
+
+            //Open edit modal
+            $('#btnEdit').click(function () {
+                const nodeId = $(this).data('node-id');
+                const nodeText = $(this).data('node-text');
+                const [accountCode, accountName] = nodeText.match(/\[(.*?)\] - (.+)/).slice(1);
+
+                $('#editNodeId').val(nodeId);
+                $('#editAccountCode').val(accountCode);
+                $('#editAccountName').val(accountName);
+
+                $('#nodeModal').modal('hide');
+                $('#editNodeModal').modal('show');
+            });
+
+            //Open delete modal
+            $('#btnDelete').click(function () {
+                const nodeId = $(this).data('node-id');
+                const nodeText = $(this).data('node-text');
+
+                $('#deleteNodeText').text(`${nodeText}`);
+                $('#deleteNodeId').val(nodeId);
+
+                $('#nodeModal').modal('hide');
+                $('#deleteNodeModal').modal('show');
+            });
         });
     </script>
     @{
