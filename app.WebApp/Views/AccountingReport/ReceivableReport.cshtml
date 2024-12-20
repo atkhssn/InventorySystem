@@ -54,6 +54,12 @@
                         </form>
                     </div>
                     <div class="col-md-2 d-none d-md-block"></div>
+                    @if (Model.FromDate.HasValue)
+                    {
+                        <div class="col-12 text-center">
+                            <p class="text-body"><span class="font-weight-bold">Date Between: </span> @Model.FromDate.Value.ToString("dd MMMM, yyyy") - @(Model.ToDate.HasValue ? Model.ToDate.Value.ToString("dd MMMM, yyyy") : "Till Now")</p>
+                        </div>
+                    }
                 </div>
                 @if (Model.accountingReportViewModels is not null)
                 {
@@ -64,48 +70,84 @@
                         }
                         else
                         {
-                            <table class="table table-sm table-bordered">
+                            if (Model.AccountCode is not null)
+                            {
+                                <table class="table table-sm table-bordered">
 
-                                <thead>
-                                    <tr class="bg-gradient-gray">
-                                        <th class="text-center">#</th>
-                                        <th class="text-center">Date</th>
-                                        <th class="text-center">Transaction</th>
-                                        <th class="text-center">Voucher No</th>
-                                        <th class="text-center">Account Code</th>
-                                        <th class="text-center">Account Name</th>
-                                        <th class="text-center">Debit Amount</th>
-                                        <th class="text-center">Credit Amount</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var item in Model.accountingReportViewModels)
-                                    {
-                                        <tr>
-                                            <td class="text-center">@Sl</td>
-                                            <td class="text-center">@item.TransactionDate.ToString("dd MMMM, yyyy")</td>
-                                            <td class="text-left">@item.TransactionId</td>
-                                            <td class="text-left">@item.VoucherNo</td>
-                                            <td class="text-left">@item.AccountCode</td>
-                                            <td class="text-left">@item.AccountName</td>
-                                            <td class="text-right">@item.DebitAmount</td>
-                                            <td class="text-right">@item.CreditAmount</td>
+                                    <thead>
+                                        <tr class="bg-gradient-gray">
+                                            <th class="text-center">#</th>
+                                            <th class="text-center">Date</th>
+                                            <th class="text-center">Transaction</th>
+                                            <th class="text-center">Voucher No</th>
+                                            <th class="text-center">Account Code</th>
+                                            <th class="text-center">Account Name</th>
+                                            <th class="text-center">Debit Amount</th>
+                                            <th class="text-center">Credit Amount</th>
                                         </tr>
-                                        Sl++;
-                                    }
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <th class="text-right" colspan="6">Total Amount (BDT)</th>
-                                        <th class="text-right">@Model.TotalDebitAmount</th>
-                                        <th class="text-right">@Model.TotalCreditAmount</th>
-                                    </tr>
-                                    <tr>
-                                        <th class="text-right" colspan="7">Receivable Amount (BDT)</th>
-                                        <th class="text-right">@(Model.TotalDebitAmount - Model.TotalCreditAmount)</th>
-                                    </tr>
-                                </tfoot>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.accountingReportViewModels)
+                                        {
+                                            <tr>
+                                                <td class="text-center">@Sl</td>
+                                                <td class="text-center">@item.TransactionDate.ToString("dd MMMM, yyyy")</td>
+                                                <td class="text-left">@item.TransactionId</td>
+                                                <td class="text-left">@item.VoucherNo</td>
+                                                <td class="text-left">@item.AccountCode</td>
+                                                <td class="text-left">@item.AccountName</td>
+                                                <td class="text-right">@item.DebitAmount</td>
+                                                <td class="text-right">@item.CreditAmount</td>
+                                            </tr>
+                                            Sl++;
+                                        }
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th class="text-right" colspan="6">Total Amount (BDT)</th>
+                                            <th class="text-right">@Model.TotalDebitAmount</th>
+                                            <th class="text-right">@Model.TotalCreditAmount</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="text-right" colspan="7">Receivable Amount (BDT)</th>
+                                            <th class="text-right">@(Model.TotalDebitAmount - Model.TotalCreditAmount)</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            }
+                            else
+                            {
+                                <table class="table table-sm table-bordered">
+
+                                    <thead>
+                                        <tr class="bg-gradient-gray">
+                                            <th class="text-center">#</th>
+                                            <th class="text-center">Account Code</th>
+                                            <th class="text-center">Account Name</th>
+                                            <th class="text-center">Debit Amount</th>
+                                            <th class="text-center">Credit Amount</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        @foreach (var groupedItems in Model.accountingReportViewModels.GroupBy(x => x.AccountCode).ToList())
+                                        {
+                                            <tr>
+                                                <td class="text-center">@Sl</td>
+                                                <td class="text-left">@groupedItems.FirstOrDefault().AccountCode</td>
+                                                <td class="text-left">@groupedItems.FirstOrDefault().AccountName</td>
+                                                <td class="text-right">@groupedItems.Sum(x => x.DebitAmount)</td>
+                                                <td class="text-right">@groupedItems.Sum(x => x.CreditAmount)</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="text-right" colspan="4">Receivable Amount (BDT)</th>
+                                                <th class="text-right">@(groupedItems.Sum(x => x.DebitAmount) - groupedItems.Sum(x => x.CreditAmount))</th>
+                                            </tr>
+                                            Sl++;
+                                        }
+                                    </tbody>
+                                </table>
+                            }
                         }
                     </div>
                 }
@@ -127,12 +169,25 @@
 
             $('#printTrailBalance').on('click', function () {
                 var tableData = $('tbody').html();
+                var tableHead = $('thead tr').html();
                 var tableFooter = $('tfoot').html();
 
                 const generateView = `
                     <div class="card-body">
                         <div class="table-responsive">
-                            <h4 class="text-danger text-center my-5">Under Build...</h1>
+                            <table class="table table-sm table-bordered">
+                                <thead>
+                                    <tr>
+                                        ${tableHead}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${tableData}
+                                </tbody>
+                            </table>
+                            <table class="table table-sm ">
+                                ${tableFooter ? `<tfoot>${tableFooter}</tfoot>` : ''}
+                            </table>
                         </div>
                     </div>
                 `;

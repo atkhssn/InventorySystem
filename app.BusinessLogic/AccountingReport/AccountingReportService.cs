@@ -78,18 +78,20 @@ namespace app.Services.AccountingReport
             if (model.ReceivableAccountCode is not null && !model.ReceivableAccountCode.Equals("0"))
             {
                 query = query.Where(ca => ca.AccountCode.Equals(model.ReceivableAccountCode));
+                request.AccountCode = model.ReceivableAccountCode;
             }
 
             if (model.FromDate.HasValue)
             {
                 query = query.Where(fd => fd.TransactionDate.Date >= model.FromDate.Value.Date);
+                request.FromDate = model.FromDate;
             }
 
             if (model.ToDate.HasValue)
             {
                 query = query.Where(td => td.TransactionDate.Date <= model.ToDate.Value.Date);
+                request.ToDate = model.ToDate;
             }
-
 
             request.accountingReportViewModels = await query
                 .Select(x => new AccountingReportViewModel
