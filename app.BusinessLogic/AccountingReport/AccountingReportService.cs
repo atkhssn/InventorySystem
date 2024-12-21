@@ -168,5 +168,110 @@ namespace app.Services.AccountingReport
 
             return request;
         }
+
+        public async Task<AccountingReportViewModel> GetCashBookReportAsync(AccountingReportViewModel model)
+        {
+            var request = new AccountingReportViewModel();
+            const string AccountCashBookHead = "1011011011"; //4th layer head code
+
+            var fetch5thHeads = await _dbContext.ChartOfAccounts
+                .Where(x => x.ParentAccountCode.Equals(AccountCashBookHead) && x.IsActive)
+                .Select(x => x.AccountCode)
+                .ToListAsync();
+
+            var query = _dbContext.Transactions
+                .Include(vo => vo.Vouchers)
+                .ThenInclude(cc => cc.CostCenters)
+                .Where(tr => fetch5thHeads.Contains(tr.AccountCode))
+                .AsQueryable();
+
+            if (model.SearchAccountCode is not null && !model.SearchAccountCode.Equals("0"))
+            {
+                query = query.Where(ca => ca.AccountCode.Equals(model.SearchAccountCode));
+                request.AccountCode = model.SearchAccountCode;
+            }
+
+            if (model.FromDate.HasValue)
+            {
+                query = query.Where(fd => fd.TransactionDate.Date >= model.FromDate.Value.Date);
+                request.FromDate = model.FromDate;
+            }
+
+            if (model.ToDate.HasValue)
+            {
+                query = query.Where(td => td.TransactionDate.Date <= model.ToDate.Value.Date);
+                request.ToDate = model.ToDate;
+            }
+
+            request.accountingReportViewModels = await query
+                .Select(x => new AccountingReportViewModel
+                {
+                    TransactionId = x.Id,
+                    VoucherNo = x.Vouchers.VoucherNo,
+                    AccountCode = x.AccountCode,
+                    AccountName = x.ChartOfAccounts.AccountName,
+                    DebitAmount = x.DebitAmount,
+                    CreditAmount = x.CreditAmount,
+                    TransactionDate = x.TransactionDate,
+                }).OrderByDescending(x => x.TransactionDate).ToListAsync();
+
+            request.TotalDebitAmount = request.accountingReportViewModels.Sum(x => x.DebitAmount);
+            request.TotalCreditAmount = request.accountingReportViewModels.Sum(x => x.CreditAmount);
+
+            return request;
+        }
+
+        public async Task<AccountingReportViewModel> GetBankBookReportAsync(AccountingReportViewModel model)
+        {
+            var request = new AccountingReportViewModel();
+            const string AccountCashBookHead = "1011011012"; //4th layer head code
+
+            var fetch5thHeads = await _dbContext.ChartOfAccounts
+                .Where(x => x.ParentAccountCode.Equals(AccountCashBookHead) && x.IsActive)
+                .Select(x => x.AccountCode)
+                .ToListAsync();
+
+            var query = _dbContext.Transactions
+                .Include(vo => vo.Vouchers)
+                .ThenInclude(cc => cc.CostCenters)
+                .Where(tr => fetch5thHeads.Contains(tr.AccountCode))
+                .AsQueryable();
+
+            if (model.SearchAccountCode is not null && !model.SearchAccountCode.Equals("0"))
+            {
+                query = query.Where(ca => ca.AccountCode.Equals(model.SearchAccountCode));
+                request.AccountCode = model.SearchAccountCode;
+            }
+
+            if (model.FromDate.HasValue)
+            {
+                query = query.Where(fd => fd.TransactionDate.Date >= model.FromDate.Value.Date);
+                request.FromDate = model.FromDate;
+            }
+
+            if (model.ToDate.HasValue)
+            {
+                query = query.Where(td => td.TransactionDate.Date <= model.ToDate.Value.Date);
+                request.ToDate = model.ToDate;
+            }
+
+            request.accountingReportViewModels = await query
+                .Select(x => new AccountingReportViewModel
+                {
+                    TransactionId = x.Id,
+                    VoucherNo = x.Vouchers.VoucherNo,
+                    AccountCode = x.AccountCode,
+                    AccountName = x.ChartOfAccounts.AccountName,
+                    DebitAmount = x.DebitAmount,
+                    CreditAmount = x.CreditAmount,
+                    TransactionDate = x.TransactionDate,
+                }).OrderByDescending(x => x.TransactionDate).ToListAsync();
+
+            request.TotalDebitAmount = request.accountingReportViewModels.Sum(x => x.DebitAmount);
+            request.TotalCreditAmount = request.accountingReportViewModels.Sum(x => x.CreditAmount);
+
+            return request;
+        }
+
     }
 }

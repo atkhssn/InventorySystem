@@ -424,6 +424,40 @@ namespace app.Services.Accounting
             return request;
         }
 
+        //Cash Book Account Heads
+        public async Task<ChartOfAccountsViewModel> CashBookAccountHeadsAsync()
+        {
+            var request = new ChartOfAccountsViewModel();
+            const string AccountCashBookHead = "1011011011"; //4th layer head code
+
+            request.ChartOfAccountsViewModels = await _dbContext.ChartOfAccounts
+                .Where(x => x.ParentAccountCode.Equals(AccountCashBookHead) && x.IsActive)
+                .Select(x => new ChartOfAccountsViewModel
+                {
+                    AccountCode = x.AccountCode,
+                    AccountName = x.AccountName,
+                }).ToListAsync();
+
+            return request;
+        }
+
+        //Bank Book Account Heads
+        public async Task<ChartOfAccountsViewModel> BankBookAccountHeadsAsync()
+        {
+            var request = new ChartOfAccountsViewModel();
+            const string AccountCashBookHead = "1011011012"; //4th layer head code
+
+            request.ChartOfAccountsViewModels = await _dbContext.ChartOfAccounts
+                .Where(x => x.ParentAccountCode.Equals(AccountCashBookHead) && x.IsActive)
+                .Select(x => new ChartOfAccountsViewModel
+                {
+                    AccountCode = x.AccountCode,
+                    AccountName = x.AccountName,
+                }).ToListAsync();
+
+            return request;
+        }
+
         #endregion
 
         #region Cost Center

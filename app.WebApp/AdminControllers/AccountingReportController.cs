@@ -54,15 +54,63 @@ namespace app.WebApp.AdminControllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> CashBookReport()
+        public async Task<IActionResult> CashBookReport(string accountCode, string fromDate, string toDate)
         {
-            return await Task.Run(() => View());
+            var response = new AccountingReportViewModel
+            {
+                FromDate = fromDate is null ? null : Convert.ToDateTime(fromDate),
+                ToDate = toDate is null ? null : Convert.ToDateTime(toDate),
+                SearchAccountCode = accountCode
+            };
+
+            if (response.SearchAccountCode is not null || response.FromDate.HasValue || response.ToDate.HasValue)
+            {
+                response = await _accountingReportService.GetCashBookReportAsync(response);
+            }
+
+            response.ChartOfAccountsViewModel = await _accountingService.CashBookAccountHeadsAsync();
+            return await Task.Run(() => View(response));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SearchCashBook(AccountingReportViewModel accountingReportViewModel)
+        {
+            return await Task.Run(() => RedirectToAction("CashBookReport", new
+            {
+                accountCode = accountingReportViewModel.SearchAccountCode is null ? "0" : accountingReportViewModel.SearchAccountCode,
+                fromDate = accountingReportViewModel.FromDate is null ? null : accountingReportViewModel.FromDate,
+                toDate = accountingReportViewModel.ToDate is null ? null : accountingReportViewModel.ToDate
+            }));
         }
 
         [HttpGet]
-        public async Task<IActionResult> BankBookReport()
+        public async Task<IActionResult> BankBookReport(string accountCode, string fromDate, string toDate)
         {
-            return await Task.Run(() => View());
+            var response = new AccountingReportViewModel
+            {
+                FromDate = fromDate is null ? null : Convert.ToDateTime(fromDate),
+                ToDate = toDate is null ? null : Convert.ToDateTime(toDate),
+                SearchAccountCode = accountCode
+            };
+
+            if (response.SearchAccountCode is not null || response.FromDate.HasValue || response.ToDate.HasValue)
+            {
+                response = await _accountingReportService.GetBankBookReportAsync(response);
+            }
+
+            response.ChartOfAccountsViewModel = await _accountingService.BankBookAccountHeadsAsync();
+            return await Task.Run(() => View(response));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SearchBankBook(AccountingReportViewModel accountingReportViewModel)
+        {
+            return await Task.Run(() => RedirectToAction("BankBookReport", new
+            {
+                accountCode = accountingReportViewModel.SearchAccountCode is null ? "0" : accountingReportViewModel.SearchAccountCode,
+                fromDate = accountingReportViewModel.FromDate is null ? null : accountingReportViewModel.FromDate,
+                toDate = accountingReportViewModel.ToDate is null ? null : accountingReportViewModel.ToDate
+            }));
         }
 
         [HttpGet]
