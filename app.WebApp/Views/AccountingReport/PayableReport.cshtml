@@ -73,7 +73,6 @@
                             if (Model.AccountCode is not null)
                             {
                                 <table class="table table-sm table-bordered">
-
                                     <thead>
                                         <tr class="bg-gradient-gray">
                                             <th class="text-center">#</th>
@@ -101,8 +100,6 @@
                                             </tr>
                                             Sl++;
                                         }
-                                    </tbody>
-                                    <tfoot>
                                         <tr>
                                             <th class="text-right" colspan="6">Total Amount (BDT)</th>
                                             <th class="text-right">@Model.TotalDebitAmount</th>
@@ -112,13 +109,12 @@
                                             <th class="text-right" colspan="7">Receivable Amount (BDT)</th>
                                             <th class="text-right">@(Model.TotalDebitAmount - Model.TotalCreditAmount)</th>
                                         </tr>
-                                    </tfoot>
+                                    </tbody>
                                 </table>
                             }
                             else
                             {
                                 <table class="table table-sm table-bordered">
-
                                     <thead>
                                         <tr class="bg-gradient-gray">
                                             <th class="text-center">#</th>
@@ -128,7 +124,6 @@
                                             <th class="text-center">Credit Amount</th>
                                         </tr>
                                     </thead>
-
                                     <tbody>
                                         @foreach (var groupedItems in Model.accountingReportViewModels.GroupBy(x => x.AccountCode).ToList())
                                         {
@@ -170,7 +165,6 @@
             $('#printReport').on('click', function () {
                 var tableData = $('tbody').html();
                 var tableHead = $('thead tr').html();
-                var tableFooter = $('tfoot').html();
 
                 const generateView = `
                     <div class="card-body">
@@ -184,9 +178,6 @@
                                 <tbody>
                                     ${tableData}
                                 </tbody>
-                            </table>
-                            <table class="table table-sm ">
-                                ${tableFooter ? `<tfoot>${tableFooter}</tfoot>` : ''}
                             </table>
                         </div>
                     </div>
