@@ -48,6 +48,6 @@ namespace app.Services.AccountingReport
         public string SearchAccountCode { get; set; }
 
         public ChartOfAccountsViewModel ChartOfAccountsViewModel { get; set; }
-        public List<AccountingReportViewModel> accountingReportViewModels { get; set; }
+        public List<AccountingReportViewModel> AccountingReportViewModels { get; set; }
     }
 }

@@ -39,7 +39,7 @@ namespace app.Services.AccountingReport
             }
 
 
-            request.accountingReportViewModels = await query
+            request.AccountingReportViewModels = await query
                 .Select(x => new AccountingReportViewModel
                 {
                     TransactionId = x.Id,
@@ -51,8 +51,8 @@ namespace app.Services.AccountingReport
                     TransactionDate = x.TransactionDate,
                 }).OrderByDescending(x => x.TransactionDate).ToListAsync();
 
-            request.TotalDebitAmount = request.accountingReportViewModels.Sum(x => x.DebitAmount);
-            request.TotalCreditAmount = request.accountingReportViewModels.Sum(x => x.CreditAmount);
+            request.TotalDebitAmount = request.AccountingReportViewModels.Sum(x => x.DebitAmount);
+            request.TotalCreditAmount = request.AccountingReportViewModels.Sum(x => x.CreditAmount);
 
             return request;
         }
@@ -92,6 +92,10 @@ namespace app.Services.AccountingReport
             {
                 query = query.Where(fd => fd.TransactionDate.Date >= model.FromDate.Value.Date);
                 request.FromDate = model.FromDate;
+                var opening = query.Where(td => td.TransactionDate.Date <= model.FromDate.Value.Date);
+                request.AccountName = "Opening Balance";
+                request.TotalDebitAmount = opening.Sum(x => x.DebitAmount);
+                request.TotalCreditAmount = opening.Sum(x => x.CreditAmount);
             }
 
             if (model.ToDate.HasValue)
@@ -100,7 +104,7 @@ namespace app.Services.AccountingReport
                 request.ToDate = model.ToDate;
             }
 
-            request.accountingReportViewModels = await query
+            request.AccountingReportViewModels = await query
                 .Select(x => new AccountingReportViewModel
                 {
                     TransactionId = x.Id,
@@ -111,10 +115,6 @@ namespace app.Services.AccountingReport
                     CreditAmount = x.CreditAmount,
                     TransactionDate = x.TransactionDate,
                 }).OrderByDescending(x => x.TransactionDate).ToListAsync();
-
-            request.TotalDebitAmount = request.accountingReportViewModels.Sum(x => x.DebitAmount);
-            request.TotalCreditAmount = request.accountingReportViewModels.Sum(x => x.CreditAmount);
-
             return request;
         }
 
@@ -161,7 +161,7 @@ namespace app.Services.AccountingReport
                 request.ToDate = model.ToDate;
             }
 
-            request.accountingReportViewModels = await query
+            request.AccountingReportViewModels = await query
                 .Select(x => new AccountingReportViewModel
                 {
                     TransactionId = x.Id,
@@ -172,10 +172,6 @@ namespace app.Services.AccountingReport
                     CreditAmount = x.CreditAmount,
                     TransactionDate = x.TransactionDate,
                 }).OrderByDescending(x => x.TransactionDate).ToListAsync();
-
-            request.TotalDebitAmount = request.accountingReportViewModels.Sum(x => x.DebitAmount);
-            request.TotalCreditAmount = request.accountingReportViewModels.Sum(x => x.CreditAmount);
-
             return request;
         }
 
@@ -218,7 +214,7 @@ namespace app.Services.AccountingReport
                 request.ToDate = model.ToDate;
             }
 
-            request.accountingReportViewModels = await query
+            request.AccountingReportViewModels = await query
                 .Select(x => new AccountingReportViewModel
                 {
                     TransactionId = x.Id,
@@ -229,10 +225,6 @@ namespace app.Services.AccountingReport
                     CreditAmount = x.CreditAmount,
                     TransactionDate = x.TransactionDate,
                 }).OrderByDescending(x => x.TransactionDate).ToListAsync();
-
-            request.TotalDebitAmount = request.accountingReportViewModels.Sum(x => x.DebitAmount);
-            request.TotalCreditAmount = request.accountingReportViewModels.Sum(x => x.CreditAmount);
-
             return request;
         }
 
@@ -275,7 +267,7 @@ namespace app.Services.AccountingReport
                 request.ToDate = model.ToDate;
             }
 
-            request.accountingReportViewModels = await query
+            request.AccountingReportViewModels = await query
                 .Select(x => new AccountingReportViewModel
                 {
                     TransactionId = x.Id,
@@ -286,12 +278,7 @@ namespace app.Services.AccountingReport
                     CreditAmount = x.CreditAmount,
                     TransactionDate = x.TransactionDate,
                 }).OrderByDescending(x => x.TransactionDate).ToListAsync();
-
-            request.TotalDebitAmount = request.accountingReportViewModels.Sum(x => x.DebitAmount);
-            request.TotalCreditAmount = request.accountingReportViewModels.Sum(x => x.CreditAmount);
-
             return request;
         }
-
     }
 }

@@ -61,10 +61,10 @@
                         </div>
                     }
                 </div>
-                @if (Model.accountingReportViewModels is not null)
+                @if (Model.AccountingReportViewModels is not null)
                 {
                     <div class="table-responsive">
-                        @if (!Model.accountingReportViewModels.Any())
+                        @if (!Model.AccountingReportViewModels.Any())
                         {
                             <p class="text-center text-danger">Nothing Found to Load!</p>
                         }
@@ -84,7 +84,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var item in Model.accountingReportViewModels)
+                                    @foreach (var item in Model.AccountingReportViewModels)
                                     {
                                         <tr>
                                             <td class="text-center">@Sl</td>

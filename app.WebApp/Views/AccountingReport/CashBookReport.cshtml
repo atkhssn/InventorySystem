@@ -63,10 +63,10 @@
                         </div>
                     }
                 </div>
-                @if (Model.accountingReportViewModels is not null)
+                @if (Model.AccountingReportViewModels is not null)
                 {
                     <div class="table-responsive">
-                        @if (!Model.accountingReportViewModels.Any())
+                        @if (!Model.AccountingReportViewModels.Any())
                         {
                             <p class="text-center text-danger">Nothing Found to Load!</p>
                         }
@@ -88,7 +88,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach (var item in Model.accountingReportViewModels)
+                                        @foreach (var item in Model.AccountingReportViewModels)
                                         {
                                             <tr>
                                                 <td class="text-center">@Sl</td>
@@ -104,12 +104,12 @@
                                         }
                                         <tr>
                                             <th class="text-right" colspan="6">Total Amount (BDT)</th>
-                                            <th class="text-right">@Model.TotalDebitAmount</th>
-                                            <th class="text-right">@Model.TotalCreditAmount</th>
+                                            <th class="text-right">@Model.AccountingReportViewModels.Sum(x => x.DebitAmount)</th>
+                                            <th class="text-right">@Model.AccountingReportViewModels.Sum(x => x.CreditAmount)</th>
                                         </tr>
                                         <tr>
                                             <th class="text-right" colspan="7">Receivable Amount (BDT)</th>
-                                            <th class="text-right">@(Model.TotalDebitAmount - Model.TotalCreditAmount)</th>
+                                            <th class="text-right">@(Model.AccountingReportViewModels.Sum(x => x.DebitAmount) - Model.AccountingReportViewModels.Sum(x => x.CreditAmount))</th>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -127,7 +127,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach (var groupedItems in Model.accountingReportViewModels.GroupBy(x => x.AccountCode).ToList())
+                                        @foreach (var groupedItems in Model.AccountingReportViewModels.GroupBy(x => x.AccountCode).ToList())
                                         {
                                             <tr>
                                                 <td class="text-center">@Sl</td>
