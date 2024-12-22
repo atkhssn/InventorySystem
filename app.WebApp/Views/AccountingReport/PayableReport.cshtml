@@ -32,9 +32,12 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-2 d-none d-md-block"></div>
-                    <div class="col-12 col-md-8">
-                        <form asp-action="SearchReceivable" method="post" class="row">
+                    <div class="col-12">
+                        <form asp-action="SearchPayable" method="post" class="row">
+                            <div class="form-group col">
+                                <label asp-for="CostCentersId" class="control-label"></label>
+                                @Html.DropDownListFor(m => m.CostCentersId, new SelectList(Model.CostCentersViewModel.CostCenterViewModels, "Id", "Name"), "--Select Here--", new { @class = "form-control" })
+                            </div>
                             <div class="form-group col">
                                 <label asp-for="SearchAccountCode" class="control-label"></label>
                                 @Html.DropDownListFor(m => m.SearchAccountCode, new SelectList(Model.ChartOfAccountsViewModel.ChartOfAccountsViewModels, "AccountCode", "AccountName"), "--Select Here--", new { @class = "form-control" })
@@ -53,7 +56,6 @@
                             </div>
                         </form>
                     </div>
-                    <div class="col-md-2 d-none d-md-block"></div>
                     @if (Model.FromDate.HasValue)
                     {
                         <div class="col-12 text-center">

@@ -77,6 +77,11 @@ namespace app.Services.AccountingReport
                 .Where(tr => fetch5thHeads.Contains(tr.AccountCode))
                 .AsQueryable();
 
+            if (model.CostCentersId.HasValue && model.CostCentersId > 0)
+            {
+                query = query.Where(vo => vo.Vouchers.CostCenters.Id.Equals(model.CostCentersId));
+            }
+
             if (model.SearchAccountCode is not null && !model.SearchAccountCode.Equals("0"))
             {
                 query = query.Where(ca => ca.AccountCode.Equals(model.SearchAccountCode));
@@ -133,6 +138,11 @@ namespace app.Services.AccountingReport
                 .Where(tr => fetch5thHeads.Contains(tr.AccountCode))
                 .AsQueryable();
 
+            if (model.CostCentersId.HasValue && model.CostCentersId > 0)
+            {
+                query = query.Where(vo => vo.Vouchers.CostCenters.Id.Equals(model.CostCentersId));
+            }
+
             if (model.SearchAccountCode is not null && !model.SearchAccountCode.Equals("0"))
             {
                 query = query.Where(ca => ca.AccountCode.Equals(model.SearchAccountCode));
@@ -185,6 +195,11 @@ namespace app.Services.AccountingReport
                 .Where(tr => fetch5thHeads.Contains(tr.AccountCode))
                 .AsQueryable();
 
+            if (model.CostCentersId.HasValue && model.CostCentersId > 0)
+            {
+                query = query.Where(vo => vo.Vouchers.CostCenters.Id.Equals(model.CostCentersId));
+            }
+
             if (model.SearchAccountCode is not null && !model.SearchAccountCode.Equals("0"))
             {
                 query = query.Where(ca => ca.AccountCode.Equals(model.SearchAccountCode));
@@ -236,6 +251,11 @@ namespace app.Services.AccountingReport
                 .ThenInclude(cc => cc.CostCenters)
                 .Where(tr => fetch5thHeads.Contains(tr.AccountCode))
                 .AsQueryable();
+
+            if (model.CostCentersId.HasValue && model.CostCentersId > 0)
+            {
+                query = query.Where(vo => vo.Vouchers.CostCenters.Id.Equals(model.CostCentersId));
+            }
 
             if (model.SearchAccountCode is not null && !model.SearchAccountCode.Equals("0"))
             {
