@@ -49,5 +49,6 @@ namespace app.Services.AccountingReport
 
         public ChartOfAccountsViewModel ChartOfAccountsViewModel { get; set; }
         public List<AccountingReportViewModel> AccountingReportViewModels { get; set; }
+        public List<AccountingReportViewModel> AccountingReportOpeningViewModels { get; set; }
     }
 }

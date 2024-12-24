@@ -65,10 +65,10 @@
                             </div>
                             <div class="modal-body">
                                 <p id="selectedNodeText" class="text-uppercase text-center font-weight-bold"></p>
-                                <div class="d-flex justify-content-around">
-                                    <button class="btn btn-success" id="btnCreate">Create</button>
-                                    <button class="btn btn-primary" id="btnEdit">Edit</button>
-                                    <button class="btn btn-danger" id="btnDelete">Delete</button>
+                                <div class="d-flex justify-content-end">
+                                    <button class="btn btn-success site-modal-btn d-block" id="btnCreate">Create</button>
+                                    <button class="btn btn-primary site-modal-btn" id="btnEdit">Edit</button>
+                                    <button class="btn btn-danger site-modal-btn" id="btnDelete">Delete</button>
                                 </div>
                             </div>
                         </div>
@@ -108,7 +108,6 @@
                         </div>
                     </div>
                 </div>
-
 
                 <!-- Modal for Editing Node -->
                 <div class="modal fade" id="editNodeModal" tabindex="-1" aria-labelledby="editNodeModalLabel" aria-hidden="true">
@@ -397,8 +396,14 @@
                 $('#btnDelete').data('node-id', selectedNode.id).data('node-text', selectedNode.text);
 
                 if(selectedNode.id.length <= 11){
-                    $('#nodeModal').modal('show');
+                    $('#btnCreate').removeClass('d-none');
+                    $('#btnCreate').addClass('d-block');
+
+                }else{
+                    $('#btnCreate').removeClass('d-block');
+                    $('#btnCreate').addClass('d-none');
                 }
+                $('#nodeModal').modal('show');
             });
 
             //Open create modal

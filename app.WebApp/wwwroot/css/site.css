@@ -35,6 +35,12 @@ body {
     background-color: #00a090 !important;
 }
 
+.site-modal-btn {
+    margin: 5px !important;
+    padding: 5px 20px !important;
+    border-radius: 3px !important;
+}
+
 .sidebar-logo-text-box {
     padding: 5px;
     margin: 40px 0;

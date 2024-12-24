@@ -5,6 +5,8 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 
     int Sl = 1;
+    decimal debit = 0M;
+    decimal credit = 0M;
 }
 
 <div class="content-header">
@@ -88,6 +90,16 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @if (Model.FromDate.HasValue)
+                                        {
+                                            <tr>
+                                                <td class="text-center">*</td>
+                                                <td class="text-center" colspan="4">Showing records up to @Model.FromDate.Value.AddDays(-1).ToString("dd MMMM, yyyy")</td>
+                                                <td class="text-left">@Model.AccountName</td>
+                                                <td class="text-right">@Model.TotalDebitAmount</td>
+                                                <td class="text-right">@Model.TotalCreditAmount</td>
+                                            </tr>
+                                        }
                                         @foreach (var item in Model.AccountingReportViewModels)
                                         {
                                             <tr>
@@ -104,12 +116,12 @@
                                         }
                                         <tr>
                                             <th class="text-right" colspan="6">Total Amount (BDT)</th>
-                                            <th class="text-right">@Model.AccountingReportViewModels.Sum(x => x.DebitAmount)</th>
-                                            <th class="text-right">@Model.AccountingReportViewModels.Sum(x => x.CreditAmount)</th>
+                                            <th class="text-right">@(Model.AccountingReportViewModels.Sum(x => x.DebitAmount) + Model.TotalDebitAmount)</th>
+                                            <th class="text-right">@(Model.AccountingReportViewModels.Sum(x => x.CreditAmount) + Model.TotalCreditAmount)</th>
                                         </tr>
                                         <tr>
                                             <th class="text-right" colspan="7">Receivable Amount (BDT)</th>
-                                            <th class="text-right">@(Model.AccountingReportViewModels.Sum(x => x.DebitAmount) - Model.AccountingReportViewModels.Sum(x => x.CreditAmount))</th>
+                                            <th class="text-right">@((Model.AccountingReportViewModels.Sum(x => x.DebitAmount) + Model.TotalDebitAmount) - (Model.AccountingReportViewModels.Sum(x => x.CreditAmount) + Model.TotalCreditAmount))</th>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -129,6 +141,35 @@
                                     <tbody>
                                         @foreach (var groupedItems in Model.AccountingReportViewModels.GroupBy(x => x.AccountCode).ToList())
                                         {
+                                            if (Model.FromDate.HasValue)
+                                            {
+                                                var openingBalanceGroups = Model.AccountingReportOpeningViewModels.GroupBy(x => x.AccountCode).ToList();
+                                                var openingBalance = openingBalanceGroups.FirstOrDefault(x => x.Key.Equals(groupedItems.FirstOrDefault().AccountCode));
+                                                if (openingBalance is null)
+                                                {
+                                                    <tr>
+                                                        <td class="text-center">*</td>
+                                                        <td class="text-left">Showing records up to @Model.FromDate.Value.AddDays(-1).ToString("dd MMMM, yyyy")</td>
+                                                        <td class="text-left">Opening Account Balance</td>
+                                                        <td class="text-right">0.000</td>
+                                                        <td class="text-right">0.000</td>
+                                                    </tr>
+                                                    debit = 0M;
+                                                    credit = 0M;
+                                                }
+                                                else
+                                                {
+                                                    <tr>
+                                                        <td class="text-center">*</td>
+                                                        <td class="text-left">Showing records up to @Model.FromDate.Value.AddDays(-1).ToString("dd MMMM, yyyy")</td>
+                                                        <td class="text-left">Opening Account Balance</td>
+                                                        <td class="text-right">@openingBalance.Sum(x => x.DebitAmount)</td>
+                                                        <td class="text-right">@openingBalance.Sum(x => x.CreditAmount)</td>
+                                                    </tr>
+                                                    debit = openingBalance.Sum(x => x.DebitAmount);
+                                                    credit = openingBalance.Sum(x => x.CreditAmount);
+                                                }
+                                            }
                                             <tr>
                                                 <td class="text-center">@Sl</td>
                                                 <td class="text-left">@groupedItems.FirstOrDefault().AccountCode</td>
@@ -138,8 +179,13 @@
                                             </tr>
                                             <tr>
                                                 <th class="text-right" colspan="4">Receivable Amount (BDT)</th>
-                                                <th class="text-right">@(groupedItems.Sum(x => x.DebitAmount) - groupedItems.Sum(x => x.CreditAmount))</th>
+                                                <th class="text-right">
+                                                    @((debit + groupedItems.Sum(x => x.DebitAmount)) - (credit + groupedItems.Sum(x => x.CreditAmount)))
+                                                </th>
                                             </tr>
+
+                                            debit = 0M;
+                                            credit = 0M;
                                             Sl++;
                                         }
                                     </tbody>
