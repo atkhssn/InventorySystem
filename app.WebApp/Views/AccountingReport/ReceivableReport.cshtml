@@ -194,10 +194,90 @@
                         }
                     </div>
                 }
+
+                @if (Model.IsOpening && Model.AccountingReportViewModels is null)
+                {
+                <table class="table table-sm table-bordered">
+                    <thead>
+                        <tr class="bg-gradient-gray">
+                            <th class="text-center">#</th>
+                            <th class="text-center">Date</th>
+                            <th class="text-center">Transaction</th>
+                            <th class="text-center">Voucher No</th>
+                            <th class="text-center">Account Code</th>
+                            <th class="text-center">Account Name</th>
+                            <th class="text-center">Debit Amount</th>
+                            <th class="text-center">Credit Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.FromDate.HasValue)
+                        {
+                            <tr>
+                                <td class="text-center">*</td>
+                                <td class="text-center" colspan="4">Showing records up to @Model.FromDate.Value.AddDays(-1).ToString("dd MMMM, yyyy")</td>
+                                <td class="text-left">@Model.AccountName</td>
+                                <td class="text-right">@Model.TotalDebitAmount</td>
+                                <td class="text-right">@Model.TotalCreditAmount</td>
+                            </tr>
+                        }
+                        <tr>
+                            <th class="text-right" colspan="6">Total Amount (BDT)</th>
+                            <th class="text-right">@Model.TotalDebitAmount</th>
+                            <th class="text-right">@Model.TotalCreditAmount</th>
+                        </tr>
+                        <tr>
+                            <th class="text-right" colspan="7">Receivable Amount (BDT)</th>
+                            <th class="text-right">@(Model.TotalDebitAmount - Model.TotalCreditAmount)</th>
+                        </tr>
+                    </tbody>
+                </table>
+                }
+
+                @if (Model.IsOpening && Model.AccountingReportOpeningViewModels.Any())
+                {
+                    <table class="table table-sm table-bordered">
+                        <thead>
+                            <tr class="bg-gradient-gray">
+                                <th class="text-center">#</th>
+                                <th class="text-center">Account Code</th>
+                                <th class="text-center">Account Name</th>
+                                <th class="text-center">Debit Amount</th>
+                                <th class="text-center">Credit Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.AccountingReportViewModels is not null && Model.AccountingReportOpeningViewModels is not null)
+                            {
+                                var notInOpening = Model.AccountingReportViewModels.Select(x => x.AccountCode)
+                                .ToList();
+
+                                Model.AccountingReportOpeningViewModels = Model.AccountingReportOpeningViewModels
+                                .Where(tr => !notInOpening.Contains(tr.AccountCode)).ToList();
+
+                                foreach (var groupedItems in Model.AccountingReportOpeningViewModels.GroupBy(x => x.AccountCode).ToList())
+                                {
+                                    <tr>
+                                        <td class="text-center">@Sl</td>
+                                        <td class="text-left">Showing records up to @Model.FromDate.Value.AddDays(-1).ToString("dd MMMM, yyyy")</td>
+                                        <td class="text-left">Opening Account Balance of @groupedItems.FirstOrDefault().AccountName</td>
+                                        <td class="text-right">@groupedItems.Sum(x => x.DebitAmount)</td>
+                                        <td class="text-right">@groupedItems.Sum(x => x.CreditAmount)</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-right" colspan="4">Receivable Amount (BDT)</th>
+                                        <th class="text-right">
+                                            @((debit + groupedItems.Sum(x => x.DebitAmount)) - (credit + groupedItems.Sum(x => x.CreditAmount)))
+                                        </th>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                }
             </div>
         </div>
     </div>
-
 </section>
 
 @section Scripts {

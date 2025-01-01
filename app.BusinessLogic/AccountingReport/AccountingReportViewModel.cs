@@ -47,6 +47,8 @@ namespace app.Services.AccountingReport
         [AllowNull]
         public string SearchAccountCode { get; set; }
 
+        public bool IsOpening { get; set; } = false;
+
         public ChartOfAccountsViewModel ChartOfAccountsViewModel { get; set; }
         public List<AccountingReportViewModel> AccountingReportViewModels { get; set; }
         public List<AccountingReportViewModel> AccountingReportOpeningViewModels { get; set; }
