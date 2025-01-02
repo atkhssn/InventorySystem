@@ -35,7 +35,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-12">
-                        <form asp-action="SearchPayable" method="post" class="row">
+                        <form asp-action="SearchReceivable" method="post" class="row">
                             <div class="form-group col">
                                 <label asp-for="CostCentersId" class="control-label"></label>
                                 @Html.DropDownListFor(m => m.CostCentersId, new SelectList(Model.CostCentersViewModel.CostCenterViewModels, "Id", "Name"), "--Select Here--", new { @class = "form-control" })
@@ -195,7 +195,7 @@
                     </div>
                 }
 
-                @if (Model.IsOpening && Model.AccountingReportViewModels is null)
+                @if (Model.IsOpening && Model.AccountingReportViewModels.Count == 0 && Model.AccountCode is not null)
                 {
                     <table class="table table-sm table-bordered">
                         <thead>
@@ -234,7 +234,7 @@
                     </table>
                 }
 
-                @if (Model.IsOpening && Model.AccountingReportOpeningViewModels.Any())
+                @if (Model.IsOpening && Model.AccountingReportOpeningViewModels is not null)
                 {
                     <table class="table table-sm table-bordered">
                         <thead>
@@ -247,7 +247,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @if (Model.AccountingReportViewModels is not null && Model.AccountingReportOpeningViewModels is not null)
+                            @if (Model.AccountingReportViewModels is not null && Model.AccountingReportOpeningViewModels.Any())
                             {
                                 var notInOpening = Model.AccountingReportViewModels.Select(x => x.AccountCode)
                                 .ToList();

@@ -38,7 +38,6 @@ namespace app.Services.AccountingReport
                 request.ToDate = model.ToDate;
             }
 
-
             request.AccountingReportViewModels = await query
                 .Select(x => new AccountingReportViewModel
                 {
@@ -53,7 +52,6 @@ namespace app.Services.AccountingReport
 
             request.TotalDebitAmount = request.AccountingReportViewModels.Sum(x => x.DebitAmount);
             request.TotalCreditAmount = request.AccountingReportViewModels.Sum(x => x.CreditAmount);
-
             return request;
         }
 
