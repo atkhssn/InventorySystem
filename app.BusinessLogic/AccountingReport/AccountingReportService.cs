@@ -141,7 +141,6 @@ namespace app.Services.AccountingReport
                     CreditAmount = x.CreditAmount,
                     TransactionDate = x.TransactionDate,
                 }).OrderByDescending(x => x.TransactionDate).ToListAsync();
-
             return request;
         }
 
@@ -179,30 +178,35 @@ namespace app.Services.AccountingReport
             if (model.SearchAccountCode is not null && !model.SearchAccountCode.Equals("0") && model.FromDate.HasValue)
             {
                 var opening = query.Where(td => td.TransactionDate.Date < model.FromDate.Value.Date);
-                request.AccountName = "Opening Account Balance";
-                request.TotalDebitAmount = opening.Sum(x => x.DebitAmount);
-                request.TotalCreditAmount = opening.Sum(x => x.CreditAmount);
+                if (opening.Any())
+                {
+                    request.IsOpening = true;
+                    request.AccountName = "Opening Account Balance";
+                    request.TotalDebitAmount = opening.Sum(x => x.DebitAmount);
+                    request.TotalCreditAmount = opening.Sum(x => x.CreditAmount);
+                }
             }
 
             if (model.SearchAccountCode.Equals("0") && model.FromDate.HasValue)
             {
                 var opening = query.Where(td => td.TransactionDate.Date < model.FromDate.Value.Date);
+                if (opening.Any())
+                    request.IsOpening = true;
                 request.AccountingReportOpeningViewModels = await opening
-                .Select(x => new AccountingReportViewModel
-                {
-                    TransactionId = x.Id,
-                    VoucherNo = x.Vouchers.VoucherNo,
-                    AccountCode = x.AccountCode,
-                    AccountName = x.ChartOfAccounts.AccountName,
-                    DebitAmount = x.DebitAmount,
-                    CreditAmount = x.CreditAmount,
-                    TransactionDate = x.TransactionDate,
-                }).OrderByDescending(x => x.TransactionDate).ToListAsync();
+                    .Select(x => new AccountingReportViewModel
+                    {
+                        TransactionId = x.Id,
+                        VoucherNo = x.Vouchers.VoucherNo,
+                        AccountCode = x.AccountCode,
+                        AccountName = x.ChartOfAccounts.AccountName,
+                        DebitAmount = x.DebitAmount,
+                        CreditAmount = x.CreditAmount,
+                        TransactionDate = x.TransactionDate,
+                    }).OrderByDescending(x => x.TransactionDate).ToListAsync();
             }
 
             if (model.FromDate.HasValue)
             {
-
                 request.FromDate = model.FromDate;
                 query = query.Where(fd => fd.TransactionDate.Date >= model.FromDate.Value.Date);
             }
@@ -257,30 +261,35 @@ namespace app.Services.AccountingReport
             if (model.SearchAccountCode is not null && !model.SearchAccountCode.Equals("0") && model.FromDate.HasValue)
             {
                 var opening = query.Where(td => td.TransactionDate.Date < model.FromDate.Value.Date);
-                request.AccountName = "Opening Account Balance";
-                request.TotalDebitAmount = opening.Sum(x => x.DebitAmount);
-                request.TotalCreditAmount = opening.Sum(x => x.CreditAmount);
+                if (opening.Any())
+                {
+                    request.IsOpening = true;
+                    request.AccountName = "Opening Account Balance";
+                    request.TotalDebitAmount = opening.Sum(x => x.DebitAmount);
+                    request.TotalCreditAmount = opening.Sum(x => x.CreditAmount);
+                }
             }
 
             if (model.SearchAccountCode.Equals("0") && model.FromDate.HasValue)
             {
                 var opening = query.Where(td => td.TransactionDate.Date < model.FromDate.Value.Date);
+                if (opening.Any())
+                    request.IsOpening = true;
                 request.AccountingReportOpeningViewModels = await opening
-                .Select(x => new AccountingReportViewModel
-                {
-                    TransactionId = x.Id,
-                    VoucherNo = x.Vouchers.VoucherNo,
-                    AccountCode = x.AccountCode,
-                    AccountName = x.ChartOfAccounts.AccountName,
-                    DebitAmount = x.DebitAmount,
-                    CreditAmount = x.CreditAmount,
-                    TransactionDate = x.TransactionDate,
-                }).OrderByDescending(x => x.TransactionDate).ToListAsync();
+                    .Select(x => new AccountingReportViewModel
+                    {
+                        TransactionId = x.Id,
+                        VoucherNo = x.Vouchers.VoucherNo,
+                        AccountCode = x.AccountCode,
+                        AccountName = x.ChartOfAccounts.AccountName,
+                        DebitAmount = x.DebitAmount,
+                        CreditAmount = x.CreditAmount,
+                        TransactionDate = x.TransactionDate,
+                    }).OrderByDescending(x => x.TransactionDate).ToListAsync();
             }
 
             if (model.FromDate.HasValue)
             {
-
                 request.FromDate = model.FromDate;
                 query = query.Where(fd => fd.TransactionDate.Date >= model.FromDate.Value.Date);
             }
@@ -335,30 +344,35 @@ namespace app.Services.AccountingReport
             if (model.SearchAccountCode is not null && !model.SearchAccountCode.Equals("0") && model.FromDate.HasValue)
             {
                 var opening = query.Where(td => td.TransactionDate.Date < model.FromDate.Value.Date);
-                request.AccountName = "Opening Account Balance";
-                request.TotalDebitAmount = opening.Sum(x => x.DebitAmount);
-                request.TotalCreditAmount = opening.Sum(x => x.CreditAmount);
+                if (opening.Any())
+                {
+                    request.IsOpening = true;
+                    request.AccountName = "Opening Account Balance";
+                    request.TotalDebitAmount = opening.Sum(x => x.DebitAmount);
+                    request.TotalCreditAmount = opening.Sum(x => x.CreditAmount);
+                }
             }
 
             if (model.SearchAccountCode.Equals("0") && model.FromDate.HasValue)
             {
                 var opening = query.Where(td => td.TransactionDate.Date < model.FromDate.Value.Date);
+                if (opening.Any())
+                    request.IsOpening = true;
                 request.AccountingReportOpeningViewModels = await opening
-                .Select(x => new AccountingReportViewModel
-                {
-                    TransactionId = x.Id,
-                    VoucherNo = x.Vouchers.VoucherNo,
-                    AccountCode = x.AccountCode,
-                    AccountName = x.ChartOfAccounts.AccountName,
-                    DebitAmount = x.DebitAmount,
-                    CreditAmount = x.CreditAmount,
-                    TransactionDate = x.TransactionDate,
-                }).OrderByDescending(x => x.TransactionDate).ToListAsync();
+                    .Select(x => new AccountingReportViewModel
+                    {
+                        TransactionId = x.Id,
+                        VoucherNo = x.Vouchers.VoucherNo,
+                        AccountCode = x.AccountCode,
+                        AccountName = x.ChartOfAccounts.AccountName,
+                        DebitAmount = x.DebitAmount,
+                        CreditAmount = x.CreditAmount,
+                        TransactionDate = x.TransactionDate,
+                    }).OrderByDescending(x => x.TransactionDate).ToListAsync();
             }
 
             if (model.FromDate.HasValue)
             {
-
                 request.FromDate = model.FromDate;
                 query = query.Where(fd => fd.TransactionDate.Date >= model.FromDate.Value.Date);
             }
