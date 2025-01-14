@@ -15,7 +15,7 @@ namespace app.Services.Accounting
         Task<ResponseViewModel> UpdateAccountHeadAsync(ChartOfAccountsViewModel model);
         Task<ResponseViewModel> DeleteAccountHeadAsync(string accountCode);
 
-        Task<List<ChartOfAccountHierarchy>> GetGLAccountHeadAsync();
+        Task<List<ChartOfAccountHierarchy>> GetGLAccountHeadAsync(string parentCode);
         Task<ResponseViewModel> BulkUploadAccountHead(List<ChartOfAccoutDtoModel> modelList);
 
         Task<ChartOfAccountsViewModel> ReceivableAccountHeadsAsync();

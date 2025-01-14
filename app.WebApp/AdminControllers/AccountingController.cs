@@ -1,5 +1,6 @@
 ﻿using app.Services;
 using app.Services.Accounting;
+using app.Utility;
 using app.Utility.DtoModel;
 using CsvHelper;
 using Microsoft.AspNetCore.Authorization;
@@ -14,6 +15,9 @@ namespace app.WebApp.AdminControllers
     {
         private readonly IAccountingService _accountingService;
         private readonly string[] _allowedFileExtensions = { ".csv" };
+        private readonly string _cashAccountCode = "1011011011";
+        private readonly string _bankAccountCode = "1011011012";
+
         public AccountingController(IAccountingService accountingService)
         {
             _accountingService = accountingService;
@@ -125,9 +129,15 @@ namespace app.WebApp.AdminControllers
 
         //Send json for voucher account code
         [HttpGet]
-        public async Task<IActionResult> GetChartOfAccountGlLayer(string term)
+        public async Task<IActionResult> GetChartOfAccountGlLayer(string term, long typeId = 0)
         {
-            var response = await _accountingService.GetGLAccountHeadAsync();
+            string parentCode = "0";
+
+            if (typeId.Equals((long)NewVoucherTypes.BankPayment) || typeId.Equals((long)NewVoucherTypes.BankRecieve)) parentCode = _bankAccountCode;
+
+            if (typeId.Equals((long)NewVoucherTypes.CashPayment) || typeId.Equals((long)NewVoucherTypes.CashRecieve)) parentCode = _cashAccountCode;
+
+            var response = await _accountingService.GetGLAccountHeadAsync(parentCode);
 
             var suggestions = response
                 .Where(item => item.text.Contains(term, StringComparison.OrdinalIgnoreCase) || item.id.Contains(term, StringComparison.OrdinalIgnoreCase))

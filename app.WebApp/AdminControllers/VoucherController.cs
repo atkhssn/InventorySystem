@@ -252,5 +252,40 @@ namespace app.WebApp.AdminControllers
 
         #endregion
 
+        #region Specific Voucher Form
+
+        [HttpGet]
+        public async Task<IActionResult> AddBillVoucher(long id = 0)
+        {
+            var response = new VouchersViewModel();
+            if (id.Equals(0))
+            {
+                response.VoucherTypesViewModel = await _voucherServices.VoucherTypesAsync();
+                response.CostCenterViewModel = await _accoutingServices.CostCentersAsync();
+            }
+            else
+            {
+                response = await _voucherServices.VoucherAsync(id);
+                if (response is null)
+                {
+                    var nullResponse = new VouchersViewModel
+                    {
+                        VoucherTypesViewModel = await _voucherServices.VoucherTypesAsync(),
+                        CostCenterViewModel = await _accoutingServices.CostCentersAsync(),
+                        ResponseViewModel = new ResponseViewModel
+                        {
+                            ResponseCode = 404,
+                            ResponseMessage = "Nothing found or Invalid Voucher Id."
+                        }
+                    };
+                    TempData["Response"] = JsonConvert.SerializeObject(nullResponse.ResponseViewModel);
+                    return await Task.Run(() => RedirectToAction("AddVoucher", new { id = 0 }));
+                }
+            }
+            return await Task.Run(() => View(response));
+        }
+
+        #endregion
+
     }
 }

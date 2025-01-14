@@ -1,4 +1,6 @@
-﻿namespace app.Utility
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace app.Utility
 {
     public enum ProductType
     {
@@ -85,5 +87,21 @@
         HEADTHREE = 3,
         HEADFOUR = 4,
         HEADFIVE = 5,
+    }
+
+    public enum NewVoucherTypes
+    {
+        [Display(Name = "Bank Payment")]
+        BankPayment = 2,
+        [Display(Name = "Bank Recieve")]
+        BankRecieve = 3,
+        [Display(Name = "Cash Payment")]
+        CashPayment = 4,
+        [Display(Name = "Cash Recieve")]
+        CashRecieve = 8,
+        [Display(Name = "Contra Voucher")]
+        ContraVoucher = 9,
+        [Display(Name = "Journal Voucher")]
+        JournalVoucher = 12,
     }
 }

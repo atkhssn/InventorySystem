@@ -534,21 +534,64 @@ namespace app.Services.Vouchern
 
                     _dbContext.VouchersLines.Add(vouchersLines);
 
-                    getVoucher.TotalDebitAmount += model.VouchersLinesViewModel.DebitAmount;
-                    getVoucher.TotalCreditAmount += model.VouchersLinesViewModel.CreditAmount;
-
-                    if (await _dbContext.SaveChangesAsync() > 0)
+                    if (model.VoucherTypesId == (long)NewVoucherTypes.BankPayment)
                     {
-                        model.ResponseViewModel.ResponseCode = 200;
-                        model.ResponseViewModel.ResponseMessage = "New voucher detail has been added.";
-                        transaction.Complete();
+                        getVoucher.TotalDebitAmount += model.VouchersLinesViewModel.CreditAmount;
+                        getVoucher.TotalCreditAmount += model.VouchersLinesViewModel.CreditAmount;
+                    }
+                    else if (model.VoucherTypesId == (long)NewVoucherTypes.BankRecieve)
+                    {
+                        getVoucher.TotalDebitAmount += model.VouchersLinesViewModel.DebitAmount;
+                        getVoucher.TotalCreditAmount += model.VouchersLinesViewModel.DebitAmount;
                     }
                     else
                     {
-                        model.ResponseViewModel.ResponseCode = 500;
-                        model.ResponseViewModel.ResponseMessage = "An internal server error occurred.";
+                        getVoucher.TotalDebitAmount += model.VouchersLinesViewModel.DebitAmount;
+                        getVoucher.TotalCreditAmount += model.VouchersLinesViewModel.CreditAmount;
                     }
 
+                    if (model.VoucherTypesId == (long)NewVoucherTypes.BankPayment)
+                    {
+                        var getVoucherLine = await _dbContext.VouchersLines.Where(x => x.VouchersId.Equals(model.Id) && x.IsActive).OrderBy(x => x.Id).FirstOrDefaultAsync();
+
+                        if (getVoucherLine != null)
+                        {
+                            getVoucherLine.DebitAmount += model.VouchersLinesViewModel.CreditAmount;
+
+                            if (await _dbContext.SaveChangesAsync() > 0)
+                            {
+                                model.ResponseViewModel.ResponseCode = 200;
+                                model.ResponseViewModel.ResponseMessage = "New voucher detail has been added.";
+                                transaction.Complete();
+                            }
+                            else
+                            {
+                                model.ResponseViewModel.ResponseCode = 500;
+                                model.ResponseViewModel.ResponseMessage = "An internal server error occurred.";
+                            }
+                        }
+                    }
+                    else if (model.VoucherTypesId == (long)NewVoucherTypes.BankRecieve)
+                    {
+                        var getVoucherLine = await _dbContext.VouchersLines.Where(x => x.VouchersId.Equals(model.Id) && x.IsActive).OrderBy(x => x.Id).FirstOrDefaultAsync();
+
+                        if (getVoucherLine != null)
+                        {
+                            getVoucherLine.CreditAmount += model.VouchersLinesViewModel.DebitAmount;
+
+                            if (await _dbContext.SaveChangesAsync() > 0)
+                            {
+                                model.ResponseViewModel.ResponseCode = 200;
+                                model.ResponseViewModel.ResponseMessage = "New voucher detail has been added.";
+                                transaction.Complete();
+                            }
+                            else
+                            {
+                                model.ResponseViewModel.ResponseCode = 500;
+                                model.ResponseViewModel.ResponseMessage = "An internal server error occurred.";
+                            }
+                        }
+                    }
                     return model;
                 }
 

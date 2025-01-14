@@ -3,7 +3,7 @@
 @using app.Services.Vouchern
 @model VouchersViewModel
 @{
-    ViewData["Title"] = "New Voucher";
+    ViewData["Title"] = "New Bill Voucher";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 
     int Sl = 1;
@@ -16,7 +16,7 @@
         <div class="breadcrumb d-flex justify-content-between align-items-center  pl-3 pr-3">
             <ol class="breadcrumb mb-0 p-0">
                 <li class="breadcrumb-item"><a href="/Admin/Index">Home</a></li>
-                <li class="breadcrumb-item active"> New Voucher</li>
+                <li class="breadcrumb-item active"> New Bill Voucher</li>
             </ol>
             <div>
                 <a asp-action="Vouchers" class="btn btn-outline-primary"><i class="fa fa-list"></i> Vouchers</a>
@@ -31,7 +31,7 @@
             <div class="card-header">
                 <h3 class="card-title text-info">
                     <i class="fas fa-edit"></i>
-                    New Voucher
+                    New Bill Voucher
                 </h3>
             </div>
             <div class="card-body">
@@ -42,7 +42,6 @@
                             @if (Model.Id > 0)
                             {
                                 <input asp-for="Id" value="@Model.Id" class="form-control" required hidden />
-                                <input asp-for="VoucherTypesId" value="@Model.VoucherTypesViewModel.Id" class="form-control" required hidden />
                                 <div class="table-responsive w-75" style="margin: 0 auto">
                                     <table class="table table-sm table-borderless">
                                         <tbody>
@@ -79,7 +78,7 @@
                                                 <th class="text-left" width="110px">Cost Center:</th>
                                                 <td class="text-left">[@Model.CostCenterViewModel.ShortName]@Model.CostCenterViewModel.Name</td>
                                                 <th class="text-left" width="110px">Voucher Type:</th>
-                                                <td class="text-left">[@Model.VoucherTypesViewModel.ShortName]@Model.VoucherTypesViewModel.Name</td>
+                                                <td class="text-left">[@Model.VoucherTypesViewModel.Name]@Model.VoucherTypesViewModel.Name</td>
                                                 <th class="text-left" width="110px">Created By:</th>
                                                 <td class="text-left">@Model.CreatedBy</td>
                                             </tr>
@@ -100,7 +99,7 @@
                                 </div>
                                 <div class="form-group col-4">
                                     <label asp-for="VoucherTypesId" class="control-label"></label><sup><b class="text-danger">*</b></sup>
-                                    @Html.DropDownListFor(m => m.VoucherTypesId, new SelectList(Model.VoucherTypesViewModel.VoucherTypesViewModels, "Id", "Name"), "--Select Here--", new { @class = "form-control", @Id = "voucherTypeId", @required = "required" })
+                                    @Html.DropDownListFor(m => m.VoucherTypesId, new SelectList(Model.VoucherTypesViewModel.VoucherTypesViewModels, "Id", "Name"), "--Select Here--", new { @class = "form-control", @required = "required" })
                                     <span asp-validation-for="VoucherTypesId" class="text-danger"></span>
                                 </div>
                                 <div class="form-group col-4">
@@ -125,20 +124,17 @@
                                     <span asp-validation-for="VouchersLinesViewModel.AccountCode" class="text-danger"></span>
                                 </div>
 
-                                @if (Model.Id > 0)
-                                {
-                                    <div class="form-group col-3 d-none" id="debitCol">
-                                        <label asp-for="VouchersLinesViewModel.DebitAmount" class="control-label"></label><sup><b class="text-danger">*</b></sup>
-                                        <input asp-for="VouchersLinesViewModel.DebitAmount" value="0.000" class="form-control" id="debitInputField" required />
-                                        <span asp-validation-for="VouchersLinesViewModel.DebitAmount" class="text-danger"></span>
-                                    </div>
+                                <div class="form-group col-3">
+                                    <label asp-for="VouchersLinesViewModel.DebitAmount" class="control-label"></label><sup><b class="text-danger">*</b></sup>
+                                    <input asp-for="VouchersLinesViewModel.DebitAmount" value="0.000" class="form-control" id="debitInputField" required />
+                                    <span asp-validation-for="VouchersLinesViewModel.DebitAmount" class="text-danger"></span>
+                                </div>
 
-                                    <div class="form-group col-3 d-none" id="creditCol">
-                                        <label asp-for="VouchersLinesViewModel.CreditAmount" class="control-label"></label><sup><b class="text-danger">*</b></sup>
-                                        <input asp-for="VouchersLinesViewModel.CreditAmount" value="0.000" class="form-control" id="creditInputField" required />
-                                        <span asp-validation-for="VouchersLinesViewModel.CreditAmount" class="text-danger"></span>
-                                    </div>
-                                }
+                                <div class="form-group col-3">
+                                    <label asp-for="VouchersLinesViewModel.CreditAmount" class="control-label"></label><sup><b class="text-danger">*</b></sup>
+                                    <input asp-for="VouchersLinesViewModel.CreditAmount" value="0.000" class="form-control" id="creditInputField" required />
+                                    <span asp-validation-for="VouchersLinesViewModel.CreditAmount" class="text-danger"></span>
+                                </div>
 
                                 <div class="form-group col-12">
                                     <label asp-for="VouchersLinesViewModel.Particular" class="control-label"></label>
@@ -262,13 +258,13 @@
     <script>
         $(document).ready(function () {
             $('#Voucher').addClass('menu-open');
-            $('#VoucherAddVoucher').addClass('active');
+            $('#VoucherAddBillVoucher').addClass('active');
 
             $("#search-box").autocomplete({
                 source: function (request, response) {
                     $.ajax({
                         url: "/Accounting/GetChartOfAccountGlLayer",
-                        data: { term: request.term, typeId: $("#voucherTypeId").val() },
+                        data: { term: request.term },
                         success: function (data) {
                             response(data);
                         }
@@ -281,13 +277,6 @@
                     return false;
                 }
             });
-
-            if(@(Model.VoucherTypesViewModel.Id) == @((long)NewVoucherTypes.BankPayment)){
-                $("#creditCol").removeClass("d-none").addClass("d-block");
-            }
-            else if(@(Model.VoucherTypesViewModel.Id) == @((long)NewVoucherTypes.BankRecieve)){
-                $("#debitCol").removeClass("d-none").addClass("d-block");
-            }
 
             $('#debitInputField').on("focus", function () {
                 $('#creditInputField').prop('disabled', true);

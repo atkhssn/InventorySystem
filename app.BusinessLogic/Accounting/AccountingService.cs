@@ -331,17 +331,32 @@ namespace app.Services.Accounting
         }
 
         //Autocomplete
-        public async Task<List<ChartOfAccountHierarchy>> GetGLAccountHeadAsync()
+        public async Task<List<ChartOfAccountHierarchy>> GetGLAccountHeadAsync(string parentCode)
         {
-            var request = await _dbContext.ChartOfAccounts
-                .Where(x => x.Level.Equals(5) && x.IsActive)
+            if (!parentCode.Equals("0"))
+            {
+                var request = await _dbContext.ChartOfAccounts
+                .Where(x => x.ParentAccountCode.Equals(parentCode) && x.Level.Equals(5) && x.IsActive && x.IsActive)
                 .Select(x => new ChartOfAccountHierarchy
                 {
                     id = x.AccountCode,
                     text = $"[{x.AccountCode}]-{x.AccountName}"
                 }).ToListAsync();
 
-            return request;
+                return request;
+            }
+            else
+            {
+                var request = await _dbContext.ChartOfAccounts
+                .Where(x => x.Level.Equals(5) && x.IsActive && x.IsActive)
+                .Select(x => new ChartOfAccountHierarchy
+                {
+                    id = x.AccountCode,
+                    text = $"[{x.AccountCode}]-{x.AccountName}"
+                }).ToListAsync();
+
+                return request;
+            }
         }
 
         //Bulk upload
