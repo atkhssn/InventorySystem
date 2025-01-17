@@ -261,11 +261,17 @@
             $('#Voucher').addClass('menu-open');
             $('#VoucherAddVoucher').addClass('active');
 
+            var voucherTypeId = $("#voucherTypeId").val();
+
+            if(@(Model.VoucherTypesViewModel.Id) == @((long)NewVoucherTypes.ContraVoucher)){
+                voucherTypeId = @(Model.VoucherTypesViewModel.Id);
+            }
+
             $("#search-box").autocomplete({
                 source: function (request, response) {
                     $.ajax({
                         url: "/Accounting/GetChartOfAccountGlLayer",
-                        data: { term: request.term, typeId: $("#voucherTypeId").val() },
+                        data: { term: request.term, typeId: voucherTypeId },
                         success: function (data) {
                             response(data);
                         }
@@ -283,7 +289,15 @@
                 $("#debitCol").removeClass("d-none").addClass("d-block");
                 $("#debitLabel").text("Amount");
             }
-            else if(@(Model.VoucherTypesViewModel.Id) == @((long)NewVoucherTypes.BankRecieve)){
+            else if(@(Model.VoucherTypesViewModel.Id) == @((long)NewVoucherTypes.BankReceive)){
+                $("#creditCol").removeClass("d-none").addClass("d-block");
+                $("#creditLabel").text("Amount");
+            }
+            else if(@(Model.VoucherTypesViewModel.Id) == @((long)NewVoucherTypes.CashPayment)){
+                $("#debitCol").removeClass("d-none").addClass("d-block");
+                $("#debitLabel").text("Amount");
+            }
+            else if(@(Model.VoucherTypesViewModel.Id) == @((long)NewVoucherTypes.CashReceive)){
                 $("#creditCol").removeClass("d-none").addClass("d-block");
                 $("#creditLabel").text("Amount");
             }

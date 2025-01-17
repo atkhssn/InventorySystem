@@ -92,16 +92,16 @@ namespace app.Utility
     public enum NewVoucherTypes
     {
         [Display(Name = "Bank Payment")]
-        BankPayment = 2,
-        [Display(Name = "Bank Recieve")]
-        BankRecieve = 3,
+        BankPayment = 13,
+        [Display(Name = "Bank Receive")]
+        BankReceive = 14,
         [Display(Name = "Cash Payment")]
-        CashPayment = 4,
-        [Display(Name = "Cash Recieve")]
-        CashRecieve = 8,
+        CashPayment = 15,
+        [Display(Name = "Cash Receive")]
+        CashReceive = 16,
         [Display(Name = "Contra Voucher")]
-        ContraVoucher = 9,
+        ContraVoucher = 17,
         [Display(Name = "Journal Voucher")]
-        JournalVoucher = 12,
+        JournalVoucher = 18,
     }
 }

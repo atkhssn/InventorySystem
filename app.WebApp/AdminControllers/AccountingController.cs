@@ -133,9 +133,9 @@ namespace app.WebApp.AdminControllers
         {
             string parentCode = "0";
 
-            if (typeId.Equals((long)NewVoucherTypes.BankPayment) || typeId.Equals((long)NewVoucherTypes.BankRecieve)) parentCode = _bankAccountCode;
+            if (typeId.Equals((long)NewVoucherTypes.BankPayment) || typeId.Equals((long)NewVoucherTypes.BankReceive)) parentCode = _bankAccountCode;
 
-            if (typeId.Equals((long)NewVoucherTypes.CashPayment) || typeId.Equals((long)NewVoucherTypes.CashRecieve)) parentCode = _cashAccountCode;
+            if (typeId.Equals((long)NewVoucherTypes.CashPayment) || typeId.Equals((long)NewVoucherTypes.CashReceive)) parentCode = _cashAccountCode;
 
             if (typeId.Equals((long)NewVoucherTypes.ContraVoucher))
             {

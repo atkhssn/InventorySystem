@@ -539,7 +539,17 @@ namespace app.Services.Vouchern
                         getVoucher.TotalDebitAmount += model.VouchersLinesViewModel.DebitAmount;
                         getVoucher.TotalCreditAmount += model.VouchersLinesViewModel.DebitAmount;
                     }
-                    else if (model.VoucherTypesId == (long)NewVoucherTypes.BankRecieve)
+                    else if (model.VoucherTypesId == (long)NewVoucherTypes.BankReceive)
+                    {
+                        getVoucher.TotalDebitAmount += model.VouchersLinesViewModel.CreditAmount;
+                        getVoucher.TotalCreditAmount += model.VouchersLinesViewModel.CreditAmount;
+                    }
+                    if (model.VoucherTypesId == (long)NewVoucherTypes.CashPayment)
+                    {
+                        getVoucher.TotalDebitAmount += model.VouchersLinesViewModel.DebitAmount;
+                        getVoucher.TotalCreditAmount += model.VouchersLinesViewModel.DebitAmount;
+                    }
+                    else if (model.VoucherTypesId == (long)NewVoucherTypes.CashReceive)
                     {
                         getVoucher.TotalDebitAmount += model.VouchersLinesViewModel.CreditAmount;
                         getVoucher.TotalCreditAmount += model.VouchersLinesViewModel.CreditAmount;
@@ -571,7 +581,49 @@ namespace app.Services.Vouchern
                             }
                         }
                     }
-                    else if (model.VoucherTypesId == (long)NewVoucherTypes.BankRecieve)
+                    else if (model.VoucherTypesId == (long)NewVoucherTypes.BankReceive)
+                    {
+                        var getVoucherLine = await _dbContext.VouchersLines.Where(x => x.VouchersId.Equals(model.Id) && x.IsActive).OrderBy(x => x.Id).FirstOrDefaultAsync();
+
+                        if (getVoucherLine != null)
+                        {
+                            getVoucherLine.DebitAmount += model.VouchersLinesViewModel.CreditAmount;
+
+                            if (await _dbContext.SaveChangesAsync() > 0)
+                            {
+                                model.ResponseViewModel.ResponseCode = 200;
+                                model.ResponseViewModel.ResponseMessage = "New voucher detail has been added.";
+                                transaction.Complete();
+                            }
+                            else
+                            {
+                                model.ResponseViewModel.ResponseCode = 500;
+                                model.ResponseViewModel.ResponseMessage = "An internal server error occurred.";
+                            }
+                        }
+                    }
+                    if (model.VoucherTypesId == (long)NewVoucherTypes.CashPayment)
+                    {
+                        var getVoucherLine = await _dbContext.VouchersLines.Where(x => x.VouchersId.Equals(model.Id) && x.IsActive).OrderBy(x => x.Id).FirstOrDefaultAsync();
+
+                        if (getVoucherLine != null)
+                        {
+                            getVoucherLine.CreditAmount += model.VouchersLinesViewModel.DebitAmount;
+
+                            if (await _dbContext.SaveChangesAsync() > 0)
+                            {
+                                model.ResponseViewModel.ResponseCode = 200;
+                                model.ResponseViewModel.ResponseMessage = "New voucher detail has been added.";
+                                transaction.Complete();
+                            }
+                            else
+                            {
+                                model.ResponseViewModel.ResponseCode = 500;
+                                model.ResponseViewModel.ResponseMessage = "An internal server error occurred.";
+                            }
+                        }
+                    }
+                    else if (model.VoucherTypesId == (long)NewVoucherTypes.CashReceive)
                     {
                         var getVoucherLine = await _dbContext.VouchersLines.Where(x => x.VouchersId.Equals(model.Id) && x.IsActive).OrderBy(x => x.Id).FirstOrDefaultAsync();
 
@@ -594,9 +646,6 @@ namespace app.Services.Vouchern
                     }
                     else
                     {
-                        getVoucher.TotalDebitAmount += model.VouchersLinesViewModel.DebitAmount;
-                        getVoucher.TotalCreditAmount += model.VouchersLinesViewModel.CreditAmount;
-
                         if (await _dbContext.SaveChangesAsync() > 0)
                         {
                             model.ResponseViewModel.ResponseCode = 200;
