@@ -333,31 +333,29 @@ namespace app.Services.Accounting
         //Autocomplete
         public async Task<List<ChartOfAccountHierarchy>> GetGLAccountHeadAsync(string parentCode)
         {
-            if (!parentCode.Equals("0"))
+            IQueryable<ChartOfAccounts> query = _dbContext.ChartOfAccounts.Where(x => x.Level == 5 && x.IsActive);
+
+            if (parentCode.Equals("CONTRA"))
             {
-                var request = await _dbContext.ChartOfAccounts
-                .Where(x => x.ParentAccountCode.Equals(parentCode) && x.Level.Equals(5) && x.IsActive && x.IsActive)
+                string[] parentCodes = { "1011011011", "1011011012" };
+                query = query.Where(x => parentCodes.Contains(x.ParentAccountCode));
+            }
+            else if (!parentCode.Equals("0"))
+            {
+                query = query.Where(x => x.ParentAccountCode == parentCode);
+            }
+
+            var result = await query
                 .Select(x => new ChartOfAccountHierarchy
                 {
                     id = x.AccountCode,
                     text = $"[{x.AccountCode}]-{x.AccountName}"
-                }).ToListAsync();
+                })
+                .ToListAsync();
 
-                return request;
-            }
-            else
-            {
-                var request = await _dbContext.ChartOfAccounts
-                .Where(x => x.Level.Equals(5) && x.IsActive && x.IsActive)
-                .Select(x => new ChartOfAccountHierarchy
-                {
-                    id = x.AccountCode,
-                    text = $"[{x.AccountCode}]-{x.AccountName}"
-                }).ToListAsync();
-
-                return request;
-            }
+            return result;
         }
+
 
         //Bulk upload
         public async Task<ResponseViewModel> BulkUploadAccountHead(List<ChartOfAccoutDtoModel> modelList)

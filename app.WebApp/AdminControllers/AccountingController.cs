@@ -137,14 +137,26 @@ namespace app.WebApp.AdminControllers
 
             if (typeId.Equals((long)NewVoucherTypes.CashPayment) || typeId.Equals((long)NewVoucherTypes.CashRecieve)) parentCode = _cashAccountCode;
 
-            var response = await _accountingService.GetGLAccountHeadAsync(parentCode);
-
-            var suggestions = response
+            if (typeId.Equals((long)NewVoucherTypes.ContraVoucher))
+            {
+                var response = await _accountingService.GetGLAccountHeadAsync("CONTRA");
+                var suggestions = response
                 .Where(item => item.text.Contains(term, StringComparison.OrdinalIgnoreCase) || item.id.Contains(term, StringComparison.OrdinalIgnoreCase))
                 .Select(item => new { id = item.id, label = item.text })
                 .Take(10)
                 .ToList();
-            return Json(suggestions);
+                return Json(suggestions);
+            }
+            else
+            {
+                var response = await _accountingService.GetGLAccountHeadAsync(parentCode);
+                var suggestions = response
+                .Where(item => item.text.Contains(term, StringComparison.OrdinalIgnoreCase) || item.id.Contains(term, StringComparison.OrdinalIgnoreCase))
+                .Select(item => new { id = item.id, label = item.text })
+                .Take(10)
+                .ToList();
+                return Json(suggestions);
+            }
         }
 
         //Hierarchy for js tree
