@@ -125,20 +125,17 @@
                                     <span asp-validation-for="VouchersLinesViewModel.AccountCode" class="text-danger"></span>
                                 </div>
 
-                                @if (Model.Id > 0)
-                                {
-                                    <div class="form-group col-3 d-none" id="debitCol">
-                                        <label asp-for="VouchersLinesViewModel.DebitAmount" class="control-label"></label><sup><b class="text-danger">*</b></sup>
-                                        <input asp-for="VouchersLinesViewModel.DebitAmount" value="0.000" class="form-control" id="debitInputField" required />
-                                        <span asp-validation-for="VouchersLinesViewModel.DebitAmount" class="text-danger"></span>
-                                    </div>
+                                <div class="form-group col-3 d-none" id="debitCol">
+                                    <label asp-for="VouchersLinesViewModel.DebitAmount" class="control-label" id="debitLabel"></label><sup><b class="text-danger">*</b></sup>
+                                    <input asp-for="VouchersLinesViewModel.DebitAmount" value="0.000" class="form-control" id="debitInputField" required />
+                                    <span asp-validation-for="VouchersLinesViewModel.DebitAmount" class="text-danger"></span>
+                                </div>
 
-                                    <div class="form-group col-3 d-none" id="creditCol">
-                                        <label asp-for="VouchersLinesViewModel.CreditAmount" class="control-label"></label><sup><b class="text-danger">*</b></sup>
-                                        <input asp-for="VouchersLinesViewModel.CreditAmount" value="0.000" class="form-control" id="creditInputField" required />
-                                        <span asp-validation-for="VouchersLinesViewModel.CreditAmount" class="text-danger"></span>
-                                    </div>
-                                }
+                                <div class="form-group col-3 d-none" id="creditCol">
+                                    <label asp-for="VouchersLinesViewModel.CreditAmount" class="control-label" id="creditLabel"></label><sup><b class="text-danger">*</b></sup>
+                                    <input asp-for="VouchersLinesViewModel.CreditAmount" value="0.000" class="form-control" id="creditInputField" required />
+                                    <span asp-validation-for="VouchersLinesViewModel.CreditAmount" class="text-danger"></span>
+                                </div>
 
                                 <div class="form-group col-12">
                                     <label asp-for="VouchersLinesViewModel.Particular" class="control-label"></label>
@@ -283,11 +280,46 @@
             });
 
             if(@(Model.VoucherTypesViewModel.Id) == @((long)NewVoucherTypes.BankPayment)){
-                $("#creditCol").removeClass("d-none").addClass("d-block");
+                $("#debitCol").removeClass("d-none").addClass("d-block");
+                $("#debitLabel").text("Amount");
             }
             else if(@(Model.VoucherTypesViewModel.Id) == @((long)NewVoucherTypes.BankRecieve)){
-                $("#debitCol").removeClass("d-none").addClass("d-block");
+                $("#creditCol").removeClass("d-none").addClass("d-block");
+                $("#creditLabel").text("Amount");
             }
+            else if(@(Model.VoucherTypesViewModel.Id) == @((long)NewVoucherTypes.ContraVoucher)){
+                $("#debitCol").removeClass("d-none").addClass("d-block");
+                $("#creditCol").removeClass("d-none").addClass("d-block");
+                $("#debitLabel").text("Debit Amount");
+                $("#creditLabel").text("Credit Amount");
+            }
+            else if(@(Model.VoucherTypesViewModel.Id) == @((long)NewVoucherTypes.JournalVoucher)){
+                $("#debitCol").removeClass("d-none").addClass("d-block");
+                $("#creditCol").removeClass("d-none").addClass("d-block");
+                $("#debitLabel").text("Debit Amount");
+                $("#creditLabel").text("Credit Amount");
+            }
+
+            $("#voucherTypeId").on('change', function(){
+                if($(this).val() == @((long)NewVoucherTypes.ContraVoucher)){
+                    $("#debitCol").removeClass("d-none").addClass("d-block");
+                    $("#creditCol").removeClass("d-none").addClass("d-block");
+                    $("#debitLabel").text("Debit Amount");
+                    $("#creditLabel").text("Credit Amount");
+                }
+                else if( $(this).val() == @((long)NewVoucherTypes.JournalVoucher)){
+                    $("#debitCol").removeClass("d-none").addClass("d-block");
+                    $("#creditCol").removeClass("d-none").addClass("d-block");
+                    $("#debitLabel").text("Debit Amount");
+                    $("#creditLabel").text("Credit Amount");
+                }
+                else{
+                    $("#debitCol").removeClass("d-block").addClass("d-none");
+                    $("#creditCol").removeClass("d-block").addClass("d-none");
+                    $("#debitLabel").text("Debit Amount");
+                    $("#creditLabel").text("Credit Amount");
+                }
+            });
 
             $('#debitInputField').on("focus", function () {
                 $('#creditInputField').prop('disabled', true);

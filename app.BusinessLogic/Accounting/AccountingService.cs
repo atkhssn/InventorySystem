@@ -356,7 +356,6 @@ namespace app.Services.Accounting
             return result;
         }
 
-
         //Bulk upload
         public async Task<ResponseViewModel> BulkUploadAccountHead(List<ChartOfAccoutDtoModel> modelList)
         {
