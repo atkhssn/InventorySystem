@@ -261,7 +261,11 @@
             $('#Voucher').addClass('menu-open');
             $('#VoucherAddVoucher').addClass('active');
 
-            var voucherTypeId = $("#voucherTypeId").val();
+            var voucherTypeId = 0;
+
+            $("#voucherTypeId").on('change', function(){
+                voucherTypeId = $(this).val();
+            });
 
             if(@(Model.VoucherTypesViewModel.Id) == @((long)NewVoucherTypes.ContraVoucher)){
                 voucherTypeId = @(Model.VoucherTypesViewModel.Id);
