@@ -544,7 +544,7 @@ namespace app.Services.Vouchern
                         getVoucher.TotalDebitAmount += model.VouchersLinesViewModel.CreditAmount;
                         getVoucher.TotalCreditAmount += model.VouchersLinesViewModel.CreditAmount;
                     }
-                    if (model.VoucherTypesId == (long)NewVoucherTypes.CashPayment)
+                    else if (model.VoucherTypesId == (long)NewVoucherTypes.CashPayment)
                     {
                         getVoucher.TotalDebitAmount += model.VouchersLinesViewModel.DebitAmount;
                         getVoucher.TotalCreditAmount += model.VouchersLinesViewModel.DebitAmount;
