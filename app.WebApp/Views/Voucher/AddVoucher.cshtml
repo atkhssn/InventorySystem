@@ -288,13 +288,7 @@
             $("#voucherTypeId").on('change', function(){
                 voucherTypeId = $(this).val();
 
-                if($(this).val() == @((long)NewVoucherTypes.ContraVoucher)){
-                    $("#debitCol").removeClass("d-none").addClass("d-block");
-                    $("#creditCol").removeClass("d-none").addClass("d-block");
-                    $("#debitLabel").text("Debit Amount");
-                    $("#creditLabel").text("Credit Amount");
-                }
-                else if( $(this).val() == @((long)NewVoucherTypes.JournalVoucher)){
+                if( $(this).val() == @((long)NewVoucherTypes.JournalVoucher)){
                     $("#debitCol").removeClass("d-none").addClass("d-block");
                     $("#creditCol").removeClass("d-none").addClass("d-block");
                     $("#debitLabel").text("Debit Amount");
@@ -304,11 +298,19 @@
                     $("#bankACNoCol").removeClass("d-none").addClass("d-block");
                     $("#CheckNoCol").removeClass("d-none").addClass("d-block");
                     $("#CheckDateCol").removeClass("d-none").addClass("d-block");
+                    $("#debitCol").removeClass("d-block").addClass("d-none");
+                    $("#creditCol").removeClass("d-block").addClass("d-none");
+                    $("#debitLabel").text("Debit Amount");
+                    $("#creditLabel").text("Credit Amount");
                 }
                 else if( $(this).val() == @((long)NewVoucherTypes.BankReceive)){
                     $("#bankACNoCol").removeClass("d-none").addClass("d-block");
                     $("#CheckNoCol").removeClass("d-none").addClass("d-block");
                     $("#CheckDateCol").removeClass("d-none").addClass("d-block");
+                    $("#debitCol").removeClass("d-block").addClass("d-none");
+                    $("#creditCol").removeClass("d-block").addClass("d-none");
+                    $("#debitLabel").text("Debit Amount");
+                    $("#creditLabel").text("Credit Amount");
                 }
                 else{
                     $("#debitCol").removeClass("d-block").addClass("d-none");
@@ -361,9 +363,7 @@
             }
             else if(@(Model.VoucherTypesViewModel.Id) == @((long)NewVoucherTypes.ContraVoucher)){
                 $("#debitCol").removeClass("d-none").addClass("d-block");
-                $("#creditCol").removeClass("d-none").addClass("d-block");
-                $("#debitLabel").text("Debit Amount");
-                $("#creditLabel").text("Credit Amount");
+                $("#debitLabel").text("Amount");
             }
             else if(@(Model.VoucherTypesViewModel.Id) == @((long)NewVoucherTypes.JournalVoucher)){
                 $("#debitCol").removeClass("d-none").addClass("d-block");
