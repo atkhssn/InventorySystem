@@ -50,6 +50,9 @@
                                     <th class="text-center">Vouche Type</th>
                                     <th class="text-center">Voucher Date</th>
                                     <th class="text-center">Cost Center Name</th>
+                                    <th class="text-center">Bank A/C No</th>
+                                    <th class="text-center">Check No</th>
+                                    <th class="text-center">Issue Date</th>
                                     <th class="text-center">Total Debit Amount</th>
                                     <th class="text-center">Total Credit Amount</th>
                                     <th class="text-center">Status</th>
@@ -66,6 +69,9 @@
                                         <td>@item.VoucherTypesViewModel.Name</td>
                                         <td>@item.VoucherDate.ToString("dd MMMM, yyyy")</td>
                                         <td>@item.CostCenterViewModel.Name</td>
+                                        <td>@(item.BankAccNo == null ? "N/A" : item.BankAccNo)</td>
+                                        <td>@(item.CheckNo == null ? "N/A" : item.CheckNo)</td>
+                                        <td>@(item.IssueDate == null ? "N/A" : item.IssueDate.Value.ToString("dd/MM/yyyy"))</td>
                                         <td class="text-right">@item.TotalDebitAmount</td>
                                         <td class="text-right">@item.TotalCreditAmount</td>
                                         <td class="text-center">

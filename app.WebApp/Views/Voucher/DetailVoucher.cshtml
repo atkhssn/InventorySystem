@@ -76,6 +76,14 @@
                                         <td class="text-left">@Model.CreatedBy</td>
                                     </tr>
                                     <tr class="border-bottom">
+                                        <th class="text-left" width="110px">Bank A/C No:</th>
+                                        <td class="text-left">@(Model.BankAccNo == null ? "N/A" : Model.BankAccNo)</td>
+                                        <th class="text-left" width="110px">Check No:</th>
+                                        <td class="text-left">@(Model.CheckNo == null ? "N/A" : Model.CheckNo)</td>
+                                        <th class="text-left" width="110px">Issue Date:</th>
+                                        <td class="text-left">@(Model.IssueDate == null ? "N/A" : Model.IssueDate.Value.ToString("dd/MM/yyyy"))</td>
+                                    </tr>
+                                    <tr class="border-bottom">
                                         <th class="text-left" width="110px">Narration:</th>
                                         <td class="text-left" colspan="4">@Model.Narration</td>
                                     </tr>

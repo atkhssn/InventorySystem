@@ -11,6 +11,9 @@ namespace app.EntityModel.CoreModel
         public VoucherTypes VoucherTypes { get; set; }
         public long CostCentersId { get; set; }
         public CostCenters CostCenters { get; set; }
+        public string BankAccNo { get; set; }
+        public string CheckNo { get; set; }
+        public DateTime? IssueDate { get; set; }
         public decimal TotalDebitAmount { get; set; }
         public decimal TotalCreditAmount { get; set; }
         public string Narration { get; set; }

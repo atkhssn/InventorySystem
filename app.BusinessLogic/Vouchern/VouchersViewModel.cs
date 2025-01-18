@@ -1,6 +1,5 @@
 ﻿using app.Services.Accounting;
 using app.Utility;
-using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
 namespace app.Services.Vouchern
@@ -20,6 +19,15 @@ namespace app.Services.Vouchern
         [Display(Name = "Cost Center")]
         public long CostCentersId { get; set; }
         public CostCentersViewModel CostCenterViewModel { get; set; }
+
+        [Display(Name = "Bank A/C Number")]
+        public string BankAccNo { get; set; }
+
+        [Display(Name = "Check No")]
+        public string CheckNo { get; set; }
+
+        [Display(Name = "Issue Date")]
+        public DateTime? IssueDate { get; set; }
 
         [Display(Name = "Total Debit Amount")]
         public decimal TotalDebitAmount { get; set; }
