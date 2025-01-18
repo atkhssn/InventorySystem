@@ -35,7 +35,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-12">
-                        <form asp-action="SearchReceivable" method="post" class="row">
+                        <form asp-action="SearchBankBook" method="post" class="row">
                             <div class="form-group col">
                                 <label asp-for="CostCentersId" class="control-label"></label>
                                 @Html.DropDownListFor(m => m.CostCentersId, new SelectList(Model.CostCentersViewModel.CostCenterViewModels, "Id", "Name"), "--Select Here--", new { @class = "form-control" })
