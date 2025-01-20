@@ -134,29 +134,20 @@ namespace app.WebApp.AdminControllers
             string parentCode = "0";
 
             if (typeId.Equals((long)NewVoucherTypes.BankPayment) || typeId.Equals((long)NewVoucherTypes.BankReceive)) parentCode = _bankAccountCode;
-
             if (typeId.Equals((long)NewVoucherTypes.CashPayment) || typeId.Equals((long)NewVoucherTypes.CashReceive)) parentCode = _cashAccountCode;
+            if (typeId.Equals((long)NewVoucherTypes.ContraVoucher)) parentCode = "CONTRA";
+            if (typeId.Equals((long)NewVoucherTypes.BillVoucher)) parentCode = "REVENUE";
+            if (typeId.Equals(990)) parentCode = "REVENUEDETAIL";
+            if (typeId.Equals((long)NewVoucherTypes.SalesInvoice)) parentCode = "SALES";
+            if (typeId.Equals(991)) parentCode = "SALESDETAIL";
 
-            if (typeId.Equals((long)NewVoucherTypes.ContraVoucher))
-            {
-                var response = await _accountingService.GetGLAccountHeadAsync("CONTRA");
-                var suggestions = response
-                .Where(item => item.text.Contains(term, StringComparison.OrdinalIgnoreCase) || item.id.Contains(term, StringComparison.OrdinalIgnoreCase))
-                .Select(item => new { id = item.id, label = item.text })
-                .Take(10)
-                .ToList();
-                return Json(suggestions);
-            }
-            else
-            {
-                var response = await _accountingService.GetGLAccountHeadAsync(parentCode);
-                var suggestions = response
-                .Where(item => item.text.Contains(term, StringComparison.OrdinalIgnoreCase) || item.id.Contains(term, StringComparison.OrdinalIgnoreCase))
-                .Select(item => new { id = item.id, label = item.text })
-                .Take(10)
-                .ToList();
-                return Json(suggestions);
-            }
+            var response = await _accountingService.GetGLAccountHeadAsync(parentCode);
+            var suggestions = response
+            .Where(item => item.text.Contains(term, StringComparison.OrdinalIgnoreCase) || item.id.Contains(term, StringComparison.OrdinalIgnoreCase))
+            .Select(item => new { id = item.id, label = item.text })
+            .Take(10)
+            .ToList();
+            return Json(suggestions);
         }
 
         //Hierarchy for js tree

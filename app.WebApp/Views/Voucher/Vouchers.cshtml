@@ -98,9 +98,24 @@
                                         </td>
                                         @if (item.VoucherStatus.Equals(VoucherStatus.CREATED))
                                         {
-                                            <td class="text-center">
-                                                @Html.ActionLink("", "AddVoucher", new { id = item.Id }, new { @class = "text-info fas fa-eye" })
-                                            </td>
+                                            if (item.VoucherTypesViewModel.Id == (long)NewVoucherTypes.BillVoucher)
+                                            {
+                                                <td class="text-center">
+                                                    @Html.ActionLink("", "AddBillVoucher", new { id = item.Id }, new { @class = "text-info fas fa-eye" })
+                                                </td>
+                                            }
+                                            else if (item.VoucherTypesViewModel.Id == (long)NewVoucherTypes.SalesInvoice)
+                                            {
+                                                <td class="text-center">
+                                                    @Html.ActionLink("", "AddBillVoucher", new { id = item.Id }, new { @class = "text-info fas fa-eye" })
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td class="text-center">
+                                                    @Html.ActionLink("", "AddVoucher", new { id = item.Id }, new { @class = "text-info fas fa-eye" })
+                                                </td>
+                                            }
                                         }
                                         else
                                         {

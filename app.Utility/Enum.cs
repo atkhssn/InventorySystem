@@ -103,5 +103,9 @@ namespace app.Utility
         ContraVoucher = 17,
         [Display(Name = "Journal Voucher")]
         JournalVoucher = 18,
+        [Display(Name = "Bill Voucher")]
+        BillVoucher = 19,
+        [Display(Name = "Sales Invoice")]
+        SalesInvoice = 20,
     }
 }

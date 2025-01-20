@@ -335,17 +335,9 @@ namespace app.Services.Accounting
         {
             IQueryable<ChartOfAccounts> query = _dbContext.ChartOfAccounts.Where(x => x.Level == 5 && x.IsActive);
 
-            if (parentCode.Equals("CONTRA"))
+            if (parentCode.Equals("0"))
             {
-                string[] parentCodes = { "1011011011", "1011011012" };
-                query = query.Where(x => parentCodes.Contains(x.ParentAccountCode));
-            }
-            else if (!parentCode.Equals("0"))
-            {
-                query = query.Where(x => x.ParentAccountCode == parentCode);
-            }
-
-            var result = await query
+                var result = await query
                 .Select(x => new ChartOfAccountHierarchy
                 {
                     id = x.AccountCode,
@@ -353,7 +345,49 @@ namespace app.Services.Accounting
                 })
                 .ToListAsync();
 
-            return result;
+                return result;
+            }
+            else
+            {
+                if (parentCode.Equals("CONTRA"))
+                {
+                    string[] parentCodes = { "1011011011", "1011011012" };
+                    query = query.Where(x => parentCodes.Contains(x.ParentAccountCode));
+                }
+
+                if (parentCode.Equals("REVENUE"))
+                {
+                    query = query.Where(x => x.CoATypeId.Equals(4));
+                }
+
+                if (parentCode.Equals("REVENUEDETAIL"))
+                {
+                    string[] parentCodes = { "1011012011", "1011012012" };
+                    query = query.Where(x => parentCodes.Contains(x.ParentAccountCode));
+                }
+
+                if (parentCode.Equals("SALES"))
+                {
+                    string[] parentCodes = { "1011011011", "1011011012" };
+                    query = query.Where(x => parentCodes.Contains(x.ParentAccountCode));
+                }
+
+                if (parentCode.Equals("SALESDETAIL"))
+                {
+                    string[] parentCodes = { "1011011011", "1011011012" };
+                    query = query.Where(x => parentCodes.Contains(x.ParentAccountCode));
+                }
+
+                var result = await query
+                .Select(x => new ChartOfAccountHierarchy
+                {
+                    id = x.AccountCode,
+                    text = $"[{x.AccountCode}]-{x.AccountName}"
+                })
+                .ToListAsync();
+
+                return result;
+            }
         }
 
         //Bulk upload

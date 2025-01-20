@@ -421,7 +421,7 @@ namespace app.Services.Vouchern
                         CostCentersId = model.CostCentersId,
                         BankAccNo = string.IsNullOrEmpty(model.BankAccNo) ? null : model.BankAccNo,
                         CheckNo = string.IsNullOrEmpty(model.CheckNo) ? null : model.CheckNo,
-                        IssueDate = model.IssueDate == null? null : (DateTime)model.IssueDate,
+                        IssueDate = model.IssueDate == null ? null : (DateTime)model.IssueDate,
                         TotalDebitAmount = model.VouchersLinesViewModel.DebitAmount,
                         TotalCreditAmount = model.VouchersLinesViewModel.CreditAmount,
                         Narration = model.Narration,
@@ -568,6 +568,11 @@ namespace app.Services.Vouchern
                         getVoucher.TotalDebitAmount += model.VouchersLinesViewModel.DebitAmount;
                         getVoucher.TotalCreditAmount += model.VouchersLinesViewModel.DebitAmount;
                     }
+                    else if (model.VoucherTypesId == (long)NewVoucherTypes.BillVoucher)
+                    {
+                        getVoucher.TotalDebitAmount += model.VouchersLinesViewModel.DebitAmount;
+                        getVoucher.TotalCreditAmount += model.VouchersLinesViewModel.DebitAmount;
+                    }
                     else
                     {
                         getVoucher.TotalDebitAmount += model.VouchersLinesViewModel.DebitAmount;
@@ -616,7 +621,7 @@ namespace app.Services.Vouchern
                             }
                         }
                     }
-                    if (model.VoucherTypesId == (long)NewVoucherTypes.CashPayment)
+                    else if (model.VoucherTypesId == (long)NewVoucherTypes.CashPayment)
                     {
                         var getVoucherLine = await _dbContext.VouchersLines.Where(x => x.VouchersId.Equals(model.Id) && x.IsActive).OrderBy(x => x.Id).FirstOrDefaultAsync();
 
@@ -658,7 +663,28 @@ namespace app.Services.Vouchern
                             }
                         }
                     }
-                    if (model.VoucherTypesId == (long)NewVoucherTypes.ContraVoucher)
+                    else if (model.VoucherTypesId == (long)NewVoucherTypes.ContraVoucher)
+                    {
+                        var getVoucherLine = await _dbContext.VouchersLines.Where(x => x.VouchersId.Equals(model.Id) && x.IsActive).OrderBy(x => x.Id).FirstOrDefaultAsync();
+
+                        if (getVoucherLine != null)
+                        {
+                            getVoucherLine.CreditAmount += model.VouchersLinesViewModel.DebitAmount;
+
+                            if (await _dbContext.SaveChangesAsync() > 0)
+                            {
+                                model.ResponseViewModel.ResponseCode = 200;
+                                model.ResponseViewModel.ResponseMessage = "New voucher detail has been added.";
+                                transaction.Complete();
+                            }
+                            else
+                            {
+                                model.ResponseViewModel.ResponseCode = 500;
+                                model.ResponseViewModel.ResponseMessage = "An internal server error occurred.";
+                            }
+                        }
+                    }
+                    else if (model.VoucherTypesId == (long)NewVoucherTypes.BillVoucher)
                     {
                         var getVoucherLine = await _dbContext.VouchersLines.Where(x => x.VouchersId.Equals(model.Id) && x.IsActive).OrderBy(x => x.Id).FirstOrDefaultAsync();
 

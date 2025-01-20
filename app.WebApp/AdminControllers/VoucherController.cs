@@ -285,7 +285,68 @@ namespace app.WebApp.AdminControllers
             return await Task.Run(() => View(response));
         }
 
-        #endregion
+        [HttpPost]
+        public async Task<IActionResult> AddBillVoucher(VouchersViewModel vouchersViewModel)
+        {
+            IFormFile file = vouchersViewModel.VouchersLinesViewModel.Attachment;
+            if (file is not null)
+            {
+                string fileExtention = Path.GetExtension(file.FileName).ToLowerInvariant();
 
+                if (!_allowedFileExtensions.Contains(fileExtention))
+                {
+                    vouchersViewModel.ResponseViewModel.ResponseCode = 400;
+                    vouchersViewModel.ResponseViewModel.ResponseMessage = $"Invalid file extention {fileExtention}.";
+                    return await Task.Run(() => View(vouchersViewModel));
+                }
+
+                if (file.Length >= 5 * 1024 * 1024)
+                {
+                    vouchersViewModel.ResponseViewModel.ResponseCode = 400;
+                    vouchersViewModel.ResponseViewModel.ResponseMessage = $"Maximum allowed file size 5MB.";
+                    return await Task.Run(() => View(vouchersViewModel));
+                }
+
+                try
+                {
+                    string rootPath = _webHostEnvironment.WebRootPath;
+                    string folderPath = "Uploads/VoucherAttachments";
+                    string uploadPath = Path.Combine(rootPath, "Uploads", "VoucherAttachments");
+                    if (!Directory.Exists(uploadPath))
+                    {
+                        Directory.CreateDirectory(uploadPath);
+                    }
+                    var documentName = $"V{vouchersViewModel.VouchersLinesViewModel.AccountCode}{DateTime.Now.ToString("yyMMddHHmmss")}{fileExtention}";
+                    var filePath = Path.Combine(uploadPath, documentName);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        file.CopyTo(stream);
+                    }
+
+                    vouchersViewModel.ImageUrl = $"{folderPath}/{documentName}";
+                }
+                catch (Exception ex)
+                {
+                    vouchersViewModel.ResponseViewModel.ResponseCode = 500;
+                    vouchersViewModel.ResponseViewModel.ResponseMessage = ex.Message.ToString();
+                    return await Task.Run(() => View(vouchersViewModel));
+                }
+            }
+
+            if (vouchersViewModel.Id.Equals(0))
+            {
+                var response = await _voucherServices.AddVoucherAsync(vouchersViewModel);
+                TempData["Response"] = JsonConvert.SerializeObject(response.ResponseViewModel);
+                return await Task.Run(() => RedirectToAction("AddBillVoucher", new { Id = response.Id }));
+            }
+            else
+            {
+                var response = await _voucherServices.AddVoucherLineAsync(vouchersViewModel);
+                TempData["Response"] = JsonConvert.SerializeObject(response.ResponseViewModel);
+                return await Task.Run(() => RedirectToAction("AddBillVoucher", new { Id = response.Id }));
+            }
+        }
+
+        #endregion
     }
 }
