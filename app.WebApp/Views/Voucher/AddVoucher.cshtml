@@ -108,7 +108,7 @@
                                 </div>
                                 <div class="form-group col-4">
                                     <label asp-for="VoucherTypesId" class="control-label"></label><sup><b class="text-danger">*</b></sup>
-                                    @Html.DropDownListFor(m => m.VoucherTypesId, new SelectList(Model.VoucherTypesViewModel.VoucherTypesViewModels, "Id", "Name"), "--Select Here--", new { @class = "form-control", @Id = "voucherTypeId", @required = "required" })
+                                    @Html.DropDownListFor(m => m.VoucherTypesId, new SelectList(Model.VoucherTypesViewModel.VoucherTypesViewModels.Take(6), "Id", "Name"), "--Select Here--", new { @class = "form-control", @Id = "voucherTypeId", @required = "required" })
                                     <span asp-validation-for="VoucherTypesId" class="text-danger"></span>
                                 </div>
                                 <div class="form-group col-4">

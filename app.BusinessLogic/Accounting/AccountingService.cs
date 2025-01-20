@@ -360,23 +360,12 @@ namespace app.Services.Accounting
                     query = query.Where(x => x.CoATypeId.Equals(4));
                 }
 
-                if (parentCode.Equals("REVENUEDETAIL"))
+                if (parentCode.Equals("CUSTOMER"))
                 {
                     string[] parentCodes = { "1011012011", "1011012012" };
                     query = query.Where(x => parentCodes.Contains(x.ParentAccountCode));
                 }
 
-                if (parentCode.Equals("SALES"))
-                {
-                    string[] parentCodes = { "1011011011", "1011011012" };
-                    query = query.Where(x => parentCodes.Contains(x.ParentAccountCode));
-                }
-
-                if (parentCode.Equals("SALESDETAIL"))
-                {
-                    string[] parentCodes = { "1011011011", "1011011012" };
-                    query = query.Where(x => parentCodes.Contains(x.ParentAccountCode));
-                }
 
                 var result = await query
                 .Select(x => new ChartOfAccountHierarchy

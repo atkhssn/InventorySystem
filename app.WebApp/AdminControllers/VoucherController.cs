@@ -1,6 +1,7 @@
 ﻿using app.Services;
 using app.Services.Accounting;
 using app.Services.Vouchern;
+using app.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -344,6 +345,200 @@ namespace app.WebApp.AdminControllers
                 var response = await _voucherServices.AddVoucherLineAsync(vouchersViewModel);
                 TempData["Response"] = JsonConvert.SerializeObject(response.ResponseViewModel);
                 return await Task.Run(() => RedirectToAction("AddBillVoucher", new { Id = response.Id }));
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AddCustomerReceive(long id = 0)
+        {
+            var response = new VouchersViewModel();
+            if (id.Equals(0))
+            {
+                response.VoucherTypesViewModel = await _voucherServices.VoucherTypesAsync();
+                response.CostCenterViewModel = await _accoutingServices.CostCentersAsync();
+            }
+            else
+            {
+                response = await _voucherServices.VoucherAsync(id);
+                if (response is null)
+                {
+                    var nullResponse = new VouchersViewModel
+                    {
+                        VoucherTypesViewModel = await _voucherServices.VoucherTypesAsync(),
+                        CostCenterViewModel = await _accoutingServices.CostCentersAsync(),
+                        ResponseViewModel = new ResponseViewModel
+                        {
+                            ResponseCode = 404,
+                            ResponseMessage = "Nothing found or Invalid Voucher Id."
+                        }
+                    };
+                    TempData["Response"] = JsonConvert.SerializeObject(nullResponse.ResponseViewModel);
+                    return await Task.Run(() => RedirectToAction("AddVoucher", new { id = 0 }));
+                }
+            }
+            return await Task.Run(() => View(response));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddCustomerReceive(VouchersViewModel vouchersViewModel)
+        {
+            IFormFile file = vouchersViewModel.VouchersLinesViewModel.Attachment;
+            if (file is not null)
+            {
+                string fileExtention = Path.GetExtension(file.FileName).ToLowerInvariant();
+
+                if (!_allowedFileExtensions.Contains(fileExtention))
+                {
+                    vouchersViewModel.ResponseViewModel.ResponseCode = 400;
+                    vouchersViewModel.ResponseViewModel.ResponseMessage = $"Invalid file extention {fileExtention}.";
+                    return await Task.Run(() => View(vouchersViewModel));
+                }
+
+                if (file.Length >= 5 * 1024 * 1024)
+                {
+                    vouchersViewModel.ResponseViewModel.ResponseCode = 400;
+                    vouchersViewModel.ResponseViewModel.ResponseMessage = $"Maximum allowed file size 5MB.";
+                    return await Task.Run(() => View(vouchersViewModel));
+                }
+
+                try
+                {
+                    string rootPath = _webHostEnvironment.WebRootPath;
+                    string folderPath = "Uploads/VoucherAttachments";
+                    string uploadPath = Path.Combine(rootPath, "Uploads", "VoucherAttachments");
+                    if (!Directory.Exists(uploadPath))
+                    {
+                        Directory.CreateDirectory(uploadPath);
+                    }
+                    var documentName = $"V{vouchersViewModel.VouchersLinesViewModel.AccountCode}{DateTime.Now.ToString("yyMMddHHmmss")}{fileExtention}";
+                    var filePath = Path.Combine(uploadPath, documentName);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        file.CopyTo(stream);
+                    }
+
+                    vouchersViewModel.ImageUrl = $"{folderPath}/{documentName}";
+                }
+                catch (Exception ex)
+                {
+                    vouchersViewModel.ResponseViewModel.ResponseCode = 500;
+                    vouchersViewModel.ResponseViewModel.ResponseMessage = ex.Message.ToString();
+                    return await Task.Run(() => View(vouchersViewModel));
+                }
+            }
+
+            if (vouchersViewModel.Id.Equals(0))
+            {
+                var response = await _voucherServices.AddVoucherAsync(vouchersViewModel);
+                TempData["Response"] = JsonConvert.SerializeObject(response.ResponseViewModel);
+                return await Task.Run(() => RedirectToAction("AddCustomerReceive", new { Id = response.Id }));
+            }
+            else
+            {
+                if (vouchersViewModel.VoucherTypesId.Equals((long)NewVoucherTypes.CustomerReceive))
+                {
+                    List<VouchersViewModel> vouchersViewModels = new List<VouchersViewModel>();
+
+                    //Bad Customer
+                    vouchersViewModels.Add(new VouchersViewModel
+                    {
+                        Id = vouchersViewModel.Id,
+                        VoucherNo = vouchersViewModel.VoucherNo,
+                        VoucherDate = vouchersViewModel.VoucherDate,
+                        VoucherTypesId = vouchersViewModel.VoucherTypesId,
+                        VoucherTypesViewModel = vouchersViewModel.VoucherTypesViewModel,
+                        CostCentersId = vouchersViewModel.CostCentersId,
+                        CostCenterViewModel = vouchersViewModel.CostCenterViewModel,
+                        BankAccNo = vouchersViewModel.BankAccNo,
+                        CheckNo = vouchersViewModel.CheckNo,
+                        IssueDate = vouchersViewModel.IssueDate,
+                        TotalDebitAmount = vouchersViewModel.TotalDebitAmount,
+                        TotalCreditAmount = vouchersViewModel.TotalCreditAmount,
+                        Narration = vouchersViewModel.Narration,
+                        VouchersLinesViewModel = new VouchersLinesViewModel
+                        {
+                            VouchersId = vouchersViewModel.VouchersLinesViewModel.VouchersId,
+                            VoucherNo = vouchersViewModel.VouchersLinesViewModel.VoucherNo,
+                            AccountCode = vouchersViewModel.VouchersLinesViewModel.AccountCode,
+                            ChartOfAccountsViewModel = vouchersViewModel.VouchersLinesViewModel.ChartOfAccountsViewModel,
+                            DebitAmount = vouchersViewModel.VouchersLinesViewModel.DebitAmount,
+                            CreditAmount = vouchersViewModel.VouchersLinesViewModel.CreditAmount + vouchersViewModel.VouchersLinesViewModel.BadDebt + vouchersViewModel.VouchersLinesViewModel.ValueAddedTax,
+                            Particular = vouchersViewModel.VouchersLinesViewModel.Particular,
+                        }
+                    });
+
+                    //Bad Debt
+                    vouchersViewModels.Add(new VouchersViewModel
+                    {
+                        Id = vouchersViewModel.Id,
+                        VoucherNo = vouchersViewModel.VoucherNo,
+                        VoucherDate = vouchersViewModel.VoucherDate,
+                        VoucherTypesId = 000,
+                        VoucherTypesViewModel = vouchersViewModel.VoucherTypesViewModel,
+                        CostCentersId = vouchersViewModel.CostCentersId,
+                        CostCenterViewModel = vouchersViewModel.CostCenterViewModel,
+                        BankAccNo = vouchersViewModel.BankAccNo,
+                        CheckNo = vouchersViewModel.CheckNo,
+                        IssueDate = vouchersViewModel.IssueDate,
+                        TotalDebitAmount = vouchersViewModel.TotalDebitAmount,
+                        TotalCreditAmount = vouchersViewModel.TotalCreditAmount,
+                        Narration = vouchersViewModel.Narration,
+                        VouchersLinesViewModel = new VouchersLinesViewModel
+                        {
+                            VouchersId = vouchersViewModel.VouchersLinesViewModel.VouchersId,
+                            VoucherNo = vouchersViewModel.VouchersLinesViewModel.VoucherNo,
+                            AccountCode = "5029001001001",
+                            ChartOfAccountsViewModel = vouchersViewModel.VouchersLinesViewModel.ChartOfAccountsViewModel,
+                            DebitAmount = vouchersViewModel.VouchersLinesViewModel.BadDebt,
+                            CreditAmount = 0M,
+                            Particular = vouchersViewModel.VouchersLinesViewModel.Particular,
+                        }
+                    });
+
+                    //VAT
+                    vouchersViewModels.Add(new VouchersViewModel
+                    {
+                        Id = vouchersViewModel.Id,
+                        VoucherNo = vouchersViewModel.VoucherNo,
+                        VoucherDate = vouchersViewModel.VoucherDate,
+                        VoucherTypesId = 000,
+                        VoucherTypesViewModel = vouchersViewModel.VoucherTypesViewModel,
+                        CostCentersId = vouchersViewModel.CostCentersId,
+                        CostCenterViewModel = vouchersViewModel.CostCenterViewModel,
+                        BankAccNo = vouchersViewModel.BankAccNo,
+                        CheckNo = vouchersViewModel.CheckNo,
+                        IssueDate = vouchersViewModel.IssueDate,
+                        TotalDebitAmount = vouchersViewModel.TotalDebitAmount,
+                        TotalCreditAmount = vouchersViewModel.TotalCreditAmount,
+                        Narration = vouchersViewModel.Narration,
+                        VouchersLinesViewModel = new VouchersLinesViewModel
+                        {
+                            VouchersId = vouchersViewModel.VouchersLinesViewModel.VouchersId,
+                            VoucherNo = vouchersViewModel.VouchersLinesViewModel.VoucherNo,
+                            AccountCode = "5023011011011",
+                            ChartOfAccountsViewModel = vouchersViewModel.VouchersLinesViewModel.ChartOfAccountsViewModel,
+                            DebitAmount = vouchersViewModel.VouchersLinesViewModel.ValueAddedTax,
+                            CreditAmount = 0M,
+                            Particular = vouchersViewModel.VouchersLinesViewModel.Particular,
+                        }
+                    });
+
+                    var response = new VouchersViewModel();
+
+                    foreach (var voucher in vouchersViewModels)
+                    {
+                        response = await _voucherServices.AddVoucherLineAsync(voucher);
+                    }
+
+                    TempData["Response"] = JsonConvert.SerializeObject(response.ResponseViewModel);
+                    return await Task.Run(() => RedirectToAction("AddCustomerReceive", new { Id = response.Id }));
+                }
+                else
+                {
+                    var response = await _voucherServices.AddVoucherLineAsync(vouchersViewModel);
+                    TempData["Response"] = JsonConvert.SerializeObject(response.ResponseViewModel);
+                    return await Task.Run(() => RedirectToAction("AddCustomerReceive", new { Id = response.Id }));
+                }
             }
         }
 

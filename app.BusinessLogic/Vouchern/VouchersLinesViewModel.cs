@@ -33,6 +33,10 @@ namespace app.Services.Vouchern
 
         public string AttachmentPath { get; set; }
 
+        public decimal BadDebt { get; set; }
+
+        public decimal ValueAddedTax { get; set; }
+
         public List<VouchersLinesViewModel> VouchersLinesViewModels { get; set; }
         public ResponseViewModel ResponseViewModel { get; set; }
     }

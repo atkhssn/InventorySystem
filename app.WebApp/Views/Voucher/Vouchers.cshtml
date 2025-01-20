@@ -104,10 +104,10 @@
                                                     @Html.ActionLink("", "AddBillVoucher", new { id = item.Id }, new { @class = "text-info fas fa-eye" })
                                                 </td>
                                             }
-                                            else if (item.VoucherTypesViewModel.Id == (long)NewVoucherTypes.SalesInvoice)
+                                            else if (item.VoucherTypesViewModel.Id == (long)NewVoucherTypes.CustomerReceive)
                                             {
                                                 <td class="text-center">
-                                                    @Html.ActionLink("", "AddBillVoucher", new { id = item.Id }, new { @class = "text-info fas fa-eye" })
+                                                    @Html.ActionLink("", "AddCustomerReceive", new { id = item.Id }, new { @class = "text-info fas fa-eye" })
                                                 </td>
                                             }
                                             else

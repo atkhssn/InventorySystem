@@ -105,7 +105,11 @@ namespace app.Utility
         JournalVoucher = 18,
         [Display(Name = "Bill Voucher")]
         BillVoucher = 19,
-        [Display(Name = "Sales Invoice")]
-        SalesInvoice = 20,
+        [Display(Name = "Customer Receive")]
+        CustomerReceive = 20,
+        [Display(Name = "Salary Payment")]
+        SalaryPayment = 21,
+        [Display(Name = "Other Expenses")]
+        OtherExpenses = 22
     }
 }
