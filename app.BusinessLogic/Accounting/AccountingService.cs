@@ -1,9 +1,11 @@
 ﻿using app.EntityModel.CoreModel;
 using app.Infrastructure;
 using app.Infrastructure.Auth;
+using app.Utility;
 using app.Utility.DtoModel;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
+using CoATypes = app.Utility.CoATypes;
 
 namespace app.Services.Accounting
 {
@@ -333,7 +335,7 @@ namespace app.Services.Accounting
         //Autocomplete
         public async Task<List<ChartOfAccountHierarchy>> GetGLAccountHeadAsync(string parentCode)
         {
-            IQueryable<ChartOfAccounts> query = _dbContext.ChartOfAccounts.Where(x => x.Level == 5 && x.IsActive);
+            IQueryable<ChartOfAccounts> query = _dbContext.ChartOfAccounts.Where(x => x.Level.Equals((int)CoAHead.HEADFIVE) && x.IsActive);
 
             if (parentCode.Equals("0"))
             {
@@ -357,7 +359,7 @@ namespace app.Services.Accounting
 
                 if (parentCode.Equals("REVENUE"))
                 {
-                    query = query.Where(x => x.CoATypeId.Equals(4));
+                    query = query.Where(x => x.CoATypeId.Equals((int)CoATypes.REVENUE));
                 }
 
                 if (parentCode.Equals("CUSTOMER"))
@@ -366,6 +368,15 @@ namespace app.Services.Accounting
                     query = query.Where(x => parentCodes.Contains(x.ParentAccountCode));
                 }
 
+                if (parentCode.Equals("EXPENSE"))
+                {
+                    query = query.Where(x => x.CoATypeId.Equals((int)CoATypes.EXPENSE));
+                }
+
+                if (parentCode.Equals("EMPLOYEE"))
+                {
+                    query = query.Where(x => x.ParentAccountCode.Equals("5030001002"));
+                }
 
                 var result = await query
                 .Select(x => new ChartOfAccountHierarchy

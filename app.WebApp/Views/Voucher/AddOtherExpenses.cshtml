@@ -3,7 +3,7 @@
 @using app.Services.Vouchern
 @model VouchersViewModel
 @{
-    ViewData["Title"] = "New Customer Receive";
+    ViewData["Title"] = "New Other Expenses";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 
     int Sl = 1;
@@ -16,7 +16,7 @@
         <div class="breadcrumb d-flex justify-content-between align-items-center  pl-3 pr-3">
             <ol class="breadcrumb mb-0 p-0">
                 <li class="breadcrumb-item"><a href="/Admin/Index">Home</a></li>
-                <li class="breadcrumb-item active"> New Voucher</li>
+                <li class="breadcrumb-item active"> New Other Expenses</li>
             </ol>
             <div>
                 <a asp-action="Vouchers" class="btn btn-outline-primary"><i class="fa fa-list"></i> Vouchers</a>
@@ -31,13 +31,13 @@
             <div class="card-header">
                 <h3 class="card-title text-info">
                     <i class="fas fa-edit"></i>
-                    Customer Receive
+                    New Other Expenses
                 </h3>
             </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-12 mr-auto">
-                        <form asp-action="AddCustomerReceive" method="post" enctype="multipart/form-data" class="row">
+                        <form asp-action="AddOtherExpenses" method="post" enctype="multipart/form-data" class="row">
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                             @if (Model.Id > 0)
                             {
@@ -98,7 +98,7 @@
                                     <input type="date" asp-for="VoucherDate" value="@DateTime.Now.ToString("dd/MM/yyyy")" class="form-control" required />
                                     <span asp-validation-for="VoucherDate" class="text-danger"></span>
                                 </div>
-                                <input asp-for="VoucherTypesId" value="@((long)NewVoucherTypes.CustomerReceive)" class="form-control" required hidden />
+                                <input asp-for="VoucherTypesId" value="@((long)NewVoucherTypes.OtherExpenses)" class="form-control" required hidden />
                                 <div class="form-group col-6">
                                     <label asp-for="CostCentersId" class="control-label"></label><sup><b class="text-danger">*</b></sup>
                                     @Html.DropDownListFor(m => m.CostCentersId, new SelectList(Model.CostCenterViewModel.CostCenterViewModels, "Id", "Name"), "--Select Here--", new { @class = "form-control", @required = "required" })
@@ -135,32 +135,17 @@
                                     <span asp-validation-for="VouchersLinesViewModel.AccountCode" class="text-danger"></span>
                                 </div>
 
-                                <div class="form-group col-6 d-none" id="debitCol">
+                                <div class="form-group col-3 d-none" id="debitCol">
                                     <label asp-for="VouchersLinesViewModel.DebitAmount" class="control-label" id="debitLabel"></label><sup><b class="text-danger">*</b></sup>
                                     <input asp-for="VouchersLinesViewModel.DebitAmount" value="0.000" class="form-control" id="debitInputField" required />
                                     <span asp-validation-for="VouchersLinesViewModel.DebitAmount" class="text-danger"></span>
                                 </div>
 
-                                <div class="form-group col-6 d-none" id="creditCol">
+                                <div class="form-group col-3 d-none" id="creditCol">
                                     <label asp-for="VouchersLinesViewModel.CreditAmount" class="control-label" id="creditLabel"></label><sup><b class="text-danger">*</b></sup>
                                     <input asp-for="VouchersLinesViewModel.CreditAmount" value="0.000" class="form-control" id="creditInputField" required />
                                     <span asp-validation-for="VouchersLinesViewModel.CreditAmount" class="text-danger"></span>
                                 </div>
-
-                                if (Model.Id > 0)
-                                {
-                                    <div class="form-group col-6">
-                                        <label asp-for="VouchersLinesViewModel.BadDebt" class="control-label">Bad Debt</label><sup><b class="text-danger">*</b></sup>
-                                        <input asp-for="VouchersLinesViewModel.BadDebt" value="0.000" class="form-control" id="debitInputField" required />
-                                        <span asp-validation-for="VouchersLinesViewModel.BadDebt" class="text-danger"></span>
-                                    </div>
-
-                                    <div class="form-group col-6">
-                                        <label asp-for="VouchersLinesViewModel.ValueAddedTax" class="control-label">VAT/AIT</label><sup><b class="text-danger">*</b></sup>
-                                        <input asp-for="VouchersLinesViewModel.ValueAddedTax" value="0.000" class="form-control" id="creditInputField" required />
-                                        <span asp-validation-for="VouchersLinesViewModel.ValueAddedTax" class="text-danger"></span>
-                                    </div>
-                                }
 
                                 <div class="form-group col-12">
                                     <label asp-for="VouchersLinesViewModel.Particular" class="control-label"></label>
@@ -284,12 +269,12 @@
     <script>
         $(document).ready(function () {
             $('#Bookmark').addClass('menu-open');
-            $('#VoucherAddCustomerReceive').addClass('active');
+            $('#VoucherAddOtherExpenses').addClass('active');
 
-            var voucherTypeId = @((long)NewVoucherTypes.CustomerReceive)
+            var voucherTypeId = @((long)NewVoucherTypes.OtherExpenses)
 
-            if(@(Model.VoucherTypesViewModel.Id) == @((long)NewVoucherTypes.CustomerReceive)){
-                voucherTypeId = 990;
+            if(@(Model.VoucherTypesViewModel.Id) == @((long)NewVoucherTypes.OtherExpenses)){
+                voucherTypeId = 991;
             }
 
             $("#search-box").autocomplete({
@@ -310,11 +295,10 @@
                 }
             });
 
-            if(@(Model.VoucherTypesViewModel.Id) == @((long)NewVoucherTypes.CustomerReceive)){
-                $("#creditCol").removeClass("d-none").addClass("d-block");
+            if(@(Model.VoucherTypesViewModel.Id) == @((long)NewVoucherTypes.OtherExpenses)){
+                $("#debitCol").removeClass("d-none").addClass("d-block");
                 $("#debitLabel").text("Amount");
-                $("#accountHeadLabel").text("Select Customer");
-                console.log(@(Model.VoucherTypesViewModel.Id));
+                $("#accountHeadLabel").text("Other Expense")
             }
 
             $('#debitInputField').on("focus", function () {

@@ -110,6 +110,18 @@
                                                     @Html.ActionLink("", "AddCustomerReceive", new { id = item.Id }, new { @class = "text-info fas fa-eye" })
                                                 </td>
                                             }
+                                            else if (item.VoucherTypesViewModel.Id == (long)NewVoucherTypes.OtherExpenses)
+                                            {
+                                                <td class="text-center">
+                                                    @Html.ActionLink("", "AddOtherExpenses", new { id = item.Id }, new { @class = "text-info fas fa-eye" })
+                                                </td>
+                                            }
+                                            else if (item.VoucherTypesViewModel.Id == (long)NewVoucherTypes.SalaryPayment)
+                                            {
+                                                <td class="text-center">
+                                                    @Html.ActionLink("", "AddSalaryPayment", new { id = item.Id }, new { @class = "text-info fas fa-eye" })
+                                                </td>
+                                            }
                                             else
                                             {
                                                 <td class="text-center">

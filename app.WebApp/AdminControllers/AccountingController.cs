@@ -139,6 +139,10 @@ namespace app.WebApp.AdminControllers
             if (typeId.Equals((long)NewVoucherTypes.BillVoucher)) parentCode = "REVENUE";
             if (typeId.Equals((long)NewVoucherTypes.CustomerReceive)) parentCode = "CONTRA";
             if (typeId.Equals(990)) parentCode = "CUSTOMER";
+            if (typeId.Equals((long)NewVoucherTypes.OtherExpenses)) parentCode = "CONTRA";
+            if (typeId.Equals(991)) parentCode = "EXPENSE";
+            if (typeId.Equals((long)NewVoucherTypes.SalaryPayment)) parentCode = "CONTRA";
+            if (typeId.Equals(992)) parentCode = "EMPLOYEE";
 
             var response = await _accountingService.GetGLAccountHeadAsync(parentCode);
             var suggestions = response

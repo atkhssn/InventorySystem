@@ -255,6 +255,8 @@ namespace app.WebApp.AdminControllers
 
         #region Specific Voucher Form
 
+        // Bill Voucher
+
         [HttpGet]
         public async Task<IActionResult> AddBillVoucher(long id = 0)
         {
@@ -280,7 +282,7 @@ namespace app.WebApp.AdminControllers
                         }
                     };
                     TempData["Response"] = JsonConvert.SerializeObject(nullResponse.ResponseViewModel);
-                    return await Task.Run(() => RedirectToAction("AddVoucher", new { id = 0 }));
+                    return await Task.Run(() => RedirectToAction("AddBillVoucher", new { id = 0 }));
                 }
             }
             return await Task.Run(() => View(response));
@@ -348,6 +350,8 @@ namespace app.WebApp.AdminControllers
             }
         }
 
+        // Customer Receive
+
         [HttpGet]
         public async Task<IActionResult> AddCustomerReceive(long id = 0)
         {
@@ -373,7 +377,7 @@ namespace app.WebApp.AdminControllers
                         }
                     };
                     TempData["Response"] = JsonConvert.SerializeObject(nullResponse.ResponseViewModel);
-                    return await Task.Run(() => RedirectToAction("AddVoucher", new { id = 0 }));
+                    return await Task.Run(() => RedirectToAction("AddCustomerReceive", new { id = 0 }));
                 }
             }
             return await Task.Run(() => View(response));
@@ -539,6 +543,196 @@ namespace app.WebApp.AdminControllers
                     TempData["Response"] = JsonConvert.SerializeObject(response.ResponseViewModel);
                     return await Task.Run(() => RedirectToAction("AddCustomerReceive", new { Id = response.Id }));
                 }
+            }
+        }
+
+        // Other Expenses
+
+        [HttpGet]
+        public async Task<IActionResult> AddOtherExpenses(long id = 0)
+        {
+            var response = new VouchersViewModel();
+            if (id.Equals(0))
+            {
+                response.VoucherTypesViewModel = await _voucherServices.VoucherTypesAsync();
+                response.CostCenterViewModel = await _accoutingServices.CostCentersAsync();
+            }
+            else
+            {
+                response = await _voucherServices.VoucherAsync(id);
+                if (response is null)
+                {
+                    var nullResponse = new VouchersViewModel
+                    {
+                        VoucherTypesViewModel = await _voucherServices.VoucherTypesAsync(),
+                        CostCenterViewModel = await _accoutingServices.CostCentersAsync(),
+                        ResponseViewModel = new ResponseViewModel
+                        {
+                            ResponseCode = 404,
+                            ResponseMessage = "Nothing found or Invalid Voucher Id."
+                        }
+                    };
+                    TempData["Response"] = JsonConvert.SerializeObject(nullResponse.ResponseViewModel);
+                    return await Task.Run(() => RedirectToAction("AddOtherExpenses", new { id = 0 }));
+                }
+            }
+            return await Task.Run(() => View(response));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddOtherExpenses(VouchersViewModel vouchersViewModel)
+        {
+            IFormFile file = vouchersViewModel.VouchersLinesViewModel.Attachment;
+            if (file is not null)
+            {
+                string fileExtention = Path.GetExtension(file.FileName).ToLowerInvariant();
+
+                if (!_allowedFileExtensions.Contains(fileExtention))
+                {
+                    vouchersViewModel.ResponseViewModel.ResponseCode = 400;
+                    vouchersViewModel.ResponseViewModel.ResponseMessage = $"Invalid file extention {fileExtention}.";
+                    return await Task.Run(() => View(vouchersViewModel));
+                }
+
+                if (file.Length >= 5 * 1024 * 1024)
+                {
+                    vouchersViewModel.ResponseViewModel.ResponseCode = 400;
+                    vouchersViewModel.ResponseViewModel.ResponseMessage = $"Maximum allowed file size 5MB.";
+                    return await Task.Run(() => View(vouchersViewModel));
+                }
+
+                try
+                {
+                    string rootPath = _webHostEnvironment.WebRootPath;
+                    string folderPath = "Uploads/VoucherAttachments";
+                    string uploadPath = Path.Combine(rootPath, "Uploads", "VoucherAttachments");
+                    if (!Directory.Exists(uploadPath))
+                    {
+                        Directory.CreateDirectory(uploadPath);
+                    }
+                    var documentName = $"V{vouchersViewModel.VouchersLinesViewModel.AccountCode}{DateTime.Now.ToString("yyMMddHHmmss")}{fileExtention}";
+                    var filePath = Path.Combine(uploadPath, documentName);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        file.CopyTo(stream);
+                    }
+
+                    vouchersViewModel.ImageUrl = $"{folderPath}/{documentName}";
+                }
+                catch (Exception ex)
+                {
+                    vouchersViewModel.ResponseViewModel.ResponseCode = 500;
+                    vouchersViewModel.ResponseViewModel.ResponseMessage = ex.Message.ToString();
+                    return await Task.Run(() => View(vouchersViewModel));
+                }
+            }
+
+            if (vouchersViewModel.Id.Equals(0))
+            {
+                var response = await _voucherServices.AddVoucherAsync(vouchersViewModel);
+                TempData["Response"] = JsonConvert.SerializeObject(response.ResponseViewModel);
+                return await Task.Run(() => RedirectToAction("AddOtherExpenses", new { Id = response.Id }));
+            }
+            else
+            {
+                var response = await _voucherServices.AddVoucherLineAsync(vouchersViewModel);
+                TempData["Response"] = JsonConvert.SerializeObject(response.ResponseViewModel);
+                return await Task.Run(() => RedirectToAction("AddOtherExpenses", new { Id = response.Id }));
+            }
+        }
+
+        // Salary Payment
+
+        [HttpGet]
+        public async Task<IActionResult> AddSalaryPayment(long id = 0)
+        {
+            var response = new VouchersViewModel();
+            if (id.Equals(0))
+            {
+                response.VoucherTypesViewModel = await _voucherServices.VoucherTypesAsync();
+                response.CostCenterViewModel = await _accoutingServices.CostCentersAsync();
+            }
+            else
+            {
+                response = await _voucherServices.VoucherAsync(id);
+                if (response is null)
+                {
+                    var nullResponse = new VouchersViewModel
+                    {
+                        VoucherTypesViewModel = await _voucherServices.VoucherTypesAsync(),
+                        CostCenterViewModel = await _accoutingServices.CostCentersAsync(),
+                        ResponseViewModel = new ResponseViewModel
+                        {
+                            ResponseCode = 404,
+                            ResponseMessage = "Nothing found or Invalid Voucher Id."
+                        }
+                    };
+                    TempData["Response"] = JsonConvert.SerializeObject(nullResponse.ResponseViewModel);
+                    return await Task.Run(() => RedirectToAction("AddSalaryPayment", new { id = 0 }));
+                }
+            }
+            return await Task.Run(() => View(response));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddSalaryPayment(VouchersViewModel vouchersViewModel)
+        {
+            IFormFile file = vouchersViewModel.VouchersLinesViewModel.Attachment;
+            if (file is not null)
+            {
+                string fileExtention = Path.GetExtension(file.FileName).ToLowerInvariant();
+
+                if (!_allowedFileExtensions.Contains(fileExtention))
+                {
+                    vouchersViewModel.ResponseViewModel.ResponseCode = 400;
+                    vouchersViewModel.ResponseViewModel.ResponseMessage = $"Invalid file extention {fileExtention}.";
+                    return await Task.Run(() => View(vouchersViewModel));
+                }
+
+                if (file.Length >= 5 * 1024 * 1024)
+                {
+                    vouchersViewModel.ResponseViewModel.ResponseCode = 400;
+                    vouchersViewModel.ResponseViewModel.ResponseMessage = $"Maximum allowed file size 5MB.";
+                    return await Task.Run(() => View(vouchersViewModel));
+                }
+
+                try
+                {
+                    string rootPath = _webHostEnvironment.WebRootPath;
+                    string folderPath = "Uploads/VoucherAttachments";
+                    string uploadPath = Path.Combine(rootPath, "Uploads", "VoucherAttachments");
+                    if (!Directory.Exists(uploadPath))
+                    {
+                        Directory.CreateDirectory(uploadPath);
+                    }
+                    var documentName = $"V{vouchersViewModel.VouchersLinesViewModel.AccountCode}{DateTime.Now.ToString("yyMMddHHmmss")}{fileExtention}";
+                    var filePath = Path.Combine(uploadPath, documentName);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        file.CopyTo(stream);
+                    }
+
+                    vouchersViewModel.ImageUrl = $"{folderPath}/{documentName}";
+                }
+                catch (Exception ex)
+                {
+                    vouchersViewModel.ResponseViewModel.ResponseCode = 500;
+                    vouchersViewModel.ResponseViewModel.ResponseMessage = ex.Message.ToString();
+                    return await Task.Run(() => View(vouchersViewModel));
+                }
+            }
+
+            if (vouchersViewModel.Id.Equals(0))
+            {
+                var response = await _voucherServices.AddVoucherAsync(vouchersViewModel);
+                TempData["Response"] = JsonConvert.SerializeObject(response.ResponseViewModel);
+                return await Task.Run(() => RedirectToAction("AddSalaryPayment", new { Id = response.Id }));
+            }
+            else
+            {
+                var response = await _voucherServices.AddVoucherLineAsync(vouchersViewModel);
+                TempData["Response"] = JsonConvert.SerializeObject(response.ResponseViewModel);
+                return await Task.Run(() => RedirectToAction("AddSalaryPayment", new { Id = response.Id }));
             }
         }
 
