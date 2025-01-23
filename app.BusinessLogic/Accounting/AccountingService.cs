@@ -351,6 +351,16 @@ namespace app.Services.Accounting
             }
             else
             {
+                if (parentCode.Equals("BANK"))
+                {
+                    query = query.Where(x => x.ParentAccountCode.Equals("1011011012"));
+                }
+
+                if (parentCode.Equals("CASH"))
+                {
+                    query = query.Where(x => x.ParentAccountCode.Equals("1011011011"));
+                }
+
                 if (parentCode.Equals("CONTRA"))
                 {
                     string[] parentCodes = { "1011011011", "1011011012" };

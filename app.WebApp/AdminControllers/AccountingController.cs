@@ -15,8 +15,6 @@ namespace app.WebApp.AdminControllers
     {
         private readonly IAccountingService _accountingService;
         private readonly string[] _allowedFileExtensions = { ".csv" };
-        private readonly string _cashAccountCode = "1011011011";
-        private readonly string _bankAccountCode = "1011011012";
 
         public AccountingController(IAccountingService accountingService)
         {
@@ -133,8 +131,8 @@ namespace app.WebApp.AdminControllers
         {
             string parentCode = "0";
 
-            if (typeId.Equals((long)NewVoucherTypes.BankPayment) || typeId.Equals((long)NewVoucherTypes.BankReceive)) parentCode = _bankAccountCode;
-            if (typeId.Equals((long)NewVoucherTypes.CashPayment) || typeId.Equals((long)NewVoucherTypes.CashReceive)) parentCode = _cashAccountCode;
+            if (typeId.Equals((long)NewVoucherTypes.BankPayment) || typeId.Equals((long)NewVoucherTypes.BankReceive)) parentCode = "BANK";
+            if (typeId.Equals((long)NewVoucherTypes.CashPayment) || typeId.Equals((long)NewVoucherTypes.CashReceive)) parentCode = "CASH";
             if (typeId.Equals((long)NewVoucherTypes.ContraVoucher)) parentCode = "CONTRA";
             if (typeId.Equals((long)NewVoucherTypes.BillVoucher)) parentCode = "REVENUE";
             if (typeId.Equals((long)NewVoucherTypes.CustomerReceive)) parentCode = "CONTRA";
