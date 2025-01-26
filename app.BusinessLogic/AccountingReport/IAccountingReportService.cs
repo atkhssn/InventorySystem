@@ -7,5 +7,6 @@
         Task<AccountingReportViewModel> GetPayableReportAsync(AccountingReportViewModel model);
         Task<AccountingReportViewModel> GetCashBookReportAsync(AccountingReportViewModel model);
         Task<AccountingReportViewModel> GetBankBookReportAsync(AccountingReportViewModel model);
+        Task<AccountingReportViewModel> GetGeneralLedgerReportAsync(AccountingReportViewModel model);
     }
 }

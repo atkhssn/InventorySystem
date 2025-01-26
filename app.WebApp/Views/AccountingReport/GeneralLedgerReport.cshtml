@@ -1,0 +1,313 @@
+﻿@using app.Services.AccountingReport
+@model AccountingReportViewModel
+@{
+    ViewData["Title"] = "General Ledger Report";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+    int Sl = 1;
+    decimal debit = 0M;
+    decimal credit = 0M;
+}
+
+<div class="content-header">
+    <div class="container-fluid ">
+        <div class="breadcrumb d-flex justify-content-between align-items-center  pl-3 pr-3">
+            <ol class="breadcrumb mb-0 p-0">
+                <li class="breadcrumb-item"><a href="/Admin/Index">Home</a></li>
+                <li class="breadcrumb-item active"> General Ledger Report</li>
+            </ol>
+            <div>
+                <a class="btn btn-outline-primary" id="printGeneralLedger"><i class="fa fa-print"></i> Print Here</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title text-info">
+                    <i class="fa fa-info-circle"></i>
+                    Account General Ledger Report
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12">
+                        <form asp-action="SearchGeneralLedger" method="post" class="row">
+                            <div class="form-group col">
+                                <label asp-for="SearchAccountCode" class="control-label"></label>
+                                @Html.DropDownListFor(m => m.SearchAccountCode, new SelectList(Model.ChartOfAccountsViewModel.ChartOfAccountsViewModels, "AccountCode", "AccountName"), "--Select Here--", new { @class = "form-control" })
+                            </div>
+                            <div class="form-group col">
+                                <label asp-for="FromDate" class="control-label"></label>
+                                <input type="date" asp-for="FromDate" value="@DateTime.Now.ToString("dd/MM/yyyy")" class="form-control" />
+                            </div>
+                            <div class="form-group col">
+                                <label asp-for="ToDate" class="control-label"></label>
+                                <input type="date" asp-for="ToDate" value="@DateTime.Now.ToString("dd/MM/yyyy")" class="form-control" />
+                            </div>
+                            <div class="form-group col mt-2" style="margin-top: 4px">
+                                <label class="control-label"></label>
+                                <input type="submit" value="Show Report" class="btn btn-outline-primary w-100" />
+                            </div>
+                        </form>
+                    </div>
+                    @if (Model.FromDate.HasValue)
+                    {
+                        <div class="col-12 text-center">
+                            <p class="text-body"><span class="font-weight-bold">Date Between: </span> @Model.FromDate.Value.ToString("dd MMMM, yyyy") - @(Model.ToDate.HasValue ? Model.ToDate.Value.ToString("dd MMMM, yyyy") : "Till Now")</p>
+                        </div>
+                    }
+                </div>
+                @if (Model.AccountingReportViewModels is not null)
+                {
+                    <div class="table-responsive">
+                        @if (!Model.AccountingReportViewModels.Any())
+                        {
+                            <p class="text-center text-danger">Nothing Found to Load!</p>
+                        }
+                        else
+                        {
+                            if (Model.AccountCode is not null)
+                            {
+                                <table class="table table-sm table-bordered">
+                                    <thead>
+                                        <tr class="bg-gradient-gray">
+                                            <th class="text-center">#</th>
+                                            <th class="text-center">Date</th>
+                                            <th class="text-center">Transaction</th>
+                                            <th class="text-center">Voucher No</th>
+                                            <th class="text-center">Account Code</th>
+                                            <th class="text-center">Account Name</th>
+                                            <th class="text-center">Debit Amount</th>
+                                            <th class="text-center">Credit Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.FromDate.HasValue)
+                                        {
+                                            <tr>
+                                                <td class="text-center">*</td>
+                                                <td class="text-center" colspan="4">Showing records up to @Model.FromDate.Value.AddDays(-1).ToString("dd MMMM, yyyy")</td>
+                                                <td class="text-left">@Model.AccountName</td>
+                                                <td class="text-right">@Model.TotalDebitAmount</td>
+                                                <td class="text-right">@Model.TotalCreditAmount</td>
+                                            </tr>
+                                        }
+                                        @foreach (var item in Model.AccountingReportViewModels)
+                                        {
+                                            <tr>
+                                                <td class="text-center">@Sl</td>
+                                                <td class="text-center">@item.TransactionDate.ToString("dd MMMM, yyyy")</td>
+                                                <td class="text-left">@item.TransactionId</td>
+                                                <td class="text-left">@item.VoucherNo</td>
+                                                <td class="text-left">@item.AccountCode</td>
+                                                <td class="text-left">@item.AccountName</td>
+                                                <td class="text-right">@item.DebitAmount</td>
+                                                <td class="text-right">@item.CreditAmount</td>
+                                            </tr>
+                                            Sl++;
+                                        }
+                                        <tr>
+                                            <th class="text-right" colspan="6">Balance (BDT)</th>
+                                            <th class="text-right">@(Model.AccountingReportViewModels.Sum(x => x.DebitAmount) + Model.TotalDebitAmount)</th>
+                                            <th class="text-right">@(Model.AccountingReportViewModels.Sum(x => x.CreditAmount) + Model.TotalCreditAmount)</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="text-right" colspan="7">Receivable Amount (BDT)</th>
+                                            <th class="text-right">@((Model.AccountingReportViewModels.Sum(x => x.DebitAmount) + Model.TotalDebitAmount) - (Model.AccountingReportViewModels.Sum(x => x.CreditAmount) + Model.TotalCreditAmount))</th>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            }
+                            else
+                            {
+                                <table class="table table-sm table-bordered">
+                                    <thead>
+                                        <tr class="bg-gradient-gray">
+                                            <th class="text-center">#</th>
+                                            <th class="text-center">Account Code</th>
+                                            <th class="text-center">Account Name</th>
+                                            <th class="text-center">Debit Amount</th>
+                                            <th class="text-center">Credit Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var groupedItems in Model.AccountingReportViewModels.GroupBy(x => x.AccountCode).ToList())
+                                        {
+                                            if (Model.FromDate.HasValue)
+                                            {
+                                                var openingBalanceGroups = Model.AccountingReportOpeningViewModels.GroupBy(x => x.AccountCode).ToList();
+                                                var openingBalance = openingBalanceGroups.FirstOrDefault(x => x.Key.Equals(groupedItems.FirstOrDefault().AccountCode));
+                                                if (openingBalance is null)
+                                                {
+                                                    <tr>
+                                                        <td class="text-center">*</td>
+                                                        <td class="text-left">Showing records up to @Model.FromDate.Value.AddDays(-1).ToString("dd MMMM, yyyy")</td>
+                                                        <td class="text-left">Opening Account Balance</td>
+                                                        <td class="text-right">0.000</td>
+                                                        <td class="text-right">0.000</td>
+                                                    </tr>
+                                                    debit = 0M;
+                                                    credit = 0M;
+                                                }
+                                                else
+                                                {
+                                                    <tr>
+                                                        <td class="text-center">*</td>
+                                                        <td class="text-left">Showing records up to @Model.FromDate.Value.AddDays(-1).ToString("dd MMMM, yyyy")</td>
+                                                        <td class="text-left">Opening Account Balance</td>
+                                                        <td class="text-right">@openingBalance.Sum(x => x.DebitAmount)</td>
+                                                        <td class="text-right">@openingBalance.Sum(x => x.CreditAmount)</td>
+                                                    </tr>
+                                                    debit = openingBalance.Sum(x => x.DebitAmount);
+                                                    credit = openingBalance.Sum(x => x.CreditAmount);
+                                                }
+                                            }
+                                            <tr>
+                                                <td class="text-center">@Sl</td>
+                                                <td class="text-left">@groupedItems.FirstOrDefault().AccountCode</td>
+                                                <td class="text-left">@groupedItems.FirstOrDefault().AccountName</td>
+                                                <td class="text-right">@groupedItems.Sum(x => x.DebitAmount)</td>
+                                                <td class="text-right">@groupedItems.Sum(x => x.CreditAmount)</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="text-right" colspan="4">Balance (BDT)</th>
+                                                <th class="text-right">
+                                                    @((debit + groupedItems.Sum(x => x.DebitAmount)) - (credit + groupedItems.Sum(x => x.CreditAmount)))
+                                                </th>
+                                            </tr>
+
+                                            debit = 0M;
+                                            credit = 0M;
+                                            Sl++;
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                        }
+                    </div>
+                }
+
+                @if (Model.IsOpening && Model.AccountingReportViewModels.Count == 0 && Model.AccountCode is not null)
+                {
+                    <table class="table table-sm table-bordered">
+                        <thead>
+                            <tr class="bg-gradient-gray">
+                                <th class="text-center">#</th>
+                                <th class="text-center">Date</th>
+                                <th class="text-center">Transaction</th>
+                                <th class="text-center">Voucher No</th>
+                                <th class="text-center">Account Code</th>
+                                <th class="text-center">Account Name</th>
+                                <th class="text-center">Debit Amount</th>
+                                <th class="text-center">Credit Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.FromDate.HasValue)
+                            {
+                                <tr>
+                                    <td class="text-center">*</td>
+                                    <td class="text-center" colspan="4">Showing records up to @Model.FromDate.Value.AddDays(-1).ToString("dd MMMM, yyyy")</td>
+                                    <td class="text-left">@Model.AccountName</td>
+                                    <td class="text-right">@Model.TotalDebitAmount</td>
+                                    <td class="text-right">@Model.TotalCreditAmount</td>
+                                </tr>
+                            }
+                            <tr>
+                                <th class="text-right" colspan="6">Total Amount (BDT)</th>
+                                <th class="text-right">@Model.TotalDebitAmount</th>
+                                <th class="text-right">@Model.TotalCreditAmount</th>
+                            </tr>
+                            <tr>
+                                <th class="text-right" colspan="7">Balance (BDT)</th>
+                                <th class="text-right">@(Model.TotalDebitAmount - Model.TotalCreditAmount)</th>
+                            </tr>
+                        </tbody>
+                    </table>
+                }
+
+                @if (Model.IsOpening && Model.AccountingReportOpeningViewModels is not null)
+                {
+                    <table class="table table-sm table-bordered">
+                        <thead>
+                            <tr class="bg-gradient-gray">
+                                <th class="text-center">#</th>
+                                <th class="text-center">Account Code</th>
+                                <th class="text-center">Account Name</th>
+                                <th class="text-center">Debit Amount</th>
+                                <th class="text-center">Credit Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.AccountingReportViewModels is not null && Model.AccountingReportOpeningViewModels.Any())
+                            {
+                                var notInOpening = Model.AccountingReportViewModels.Select(x => x.AccountCode)
+                                .ToList();
+
+                                Model.AccountingReportOpeningViewModels = Model.AccountingReportOpeningViewModels
+                                .Where(tr => !notInOpening.Contains(tr.AccountCode)).ToList();
+
+                                foreach (var groupedItems in Model.AccountingReportOpeningViewModels.GroupBy(x => x.AccountCode).ToList())
+                                {
+                                    <tr>
+                                        <td class="text-center">@Sl</td>
+                                        <td class="text-left">Showing records up to @Model.FromDate.Value.AddDays(-1).ToString("dd MMMM, yyyy")</td>
+                                        <td class="text-left">Opening Account Balance of @groupedItems.FirstOrDefault().AccountName</td>
+                                        <td class="text-right">@groupedItems.Sum(x => x.DebitAmount)</td>
+                                        <td class="text-right">@groupedItems.Sum(x => x.CreditAmount)</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-right" colspan="4">Balance (BDT)</th>
+                                        <th class="text-right">
+                                            @((debit + groupedItems.Sum(x => x.DebitAmount)) - (credit + groupedItems.Sum(x => x.CreditAmount)))
+                                        </th>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+
+</section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+        $('#Accounting-Report').addClass('menu-open');
+        $('#AccountingReportGeneralLedgerReport').addClass('active');
+
+            setTimeout(function() {
+                $('#response').hide();
+            }, 5000);
+
+            $('#printGeneralLedger').on('click', function () {
+                var tableData = $('tbody').html();
+                var tableFooter = $('tfoot').html();
+
+                const generateView = `
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <h4 class="text-danger text-center my-5">Under Build...</h1>
+                        </div>
+                    </div>
+                `;
+
+                var originalContent = $('body').html();
+
+                $('body').html(generateView);
+                window.print();
+                $('body').html(originalContent);
+            });
+        });
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

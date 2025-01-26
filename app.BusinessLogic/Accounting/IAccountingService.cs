@@ -22,5 +22,6 @@ namespace app.Services.Accounting
         Task<ChartOfAccountsViewModel> PayableAccountHeadsAsync();
         Task<ChartOfAccountsViewModel> CashBookAccountHeadsAsync();
         Task<ChartOfAccountsViewModel> BankBookAccountHeadsAsync();
+        Task<ChartOfAccountsViewModel> AllAccountHeadsAsync();
     }
 }

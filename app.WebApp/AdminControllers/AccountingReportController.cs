@@ -18,6 +18,47 @@ namespace app.WebApp.AdminControllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> GeneralLedgerReport(string accountCode, string fromDate, string toDate)
+        {
+            var response = new AccountingReportViewModel
+            {
+                SearchAccountCode = accountCode,
+                FromDate = fromDate is null ? null : Convert.ToDateTime(fromDate),
+                ToDate = toDate is null ? null : Convert.ToDateTime(toDate)
+            };
+
+            if (!string.IsNullOrEmpty(response.SearchAccountCode) || response.FromDate.HasValue || response.ToDate.HasValue)
+            {
+                response = await _accountingReportService.GetGeneralLedgerReportAsync(response);
+            }
+            response.ChartOfAccountsViewModel = await _accountingService.AllAccountHeadsAsync();
+            return await Task.Run(() => View(response));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SearchGeneralLedger(AccountingReportViewModel accountingReportViewModel)
+        {
+            return await Task.Run(() => RedirectToAction("GeneralLedgerReport", new
+            {
+                accountCode = accountingReportViewModel.SearchAccountCode is null ? "0" : accountingReportViewModel.SearchAccountCode,
+                fromDate = accountingReportViewModel.FromDate is null ? null : accountingReportViewModel.FromDate,
+                toDate = accountingReportViewModel.ToDate is null ? null : accountingReportViewModel.ToDate
+            }));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> BalanceSheetReport()
+        {
+            return await Task.Run(() => View());
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ProfitLossReport()
+        {
+            return await Task.Run(() => View());
+        }
+
+        [HttpGet]
         public async Task<IActionResult> TrailBalanceReport(long? costCenter, string fromDate, string toDate)
         {
             var response = new AccountingReportViewModel
@@ -44,12 +85,6 @@ namespace app.WebApp.AdminControllers
                 fromDate = accountingReportViewModel.FromDate is null ? null : accountingReportViewModel.FromDate,
                 toDate = accountingReportViewModel.ToDate is null ? null : accountingReportViewModel.ToDate
             }));
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> BalanceSheetReport()
-        {
-            return await Task.Run(() => View());
         }
 
         [HttpGet]

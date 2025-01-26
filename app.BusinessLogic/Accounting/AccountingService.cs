@@ -514,6 +514,22 @@ namespace app.Services.Accounting
             return request;
         }
 
+        //All Account Heads
+        public async Task<ChartOfAccountsViewModel> AllAccountHeadsAsync()
+        {
+            var request = new ChartOfAccountsViewModel();
+
+            request.ChartOfAccountsViewModels = await _dbContext.ChartOfAccounts
+                .Where(x => x.Level.Equals((int)CoAHead.HEADFIVE) && x.IsActive)
+                .Select(x => new ChartOfAccountsViewModel
+                {
+                    AccountCode = x.AccountCode,
+                    AccountName = x.AccountName,
+                }).ToListAsync();
+
+            return request;
+        }
+
         #endregion
 
         #region Cost Center

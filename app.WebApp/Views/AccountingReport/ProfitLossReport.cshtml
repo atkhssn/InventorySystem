@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Balance Sheet Report";
+    ViewData["Title"] = "Profit-Loss Report";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
@@ -8,10 +8,10 @@
         <div class="breadcrumb d-flex justify-content-between align-items-center  pl-3 pr-3">
             <ol class="breadcrumb mb-0 p-0">
                 <li class="breadcrumb-item"><a href="/Admin/Index">Home</a></li>
-                <li class="breadcrumb-item active"> Balance Sheet Report</li>
+                <li class="breadcrumb-item active"> Profit-Loss Report</li>
             </ol>
             <div>
-                <a class="btn btn-outline-primary" id="printBalanceSheet"><i class="fa fa-print"></i> Print Here</a>
+                <a class="btn btn-outline-primary" id="printProfitLoss"><i class="fa fa-print"></i> Print Here</a>
             </div>
         </div>
     </div>
@@ -23,7 +23,7 @@
             <div class="card-header">
                 <h3 class="card-title text-info">
                     <i class="fa fa-info-circle"></i>
-                    Account Balance Sheet Report
+                    Account Profit-Loss Report
                 </h3>
             </div>
             <div class="card-body">
@@ -42,13 +42,13 @@
     <script>
         $(document).ready(function () {
         $('#Accounting-Report').addClass('menu-open');
-        $('#AccountingReportBalanceSheetReport').addClass('active');
+        $('#AccountingReportProfitLossReport').addClass('active');
 
             setTimeout(function() {
                 $('#response').hide();
             }, 5000);
 
-            $('#printBalanceSheet').on('click', function () {
+            $('#printProfitLoss').on('click', function () {
                 var tableData = $('tbody').html();
                 var tableFooter = $('tfoot').html();
 
