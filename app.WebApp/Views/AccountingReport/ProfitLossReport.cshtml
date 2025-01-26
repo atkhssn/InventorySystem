@@ -1,6 +1,12 @@
-﻿@{
+﻿@using app.Services.AccountingReport
+@model AccountingReportViewModel
+@{
     ViewData["Title"] = "Profit-Loss Report";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    int Sli = 1;
+    int Sle = 1;
+    decimal inc = 0M;
+    decimal exp = 0M;
 }
 
 <div class="content-header">
@@ -27,11 +33,111 @@
                 </h3>
             </div>
             <div class="card-body">
-                <div class="table-responsive">
-                    <div class="text-danger text-center my-5">
-                        Under Build...
+                <div class="row">
+                    <div class="col-12">
+                        <form asp-action="SearchProfitLoss" method="post" class="row">
+                            <div class="form-group col">
+                                <label asp-for="FromDate" class="control-label"></label>
+                                <input type="date" asp-for="FromDate" value="@DateTime.Now.ToString("dd/MM/yyyy")" class="form-control" />
+                            </div>
+                            <div class="form-group col">
+                                <label asp-for="ToDate" class="control-label"></label>
+                                <input type="date" asp-for="ToDate" value="@DateTime.Now.ToString("dd/MM/yyyy")" class="form-control" />
+                            </div>
+                            <div class="form-group col mt-2" style="margin-top: 4px">
+                                <label class="control-label"></label>
+                                <input type="submit" value="Show Report" class="btn btn-outline-primary w-100" />
+                            </div>
+                        </form>
                     </div>
+                    @if (Model.FromDate.HasValue)
+                    {
+                        <div class="col-12 text-center">
+                            <p class="text-body"><span class="font-weight-bold">Date Between: </span> @Model.FromDate.Value.ToString("dd MMMM, yyyy") - @(Model.ToDate.HasValue ? Model.ToDate.Value.ToString("dd MMMM, yyyy") : "Till Now")</p>
+                        </div>
+                    }
                 </div>
+                @if (Model.Revenue is not null)
+                {
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr class="bg-gradient-gray">
+                                    <th class="text-center">#</th>
+                                    <th class="text-center">Date</th>
+                                    <th class="text-center">Account Name</th>
+                                    <th class="text-center">Debit Amount</th>
+                                    <th class="text-center">Credit Amount</th>
+                                    <th class="text-center">Revenue/Expense</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Revenue is not null && Model.Revenue.Any())
+                                {
+                                    foreach (var income in Model.Revenue)
+                                    {
+                                        <tr>
+                                            <td class="text-center">@Sli</td>
+                                            <td class="text-left">@income.TransactionDate.ToString("dd MMMM, yyyy")</td>
+                                            <td class="text-left">@(income.AccountName)[@(income.AccountCode)]</td>
+                                            <td class="text-right">@income.DebitAmount</td>
+                                            <td class="text-right">@income.CreditAmount</td>
+                                            <td class="text-right">@(income.CreditAmount - income.DebitAmount)</td>
+                                        </tr>
+                                        Sli++;
+                                    }
+                                    <tr>
+                                        <td class="text-right" colspan="5">Total Revenue (BDT)</td>
+                                        <td class="text-right">
+                                            @(inc = Model.Revenue.Sum(x => x.CreditAmount) - Model.Revenue.Sum(x => x.DebitAmount))
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <th class="text-center" colspan="6">No Income</th>
+                                    </tr>
+                                }
+                                @if (Model.Expense is not null && Model.Expense.Any())
+                                {
+                                    foreach (var expense in Model.Expense)
+                                    {
+                                        <tr>
+                                            <td class="text-center">@Sle</td>
+                                            <td class="text-left">@expense.TransactionDate.ToString("dd MMMM, yyyy")</td>
+                                            <td class="text-left">@(expense.AccountName)[@(expense.AccountCode)]</td>
+                                            <td class="text-right">@expense.DebitAmount</td>
+                                            <td class="text-right">@expense.CreditAmount</td>
+                                            <td class="text-right">@(expense.DebitAmount - expense.CreditAmount)</td>
+                                        </tr>
+                                        Sle++;
+                                    }
+                                    <tr>
+                                        <td class="text-right" colspan="5">Total Expense (BDT)</td>
+                                        <td class="text-right">
+                                            @(exp = Model.Expense.Sum(x => x.DebitAmount) - Model.Expense.Sum(x => x.CreditAmount))
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th class="text-right" colspan="5">Net Profit/Loss (BDT)</th>
+                                        <th class="text-right">
+                                            @(inc - exp)
+                                        </th>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <th class="text-center" colspan="6">No Expense</th>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+
             </div>
         </div>
     </div>

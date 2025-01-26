@@ -465,5 +465,69 @@ namespace app.Services.AccountingReport
                 }).OrderByDescending(x => x.TransactionDate).ToListAsync();
             return request;
         }
+
+        public async Task<AccountingReportViewModel> GetProfitLossReportAsync(AccountingReportViewModel model)
+        {
+            var request = new AccountingReportViewModel();
+
+            var income = _dbContext.Transactions
+                .Include(ac => ac.ChartOfAccounts)
+                .Where(ac => ac.ChartOfAccounts.CoATypeId == (int)Utility.CoATypes.REVENUE)
+                .Include(vo => vo.Vouchers)
+                .ThenInclude(cc => cc.CostCenters)
+                .AsQueryable();
+
+            var expense = _dbContext.Transactions
+                .Include(ac => ac.ChartOfAccounts)
+                .Where(ac => ac.ChartOfAccounts.CoATypeId == (int)Utility.CoATypes.EXPENSE)
+                .Include(vo => vo.Vouchers)
+                .ThenInclude(cc => cc.CostCenters)
+                .AsQueryable();
+
+            if (model.FromDate.HasValue)
+            {
+                request.FromDate = model.FromDate;
+                income = income.Where(td => td.TransactionDate.Date > model.FromDate.Value.Date);
+                expense = expense.Where(td => td.TransactionDate.Date > model.FromDate.Value.Date);
+            }
+
+            if (model.ToDate.HasValue)
+            {
+                request.ToDate = model.ToDate;
+                income = income.Where(td => td.TransactionDate.Date <= model.ToDate.Value.Date);
+                expense = expense.Where(td => td.TransactionDate.Date <= model.ToDate.Value.Date);
+            }
+
+            if (!model.ToDate.HasValue && model.FromDate.HasValue)
+            {
+                income = income.Where(td => td.TransactionDate.Date <= DateTime.Now.Date);
+                expense = expense.Where(td => td.TransactionDate.Date <= DateTime.Now.Date);
+            }
+
+            request.Revenue = await income
+                .Select(x => new AccountingReportViewModel
+                {
+                    TransactionId = x.Id,
+                    VoucherNo = x.Vouchers.VoucherNo,
+                    AccountCode = x.AccountCode,
+                    AccountName = x.ChartOfAccounts.AccountName,
+                    DebitAmount = x.DebitAmount,
+                    CreditAmount = x.CreditAmount,
+                    TransactionDate = x.TransactionDate,
+                }).OrderByDescending(x => x.TransactionDate).ToListAsync();
+
+            request.Expense = await expense
+                .Select(x => new AccountingReportViewModel
+                {
+                    TransactionId = x.Id,
+                    VoucherNo = x.Vouchers.VoucherNo,
+                    AccountCode = x.AccountCode,
+                    AccountName = x.ChartOfAccounts.AccountName,
+                    DebitAmount = x.DebitAmount,
+                    CreditAmount = x.CreditAmount,
+                    TransactionDate = x.TransactionDate,
+                }).OrderByDescending(x => x.TransactionDate).ToListAsync();
+            return request;
+        }
     }
 }

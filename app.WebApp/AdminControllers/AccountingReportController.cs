@@ -53,9 +53,32 @@ namespace app.WebApp.AdminControllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ProfitLossReport()
+        public async Task<IActionResult> ProfitLossReport(string accountCode, string fromDate, string toDate)
         {
-            return await Task.Run(() => View());
+            var response = new AccountingReportViewModel
+            {
+                SearchAccountCode = accountCode,
+                FromDate = fromDate is null ? null : Convert.ToDateTime(fromDate),
+                ToDate = toDate is null ? null : Convert.ToDateTime(toDate)
+            };
+
+            if (!string.IsNullOrEmpty(response.SearchAccountCode) || response.FromDate.HasValue || response.ToDate.HasValue)
+            {
+                response = await _accountingReportService.GetProfitLossReportAsync(response);
+            }
+            response.ChartOfAccountsViewModel = await _accountingService.AllAccountHeadsAsync();
+            return await Task.Run(() => View(response));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SearchProfitLoss(AccountingReportViewModel accountingReportViewModel)
+        {
+            return await Task.Run(() => RedirectToAction("ProfitLossReport", new
+            {
+                accountCode = "0",
+                fromDate = accountingReportViewModel.FromDate is null ? null : accountingReportViewModel.FromDate,
+                toDate = accountingReportViewModel.ToDate is null ? null : accountingReportViewModel.ToDate
+            }));
         }
 
         [HttpGet]
