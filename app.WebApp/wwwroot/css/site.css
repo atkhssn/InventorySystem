@@ -22,7 +22,8 @@ body {
 }
 
 .main-layout-footer {
-    max-height: 70px !important;
+    text-align: center;
+    margin-top: 20px;
     color: #00a090 !important;
 }
 

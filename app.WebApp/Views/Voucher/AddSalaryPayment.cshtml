@@ -3,7 +3,7 @@
 @using app.Services.Vouchern
 @model VouchersViewModel
 @{
-    ViewData["Title"] = "New Salary Payment";
+    ViewData["Title"] = "Salary Payment";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 
     int Sl = 1;
@@ -16,7 +16,8 @@
         <div class="breadcrumb d-flex justify-content-between align-items-center  pl-3 pr-3">
             <ol class="breadcrumb mb-0 p-0">
                 <li class="breadcrumb-item"><a href="/Admin/Index">Home</a></li>
-                <li class="breadcrumb-item active"> New Salary Payment</li>
+                <li class="breadcrumb-item active"><a href="/Voucher/AddVoucher">Voucher</a></li>
+                <li class="breadcrumb-item active">Salary Payment</li>
             </ol>
             <div>
                 <a asp-action="Vouchers" class="btn btn-outline-primary"><i class="fa fa-list"></i> Vouchers</a>
@@ -31,7 +32,7 @@
             <div class="card-header">
                 <h3 class="card-title text-info">
                     <i class="fas fa-edit"></i>
-                    New Salary Payment
+                    Salary Payment
                 </h3>
             </div>
             <div class="card-body">
@@ -182,6 +183,7 @@
                                                 <th class="text-center">Particular</th>
                                                 <th class="text-center">Debit</th>
                                                 <th class="text-center">Credit</th>
+                                                <th class="text-center">Action</th>
                                             </tr>
                                         </thead>
 
@@ -194,6 +196,16 @@
                                                     <td>@item.Particular</td>
                                                     <td class="text-right">@item.DebitAmount</td>
                                                     <td class="text-right">@item.CreditAmount</td>
+                                                    <td class="text-center">
+                                                        @if (Model.VouchersLinesViewModels.FirstOrDefault().Id == item.Id)
+                                                        {
+                                                            <a class="text-danger fas fa-trash disabled" title="Disabled"></a>
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.ActionLink("", "DeleteVoucherLine", new { voucherId = Model.Id, id = item.Id }, new { @class = "text-danger fas fa-trash", onclick = "return confirm('Are you sure you want to delete this?')" })
+                                                        }
+                                                    </td>
                                                 </tr>
                                                 Sl++;
                                             }
@@ -204,6 +216,7 @@
                                                 <td class="text-right" colspan="3">Total</td>
                                                 <td class="text-right">@Model.VouchersLinesViewModels.Select(x => x.DebitAmount).Sum()</td>
                                                 <td class="text-right">@Model.VouchersLinesViewModels.Select(x => x.CreditAmount).Sum()</td>
+                                                <td></td>
                                             </tr>
                                         </tfoot>
                                     </table>
