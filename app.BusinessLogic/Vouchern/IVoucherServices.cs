@@ -13,6 +13,7 @@
         Task<VouchersViewModel> VoucherByVoucherNoAsync(string voucherNo);
         Task<VouchersViewModel> AddVoucherAsync(VouchersViewModel model);
         Task<ResponseViewModel> DeleteVoucherAync(long Id);
+        Task<ResponseViewModel> DeleteVoucherLineAync(long Id);
         Task<VouchersViewModel> AddVoucherLineAsync(VouchersViewModel model);
         Task<ResponseViewModel> MakeSubmitVoucherAync(long Id);
         Task<ResponseViewModel> MakeApproveVoucherAsync(string voucherNo);

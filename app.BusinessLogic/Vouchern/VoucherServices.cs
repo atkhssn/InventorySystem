@@ -530,6 +530,92 @@ namespace app.Services.Vouchern
             }
         }
 
+        public async Task<ResponseViewModel> DeleteVoucherLineAync(long id)
+        {
+            ResponseViewModel request = new ResponseViewModel();
+            var user = await _workContext.GetCurrentUserAsync();
+            var findVoucherLine = await _dbContext.VouchersLines.Where(x => x.Id.Equals(id)).FirstOrDefaultAsync();
+            var findVoucher = await _dbContext.Vouchers.Where(x => x.Id.Equals(findVoucherLine.VouchersId)).FirstOrDefaultAsync();
+            var getFirstVoucherLine = await _dbContext.VouchersLines.Where(x => x.VouchersId.Equals(findVoucherLine.VouchersId) && x.IsActive).OrderBy(x => x.Id).FirstOrDefaultAsync();
+
+            if (findVoucherLine is null)
+            {
+                request.ResponseCode = 404;
+                request.ResponseMessage = $"No records found to delete.";
+                return await Task.Run(() => request);
+            }
+
+            if (findVoucher is null)
+            {
+                request.ResponseCode = 404;
+                request.ResponseMessage = $"No records found to delete.";
+                return await Task.Run(() => request);
+            }
+
+            if (!findVoucher.Status.Equals((int)VoucherStatus.CREATED))
+            {
+                request.ResponseCode = 400;
+                request.ResponseMessage = $"Already submitted or approved, Cannot be delete.";
+                return await Task.Run(() => request);
+            }
+
+            try
+            {
+                using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+                {
+                    if (findVoucher.VoucherTypesId.Equals((int)NewVoucherTypes.JournalVoucher))
+                    {
+                        if (findVoucherLine.DebitAmount > 0)
+                        {
+                            findVoucher.TotalDebitAmount -= findVoucherLine.DebitAmount;
+                        }
+
+                        if (findVoucherLine.CreditAmount > 0)
+                        {
+                            findVoucher.TotalCreditAmount -= findVoucherLine.CreditAmount;
+                        }
+                    }
+
+                    if (!findVoucher.VoucherTypesId.Equals((int)NewVoucherTypes.JournalVoucher))
+                    {
+                        if (findVoucherLine.DebitAmount > 0)
+                        {
+                            findVoucher.TotalDebitAmount -= findVoucherLine.DebitAmount;
+                            findVoucher.TotalCreditAmount -= findVoucherLine.DebitAmount;
+                            getFirstVoucherLine.CreditAmount -= findVoucherLine.DebitAmount;
+                        }
+
+                        if (findVoucherLine.CreditAmount > 0)
+                        {
+                            findVoucher.TotalDebitAmount -= findVoucherLine.CreditAmount;
+                            findVoucher.TotalCreditAmount -= findVoucherLine.CreditAmount;
+                            getFirstVoucherLine.DebitAmount -= findVoucherLine.CreditAmount;
+                        }
+                    }
+
+                    _dbContext.VouchersLines.Remove(findVoucherLine);
+                    if (await _dbContext.SaveChangesAsync() > 0)
+                    {
+                        request.ResponseCode = 200;
+                        request.ResponseMessage = "Voucher detail has been removed.";
+                        transaction.Complete();
+                    }
+                    else
+                    {
+                        request.ResponseCode = 500;
+                        request.ResponseMessage = $"Something went wrong.";
+                    }
+                }
+                return await Task.Run(() => request);
+            }
+            catch (Exception ex)
+            {
+                request.ResponseCode = 500;
+                request.ResponseMessage = ex.Message.ToString();
+                return await Task.Run(() => request);
+            }
+        }
+
         public async Task<VouchersViewModel> AddVoucherLineAsync(VouchersViewModel model)
         {
             model.ResponseViewModel = new ResponseViewModel();

@@ -259,6 +259,14 @@ namespace app.WebApp.AdminControllers
             return await Task.Run(() => RedirectToAction("Vouchers"));
         }
 
+        [HttpGet]
+        public async Task<IActionResult> DeleteVoucherLine(long voucherId, long Id)
+        {
+            var response = await _voucherServices.DeleteVoucherLineAync(Id);
+            TempData["Response"] = JsonConvert.SerializeObject(response);
+            return await Task.Run(() => RedirectToAction("AddVoucher", new { Id = voucherId }));
+        }
+
         #endregion
 
         #region Specific Voucher Form

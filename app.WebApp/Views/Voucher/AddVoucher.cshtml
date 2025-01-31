@@ -194,6 +194,7 @@
                                                 <th class="text-center">Particular</th>
                                                 <th class="text-center">Debit</th>
                                                 <th class="text-center">Credit</th>
+                                                <th class="text-center" width="15px">Action</th>
                                             </tr>
                                         </thead>
 
@@ -206,6 +207,16 @@
                                                     <td>@item.Particular</td>
                                                     <td class="text-right">@item.DebitAmount</td>
                                                     <td class="text-right">@item.CreditAmount</td>
+                                                    <td class="text-center">
+                                                        @if (Model.VouchersLinesViewModels.FirstOrDefault().Id == item.Id)
+                                                        {
+                                                            <a class="text-danger fas fa-trash disabled" title="Disabled"></a>
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.ActionLink("", "DeleteVoucherLine", new { voucherId = Model.Id, id = item.Id }, new { @class = "text-danger fas fa-trash", onclick = "return confirm('Are you sure you want to delete this?')" })
+                                                        }
+                                                    </td>
                                                 </tr>
                                                 Sl++;
                                             }
@@ -216,6 +227,7 @@
                                                 <td class="text-right" colspan="3">Total</td>
                                                 <td class="text-right">@Model.VouchersLinesViewModels.Select(x => x.DebitAmount).Sum()</td>
                                                 <td class="text-right">@Model.VouchersLinesViewModels.Select(x => x.CreditAmount).Sum()</td>
+                                                <td></td>
                                             </tr>
                                         </tfoot>
                                     </table>
