@@ -101,38 +101,44 @@
                                             if (item.VoucherTypesViewModel.Id == (long)NewVoucherTypes.BillVoucher)
                                             {
                                                 <td class="text-center">
-                                                    @Html.ActionLink("", "AddBillVoucher", new { id = item.Id }, new { @class = "text-info fas fa-eye" })
+                                                    @Html.ActionLink("", "AddBillVoucher", new { id = item.Id }, new { @class = "text-info fas fa-eye" }) |
+                                                    @Html.ActionLink("", "DeleteVoucher", new { id = item.Id }, new { @class = "text-danger fas fa-trash", onclick = "return confirm('Are you sure you want to delete this?')" })
                                                 </td>
                                             }
                                             else if (item.VoucherTypesViewModel.Id == (long)NewVoucherTypes.CustomerReceive)
                                             {
                                                 <td class="text-center">
-                                                    @Html.ActionLink("", "AddCustomerReceive", new { id = item.Id }, new { @class = "text-info fas fa-eye" })
+                                                    @Html.ActionLink("", "AddCustomerReceive", new { id = item.Id }, new { @class = "text-info fas fa-eye" }) |
+                                                    @Html.ActionLink("", "DeleteVoucher", new { id = item.Id }, new { @class = "text-danger fas fa-trash", onclick = "return confirm('Are you sure you want to delete this?')" })
                                                 </td>
                                             }
                                             else if (item.VoucherTypesViewModel.Id == (long)NewVoucherTypes.OtherExpenses)
                                             {
                                                 <td class="text-center">
-                                                    @Html.ActionLink("", "AddOtherExpenses", new { id = item.Id }, new { @class = "text-info fas fa-eye" })
+                                                    @Html.ActionLink("", "AddOtherExpenses", new { id = item.Id }, new { @class = "text-info fas fa-eye" }) |
+                                                    @Html.ActionLink("", "DeleteVoucher", new { id = item.Id }, new { @class = "text-danger fas fa-trash", onclick = "return confirm('Are you sure you want to delete this?')" })
                                                 </td>
                                             }
                                             else if (item.VoucherTypesViewModel.Id == (long)NewVoucherTypes.SalaryPayment)
                                             {
                                                 <td class="text-center">
-                                                    @Html.ActionLink("", "AddSalaryPayment", new { id = item.Id }, new { @class = "text-info fas fa-eye" })
+                                                    @Html.ActionLink("", "AddSalaryPayment", new { id = item.Id }, new { @class = "text-info fas fa-eye" }) |
+                                                    @Html.ActionLink("", "DeleteVoucher", new { id = item.Id }, new { @class = "text-danger fas fa-trash", onclick = "return confirm('Are you sure you want to delete this?')" })
                                                 </td>
                                             }
                                             else
                                             {
                                                 <td class="text-center">
-                                                    @Html.ActionLink("", "AddVoucher", new { id = item.Id }, new { @class = "text-info fas fa-eye" })
+                                                    @Html.ActionLink("", "AddVoucher", new { id = item.Id }, new { @class = "text-info fas fa-eye" }) |
+                                                    @Html.ActionLink("", "DeleteVoucher", new { id = item.Id }, new { @class = "text-danger fas fa-trash", onclick = "return confirm('Are you sure you want to delete this?')" })
                                                 </td>
                                             }
                                         }
                                         else
                                         {
                                             <td class="text-center">
-                                                @Html.ActionLink("", "DetailVoucher", new { id = item.Id }, new { @class = "text-info fas fa-eye" })
+                                                @Html.ActionLink("", "DetailVoucher", new { id = item.Id }, new { @class = "text-info fas fa-eye" }) |
+                                                <a class="text-danger fas fa-trash disabled" title="Disabled"></a>
                                             </td>
                                         }
                                     </tr>

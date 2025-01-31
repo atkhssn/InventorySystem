@@ -487,27 +487,47 @@ namespace app.Services.Vouchern
                 return await Task.Run(() => request);
             }
 
-            if (Convert.ToInt32(VoucherStatus.CREATED).Equals(findVoucher.Status))
+            if (!findVoucher.Status.Equals((int)VoucherStatus.CREATED))
             {
                 request.ResponseCode = 400;
-                request.ResponseMessage = $"Approved vouchers cannot be deleted.";
+                request.ResponseMessage = $"Already submitted or approved, Cannot be delete.";
                 return await Task.Run(() => request);
             }
 
-            findVoucher.IsActive = false;
-            findVoucher.UpdatedBy = user.FullName;
-            findVoucher.UpdatedOn = DateTime.Now;
-
-            if (await _dbContext.SaveChangesAsync() > 0)
+            try
             {
-                request.ResponseCode = 200;
-                request.ResponseMessage = $"Voucher has been removed.";
+                using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+                {
+                    _dbContext.VouchersLines.RemoveRange(_dbContext.VouchersLines.Where(x => x.VouchersId.Equals(id)));
+                    if (await _dbContext.SaveChangesAsync() > 0)
+                    {
+                        _dbContext.Vouchers.Remove(findVoucher);
+                        if (await _dbContext.SaveChangesAsync() > 0)
+                        {
+                            request.ResponseCode = 200;
+                            request.ResponseMessage = "Voucher has been removed.";
+                            transaction.Complete();
+                        }
+                        else
+                        {
+                            request.ResponseCode = 500;
+                            request.ResponseMessage = $"Something went wrong.";
+                        }
+                    }
+                    else
+                    {
+                        request.ResponseCode = 500;
+                        request.ResponseMessage = $"Something went wrong.";
+                    }
+                }
                 return await Task.Run(() => request);
             }
-
-            request.ResponseCode = 500;
-            request.ResponseMessage = $"An internal server error occurred.";
-            return await Task.Run(() => request);
+            catch (Exception ex)
+            {
+                request.ResponseCode = 500;
+                request.ResponseMessage = ex.Message.ToString();
+                return await Task.Run(() => request);
+            }
         }
 
         public async Task<VouchersViewModel> AddVoucherLineAsync(VouchersViewModel model)
