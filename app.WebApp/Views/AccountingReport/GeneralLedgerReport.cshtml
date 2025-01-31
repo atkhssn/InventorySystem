@@ -116,7 +116,7 @@
                                             <th class="text-right">@(Model.AccountingReportViewModels.Sum(x => x.CreditAmount) + Model.TotalCreditAmount)</th>
                                         </tr>
                                         <tr>
-                                            <th class="text-right" colspan="7">Receivable Amount (BDT)</th>
+                                            <th class="text-right" colspan="7">Amount (BDT)</th>
                                             <th class="text-right">@((Model.AccountingReportViewModels.Sum(x => x.DebitAmount) + Model.TotalDebitAmount) - (Model.AccountingReportViewModels.Sum(x => x.CreditAmount) + Model.TotalCreditAmount))</th>
                                         </tr>
                                     </tbody>

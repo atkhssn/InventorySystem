@@ -120,7 +120,7 @@
                                             <th class="text-right">@(Model.AccountingReportViewModels.Sum(x => x.CreditAmount) + Model.TotalCreditAmount)</th>
                                         </tr>
                                         <tr>
-                                            <th class="text-right" colspan="7">Receivable Amount (BDT)</th>
+                                            <th class="text-right" colspan="7">Payable Amount (BDT)</th>
                                             <th class="text-right">@((Model.AccountingReportViewModels.Sum(x => x.DebitAmount) + Model.TotalDebitAmount) - (Model.AccountingReportViewModels.Sum(x => x.CreditAmount) + Model.TotalCreditAmount))</th>
                                         </tr>
                                     </tbody>
@@ -178,7 +178,7 @@
                                                 <td class="text-right">@groupedItems.Sum(x => x.CreditAmount)</td>
                                             </tr>
                                             <tr>
-                                                <th class="text-right" colspan="4">Receivable Amount (BDT)</th>
+                                                <th class="text-right" colspan="4">Payable Amount (BDT)</th>
                                                 <th class="text-right">
                                                     @((debit + groupedItems.Sum(x => x.DebitAmount)) - (credit + groupedItems.Sum(x => x.CreditAmount)))
                                                 </th>
@@ -227,7 +227,7 @@
                                 <th class="text-right">@Model.TotalCreditAmount</th>
                             </tr>
                             <tr>
-                                <th class="text-right" colspan="7">Receivable Amount (BDT)</th>
+                                <th class="text-right" colspan="7">Payable Amount (BDT)</th>
                                 <th class="text-right">@(Model.TotalDebitAmount - Model.TotalCreditAmount)</th>
                             </tr>
                         </tbody>
@@ -265,7 +265,7 @@
                                         <td class="text-right">@groupedItems.Sum(x => x.CreditAmount)</td>
                                     </tr>
                                     <tr>
-                                        <th class="text-right" colspan="4">Receivable Amount (BDT)</th>
+                                        <th class="text-right" colspan="4">Payable Amount (BDT)</th>
                                         <th class="text-right">
                                             @((debit + groupedItems.Sum(x => x.DebitAmount)) - (credit + groupedItems.Sum(x => x.CreditAmount)))
                                         </th>

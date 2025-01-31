@@ -66,9 +66,9 @@
                                     <th class="text-center">#</th>
                                     <th class="text-center">Date</th>
                                     <th class="text-center">Account Name</th>
-                                    <th class="text-center">Debit Amount</th>
-                                    <th class="text-center">Credit Amount</th>
-                                    <th class="text-center">Revenue/Expense</th>
+                                    @* <th class="text-center">Debit Amount</th> *@
+                                    @* <th class="text-center">Credit Amount</th> *@
+                                    <th class="text-center">Income/Expense</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -80,8 +80,8 @@
                                             <td class="text-center">@Sli</td>
                                             <td class="text-left">@income.TransactionDate.ToString("dd MMMM, yyyy")</td>
                                             <td class="text-left">@(income.AccountName)[@(income.AccountCode)]</td>
-                                            <td class="text-right">@income.DebitAmount</td>
-                                            <td class="text-right">@income.CreditAmount</td>
+                                            @* <td class="text-right">@income.DebitAmount</td> *@
+                                            @* <td class="text-right">@income.CreditAmount</td> *@
                                             <td class="text-right">@(income.CreditAmount - income.DebitAmount)</td>
                                         </tr>
                                         Sli++;
@@ -107,8 +107,8 @@
                                             <td class="text-center">@Sle</td>
                                             <td class="text-left">@expense.TransactionDate.ToString("dd MMMM, yyyy")</td>
                                             <td class="text-left">@(expense.AccountName)[@(expense.AccountCode)]</td>
-                                            <td class="text-right">@expense.DebitAmount</td>
-                                            <td class="text-right">@expense.CreditAmount</td>
+                                            @* <td class="text-right">@expense.DebitAmount</td> *@
+                                            @* <td class="text-right">@expense.CreditAmount</td> *@
                                             <td class="text-right">@(expense.DebitAmount - expense.CreditAmount)</td>
                                         </tr>
                                         Sle++;
